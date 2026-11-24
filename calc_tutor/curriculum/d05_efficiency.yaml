@@ -1,0 +1,116 @@
+unit:
+  id: D05
+  ord: 90
+  course: core
+  title: "Growth Rates & Algorithm Efficiency"
+  constellation: "The Hourglass"
+  color: "#90a4ae"
+  blurb: |
+    How does cost scale as data grows? Big-O, Omega and Theta formalize the limits-at-
+    infinity intuition from calculus, and logarithms explain why some algorithms barely
+    notice a million-fold increase in data.
+  ds_why: |
+    Choosing between an O(n log n) and an O(n^2) approach is the difference between seconds
+    and days on real data. Complexity thinking decides what's feasible at scale.
+
+topics:
+  - id: dm-big-o
+    title: "Big-O, Big-Omega & Big-Theta"
+    xp: 60
+    prereqs: [lim-infinity, dm-quantifiers]
+    readings:
+      - {book: EPP, sec: "9.1", title: "Real-Valued Functions of a Real Variable and Their Graphs"}
+      - {book: EPP, sec: "9.2", title: "O-, Omega-, and Theta-Notations"}
+      - {book: KBR, sec: "5.3", title: "Growth of Functions"}
+    summary: |
+      $f=O(g)$ if $|f(n)|\le C|g(n)|$ for all large $n$ -- an upper bound up to constants.
+      $\Omega$ is the lower bound; $\Theta$ means both.
+    key_ideas:
+      - 'Formal definition uses quantifiers: $\exists C, n_0\ \forall n\ge n_0: |f(n)|\le C|g(n)|$.'
+      - 'Drop constants and lower-order terms: $3n^2+10n\log n=\Theta(n^2)$.'
+      - 'Limit test: if $f/g\to$ a finite nonzero constant, $f=\Theta(g)$.'
+    ds: |
+      kNN prediction is $O(nd)$ per query; training a GBM is roughly $O(n\log n)$ per tree
+      split search; attention in transformers is $O(n^2)$ in sequence length -- the reason
+      long-context tricks exist.
+    lab: |
+      Time `x in some_list` vs `x in some_set` for sizes $10^3..10^7$ and plot on log-log axes.
+      Read off the slopes: about 1 for the list (O(n)), about 0 for the set (O(1)).
+    questions:
+      - {type: mc, d: 1, q: '$5n^3+100n^2+7=$', choices: ['$\Theta(n^2)$', '$\Theta(n^3)$', '$\Theta(n^5)$', '$\Theta(100n^2)$'], a: 1, exp: 'Leading term.'}
+      - {type: mc, d: 2, q: 'Which is NOT $O(n^2)$?', choices: ['$n\log n$', '$100n^2$', '$n^2\log n$', '$\sqrt n$'], a: 2, exp: '$n^2\log n/n^2=\log n\to\infty$.'}
+      - {type: mc, d: 2, q: 'Doubling $n$ for an $O(n^2)$ algorithm multiplies run time by about...', choices: ['2', '4', '$n$', '1'], a: 1, exp: '$(2n)^2=4n^2$.'}
+    cards:
+      - {f: 'Definition of $f=O(g)$', b: 'There exist $C,n_0$ with $|f(n)|\le C|g(n)|$ for all $n\ge n_0$.'}
+      - {f: '$\Theta(g)$ means', b: 'Both $O(g)$ and $\Omega(g)$: same growth rate up to constants.'}
+    fun:
+      - kind: fact
+        title: "Knuth's notation"
+        body: |
+          Big-O was introduced by number theorist Paul Bachmann in 1894. Donald Knuth
+          popularized Omega and Theta for computer science in a 1976 letter titled "Big Omicron
+          and Big Omega and Big Theta" -- one of the most influential letters to an editor ever.
+
+  - id: dm-algo-analysis
+    title: "Analyzing Algorithms: Loops, Logs & Search"
+    xp: 70
+    prereqs: [dm-big-o, dm-sums]
+    readings:
+      - {book: EPP, sec: "9.3", title: "Application: Efficiency of Algorithms I"}
+      - {book: EPP, sec: "9.4", title: "Exponential and Logarithmic Functions: Graphs and Orders"}
+    summary: |
+      Count operations: nested loops multiply, sequential steps add. Halving the problem each
+      step gives $O(\log n)$ (binary search). Logs grow absurdly slowly.
+    key_ideas:
+      - 'Nested loops over $n$: $\sum_{i=1}^n i = O(n^2)$.'
+      - 'Binary search: $\lceil\log_2(n+1)\rceil$ comparisons worst case.'
+      - '$\log_b n=\Theta(\log n)$ for any base -- the base is just a constant factor.'
+    ds: |
+      Database indexes (B-trees) and sorted arrays give $O(\log n)$ lookups; that's why
+      indexing a join key turns a minutes-long query into milliseconds.
+    lab: |
+      Implement binary search with a comparison counter. How many comparisons for $n=10^6$ and
+      $n=10^9$? Compare with `np.searchsorted`.
+    questions:
+      - {type: num, d: 1, q: 'Worst-case comparisons for binary search on 1,000,000 sorted items (round up)?', a: '20', exp: '$\lceil\log_2 1{,}000{,}001\rceil=20$.'}
+      - {type: mc, d: 2, q: 'Two nested loops: outer $i=1..n$, inner $j=1..i$. Complexity?', choices: ['$O(n)$', '$O(n\log n)$', '$O(n^2)$', '$O(2^n)$'], a: 2, exp: '$\sum i=n(n+1)/2$.'}
+    cards:
+      - {f: 'Why is binary search $O(\log n)$?', b: 'Each comparison halves the remaining range.'}
+    fun:
+      - kind: puzzle
+        title: "20 questions"
+        body: |
+          In "20 questions" with yes/no answers, how many different objects can a perfect
+          player distinguish?
+        answer: "$2^{20}=1{,}048{,}576$ -- binary search on the space of objects."
+
+  - id: dm-divide-conquer
+    title: "Divide & Conquer: Merge Sort and Recurrences"
+    xp: 70
+    optional: true
+    prereqs: [dm-algo-analysis, dm-recurrences]
+    readings:
+      - {book: EPP, sec: "9.5", title: "Application: Efficiency of Algorithms II"}
+    summary: |
+      Split, solve halves recursively, combine. Merge sort satisfies $T(n)=2T(n/2)+n$, which
+      solves to $\Theta(n\log n)$ -- optimal for comparison sorting.
+    key_ideas:
+      - 'Recursion tree: $\log_2 n$ levels, $n$ work per level.'
+      - 'Comparison sorting needs $\Omega(n\log n)$: there are $n!$ orderings and $\log_2 n!\approx n\log_2 n$.'
+    ds: |
+      MapReduce/Spark aggregations, the FFT, and decision-tree construction are divide and
+      conquer. Knowing $n\log n$ is the sorting floor helps estimate pipeline costs.
+    lab: |
+      Implement merge sort, count comparisons for random arrays of size $2^{10}..2^{20}$, and
+      plot count / ($n\log_2 n$). It should level off near 1.
+    questions:
+      - {type: mc, d: 2, q: '$T(n)=2T(n/2)+n$ solves to...', choices: ['$\Theta(n)$', '$\Theta(n\log n)$', '$\Theta(n^2)$', '$\Theta(\log n)$'], a: 1, exp: '$\log n$ levels each costing $n$.'}
+      - {type: mc, d: 2, q: '$T(n)=T(n/2)+1$ (binary search) solves to...', choices: ['$\Theta(1)$', '$\Theta(\log n)$', '$\Theta(n)$', '$\Theta(n\log n)$'], a: 1, exp: 'One unit of work per halving.'}
+    cards:
+      - {f: 'Merge sort recurrence and solution', b: '$T(n)=2T(n/2)+n$, so $\Theta(n\log n)$.'}
+    fun:
+      - kind: fact
+        title: "Von Neumann's sort"
+        body: |
+          John von Neumann invented merge sort in 1945, for one of the first stored-program
+          computers (EDVAC). Python's built-in `sorted` uses Timsort, a merge-sort descendant.

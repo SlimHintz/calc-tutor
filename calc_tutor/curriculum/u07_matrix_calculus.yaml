@@ -1,0 +1,238 @@
+unit:
+  id: U07
+  ord: 130
+  course: core
+  title: "Vector & Matrix Calculus for ML"
+  constellation: "The Network"
+  color: "#ff6b9d"
+  blurb: |
+    Derivatives of vector-valued functions and with respect to matrices: Jacobians,
+    gradient identities, the normal equations, backpropagation and automatic
+    differentiation. The direct engine room of deep learning.
+  ds_why: |
+    This is literally how PyTorch, JAX and TensorFlow compute gradients, and how linear
+    regression's closed form is derived.
+
+topics:
+  - id: mc-jacobian
+    title: "Jacobians: Derivatives of Vector Functions"
+    xp: 90
+    prereqs: [mv-gradient, la-matmul]
+    readings:
+      - {book: PRE, sec: "9.5", title: "The Algebra of Matrices (refresher)"}
+      - {book: MML, sec: "5.3", title: "Gradients of Vector-Valued Functions"}
+      - {book: MCDL, sec: "4.1", title: "Generalization of the Jacobian"}
+    summary: |
+      For $\mathbf f:\mathbb R^n\to\mathbb R^m$, the Jacobian $J$ is the $m\times n$ matrix
+      $J_{ij}=\frac{\partial f_i}{\partial x_j}$: the best linear approximation of $\mathbf f$.
+    key_ideas:
+      - 'Rows = outputs, columns = inputs (numerator layout).'
+      - '$\mathbf f(\mathbf x)=A\mathbf x$ has Jacobian $A$.'
+      - 'Elementwise functions (activations) have diagonal Jacobians.'
+      - 'Chain rule: $J_{\mathbf f\circ\mathbf g}=J_{\mathbf f}\,J_{\mathbf g}$ -- matrices multiply.'
+    ds: |
+      A neural layer $\mathbf h=\sigma(W\mathbf x+\mathbf b)$ has Jacobian
+      $\text{diag}(\sigma'(\cdot))W$. Backprop multiplies these Jacobians (cleverly, as
+      vector-Jacobian products, without ever building them).
+    lab: |
+      Use `jax.jacobian` (or `torch.autograd.functional.jacobian`) on
+      $\mathbf f(x,y)=(x^2y, 5x+\sin y)$ and compare with your hand computation.
+    questions:
+      - {type: mc, d: 1, q: 'Shape of the Jacobian of $\mathbf f:\mathbb R^3\to\mathbb R^2$?', choices: ['3×2', '2×3', '3×3', '2×2'], a: 1, exp: 'Outputs × inputs.'}
+      - {type: expr, d: 2, var: 'x,y', q: 'For $\mathbf f(x,y)=(x^2y,\ 5x+\sin y)$, entry $J_{11}=\partial f_1/\partial x$?', a: '2x*y', exp: 'Differentiate $x^2y$ in $x$.'}
+      - {type: mc, d: 2, q: 'Jacobian of elementwise $\sigma(\mathbf z)$ for $\mathbf z\in\mathbb R^n$ is...', choices: ['$n\times1$ vector', 'diagonal $n\times n$', 'dense $n\times n$', 'scalar'], a: 1, exp: 'Each output depends only on its own input.'}
+    cards:
+      - {f: 'Jacobian of $\mathbf f:\mathbb R^n\to\mathbb R^m$', b: '$m\times n$ matrix, $J_{ij}=\partial f_i/\partial x_j$.'}
+      - {f: 'Chain rule for vector functions', b: '$J_{\mathbf f\circ\mathbf g}(\mathbf x)=J_{\mathbf f}(\mathbf g(\mathbf x))\,J_{\mathbf g}(\mathbf x)$'}
+    fun:
+      - kind: fact
+        title: "Jacobi's legacy"
+        body: |
+          Carl Jacobi (1804-1851) was so prolific that his collected works fill 8 volumes. His
+          determinant (next unit!) tells you how a transformation stretches volume -- the key
+          to normalizing flows, a family of generative models.
+
+  - id: mc-matrix
+    title: "Gradients w.r.t. Vectors & Matrices: Identities"
+    xp: 90
+    prereqs: [mc-jacobian]
+    readings:
+      - {book: MML, sec: "5.4", title: "Gradients of Matrices"}
+      - {book: MML, sec: "5.5", title: "Useful Identities for Computing Gradients"}
+      - {book: MCDL, sec: "4.2-4.4", title: "Element-wise operators, scalar expansion, vector sum reduction"}
+    summary: |
+      The handful of identities that do 90% of ML derivations:
+      $\nabla_{\mathbf x}\mathbf a^\top\mathbf x=\mathbf a$,
+      $\nabla_{\mathbf x}\mathbf x^\top A\mathbf x=(A+A^\top)\mathbf x$,
+      $\nabla_{\mathbf x}\|A\mathbf x-\mathbf b\|^2=2A^\top(A\mathbf x-\mathbf b)$.
+    key_ideas:
+      - 'Gradient has the same shape as the variable (denominator-layout convention in ML).'
+      - '$\nabla\mathbf x^\top A\mathbf x=2A\mathbf x$ if $A$ symmetric.'
+      - 'Sanity check by shapes and by the 1-D case.'
+    ds: |
+      These identities give closed-form gradients for linear/ridge regression, Gaussian
+      log-likelihoods, and quadratic forms in portfolio risk ($\mathbf w^\top\Sigma\mathbf w$).
+    lab: |
+      Verify $\nabla_{\mathbf x}\|A\mathbf x-\mathbf b\|^2=2A^\top(A\mathbf x-\mathbf b)$ against
+      finite differences for random $A$ (5×3), $\mathbf x$, $\mathbf b$ in numpy.
+    questions:
+      - {type: mc, d: 1, q: '$\nabla_{\mathbf x}(\mathbf a^\top\mathbf x)$ = ?', choices: ['$\mathbf a^\top$', '$\mathbf a$', '$\mathbf x$', '$\mathbf a\mathbf x^\top$'], a: 1, exp: 'Matches 1-D: $\frac{d}{dx}ax=a$.'}
+      - {type: mc, d: 2, q: '$\nabla_{\mathbf x}(\mathbf x^\top A\mathbf x)$ for symmetric $A$?', choices: ['$A\mathbf x$', '$2A\mathbf x$', '$\mathbf x^\top A$', '$A^2\mathbf x$'], a: 1, exp: '1-D analogue: $\frac{d}{dx}ax^2=2ax$.'}
+      - {type: mc, d: 2, q: 'If $\mathbf w\in\mathbb R^{10}$, what shape is $\nabla_{\mathbf w}L$ for scalar $L$?', choices: ['scalar', '10-vector', '10×10', '1×1'], a: 1, exp: 'Same shape as $\mathbf w$.'}
+    cards:
+      - {f: '$\nabla_{\mathbf x}\mathbf x^\top A\mathbf x$', b: '$(A+A^\top)\mathbf x$; $=2A\mathbf x$ if symmetric.'}
+      - {f: '$\nabla_{\mathbf x}\|A\mathbf x-\mathbf b\|^2$', b: '$2A^\top(A\mathbf x-\mathbf b)$'}
+    fun:
+      - kind: fact
+        title: "The Matrix Cookbook"
+        body: |
+          "The Matrix Cookbook" (Petersen & Pedersen) is a free 70-page PDF of matrix
+          identities that's been quietly saving ML researchers since 2005. Bookmark it; you
+          now know enough to read it.
+
+  - id: mc-linreg
+    title: "Least Squares via Matrix Calculus"
+    xp: 100
+    prereqs: [mc-matrix, la-least-squares]
+    readings:
+      - {book: PRE, sec: "9.6", title: "Inverses of Matrices and Matrix Equations (refresher)"}
+      - {book: MML, sec: "9.2.1", title: "Maximum Likelihood Estimation (linear regression)"}
+    summary: |
+      Minimize $L(\boldsymbol\theta)=\|\mathbf y-X\boldsymbol\theta\|^2$: set
+      $\nabla L=-2X^\top(\mathbf y-X\boldsymbol\theta)=0$ to get the normal equations
+      $X^\top X\boldsymbol\theta=X^\top\mathbf y$.
+    key_ideas:
+      - 'Normal equations: $\hat{\boldsymbol\theta}=(X^\top X)^{-1}X^\top\mathbf y$.'
+      - 'Residual is orthogonal to the column space of $X$: $X^\top(\mathbf y-X\hat{\boldsymbol\theta})=0$.'
+      - 'Ridge: $\hat{\boldsymbol\theta}=(X^\top X+\lambda I)^{-1}X^\top\mathbf y$.'
+      - 'Minimizing squared error = MLE under Gaussian noise.'
+    ds: |
+      This IS `LinearRegression().fit()`. You'll derive it in three lines, and see why
+      ridge fixes singular $X^\top X$ (collinear features).
+    lab: |
+      Running lab: regress your run pace on (distance, elevation gain, temperature) with the
+      normal equations in numpy, then compare with `sklearn.linear_model.LinearRegression`.
+    questions:
+      - {type: mc, d: 2, q: 'Setting $\nabla_{\boldsymbol\theta}\|\mathbf y-X\boldsymbol\theta\|^2=0$ gives...', choices: ['$X\boldsymbol\theta=\mathbf y$', '$X^\top X\boldsymbol\theta=X^\top\mathbf y$', '$\boldsymbol\theta=X^\top\mathbf y$', '$XX^\top\boldsymbol\theta=\mathbf y$'], a: 1, exp: 'The normal equations.'}
+      - {type: num, d: 2, q: 'Fit $y=\theta x$ (no intercept) to points (1,2), (2,3). $\hat\theta=\frac{\sum x_iy_i}{\sum x_i^2}=?$', a: '8/5', exp: '$(2+6)/(1+4)$.'}
+      - {type: mc, d: 2, q: 'Why add $\lambda I$ in ridge regression?', choices: ['to make predictions bigger', 'to make $X^\top X+\lambda I$ invertible and shrink coefficients', 'to speed up matrix multiplication', 'to remove the intercept'], a: 1, exp: 'Adds $\lambda$ to every eigenvalue.'}
+    cards:
+      - {f: 'Normal equations', b: '$X^\top X\hat{\boldsymbol\theta}=X^\top\mathbf y$'}
+      - {f: 'Ridge closed form', b: '$(X^\top X+\lambda I)^{-1}X^\top\mathbf y$'}
+    fun:
+      - kind: fact
+        title: "Legendre vs. Gauss (again!)"
+        body: |
+          Legendre published least squares in 1805. Gauss claimed he'd used it since 1795 (for
+          Ceres) -- another priority fight. Gauss also gave the probabilistic justification
+          (normal errors), which is why the normal distribution is "Gaussian".
+
+  - id: mc-backprop
+    title: "Backpropagation"
+    xp: 120
+    prereqs: [mc-jacobian, mv-chain, fn-activations]
+    readings:
+      - {book: MML, sec: "5.6", title: "Backpropagation and Automatic Differentiation"}
+      - {book: MCDL, sec: "4.5-6", title: "The chain rules; gradient of neuron activation and loss"}
+    videos:
+      - {book: 3B1B-NN, n: 3, title: "What is backpropagation really doing?"}
+      - {book: 3B1B-NN, n: 4, title: "Backpropagation calculus"}
+    summary: |
+      Forward pass computes activations; backward pass sends $\frac{\partial L}{\partial(\cdot)}$
+      from the loss back through each layer via the chain rule, reusing intermediate results.
+    key_ideas:
+      - '"Error signal" $\boldsymbol\delta^{(l)}=\partial L/\partial\mathbf z^{(l)}$ flows backward.'
+      - 'For $\mathbf z=W\mathbf a+\mathbf b$: $\partial L/\partial W=\boldsymbol\delta\,\mathbf a^\top$, $\partial L/\partial\mathbf b=\boldsymbol\delta$.'
+      - '$\boldsymbol\delta^{(l-1)}=(W^\top\boldsymbol\delta^{(l)})\odot\sigma''(\mathbf z^{(l-1)})$.'
+      - 'Cost: about 2-3× a forward pass, regardless of parameter count.'
+    ds: |
+      This is what `loss.backward()` does. Understanding it explains vanishing/exploding
+      gradients, why ReLU and residual connections help, and why memory scales with depth.
+    lab: |
+      Write a 2-layer MLP in pure numpy (forward + backward) for XOR. Gradient-check
+      against finite differences. Then train it. (The classic rite of passage!)
+    questions:
+      - {type: mc, d: 2, q: 'For $\mathbf z=W\mathbf a+\mathbf b$ with upstream $\boldsymbol\delta=\partial L/\partial\mathbf z$, $\partial L/\partial W$ equals...', choices: ['$\boldsymbol\delta^\top\mathbf a$', '$\boldsymbol\delta\,\mathbf a^\top$', '$W^\top\boldsymbol\delta$', '$\mathbf a\,\boldsymbol\delta^\top$'], a: 1, exp: 'Outer product, shape matches $W$ (out × in).'}
+      - {type: num, d: 2, q: 'Single neuron $z=wx+b$, $L=\frac12(z-y)^2$, $w=1,b=0,x=2,y=5$. $\partial L/\partial w$?', a: '-6', exp: '$(z-y)x=(2-5)(2)$.'}
+      - {type: mc, d: 2, q: 'Why is reverse mode (backprop) efficient for training?', choices: ['one backward pass gives the gradient w.r.t. ALL parameters', 'it avoids the chain rule', 'it uses second derivatives', 'it needs no memory'], a: 0, exp: 'Many inputs (params), one output (loss): reverse mode wins.'}
+    cards:
+      - {f: 'Backprop: $\partial L/\partial W$ for $\mathbf z=W\mathbf a+\mathbf b$', b: '$\boldsymbol\delta\,\mathbf a^\top$ where $\boldsymbol\delta=\partial L/\partial\mathbf z$'}
+      - {f: 'Backprop recursion for $\boldsymbol\delta$', b: '$\boldsymbol\delta^{(l-1)}=(W^{(l)\top}\boldsymbol\delta^{(l)})\odot\sigma''(\mathbf z^{(l-1)})$'}
+    fun:
+      - kind: fact
+        title: "Invented many times"
+        body: |
+          Reverse-mode differentiation was published by Seppo Linnainmaa in his 1970 master's
+          thesis, applied to neural nets by Paul Werbos in 1974, and popularized in 1986. Good
+          ideas often have to be discovered three times before the world listens.
+
+  - id: mc-autodiff
+    title: "Automatic Differentiation"
+    xp: 80
+    prereqs: [mc-backprop]
+    readings:
+      - {book: MML, sec: "5.6.2", title: "Automatic Differentiation"}
+    summary: |
+      Autodiff computes exact derivatives of programs by applying the chain rule to
+      elementary operations. Forward mode pushes tangents forward (dual numbers); reverse
+      mode pulls adjoints backward.
+    key_ideas:
+      - 'Not symbolic (no expression swell) and not numeric (no step-size error).'
+      - 'Forward mode: cost ∝ number of inputs. Reverse mode: cost ∝ number of outputs.'
+      - 'Dual numbers $a+b\varepsilon$, $\varepsilon^2=0$: $f(a+\varepsilon)=f(a)+f''(a)\varepsilon$.'
+    ds: |
+      Choosing `jax.jvp` (forward) vs `jax.vjp`/`grad` (reverse), understanding
+      `torch.no_grad()`, and debugging NaN gradients all rest on this.
+    lab: |
+      Implement a tiny `Dual` class in Python with `+`, `*`, and `sin`. Compute the
+      derivative of $x\sin(x^2)$ at $x=1.5$ and compare with `jax.grad`.
+    questions:
+      - {type: mc, d: 2, q: 'A function $\mathbb R^{10^6}\to\mathbb R$ (a loss). Best autodiff mode?', choices: ['forward', 'reverse', 'symbolic', 'finite differences'], a: 1, exp: 'Reverse: one pass for all inputs.'}
+      - {type: num, d: 2, q: 'Dual numbers: $(3+\varepsilon)^2=9+k\varepsilon$. What is $k$?', a: '6', exp: '$9+6\varepsilon+\varepsilon^2$, and $\varepsilon^2=0$: the derivative of $x^2$ at 3.'}
+    cards:
+      - {f: 'Forward vs reverse mode cost', b: 'Forward ∝ #inputs; reverse ∝ #outputs. ML losses: many inputs, one output -> reverse.'}
+      - {f: 'Dual number rule', b: '$f(a+\varepsilon)=f(a)+f''(a)\varepsilon$, with $\varepsilon^2=0$.'}
+    fun:
+      - kind: puzzle
+        title: "Derivatives with fake numbers"
+        body: |
+          Invent a number $\varepsilon\ne0$ with $\varepsilon^2=0$. Then
+          $(x+\varepsilon)^3=x^3+3x^2\varepsilon$ -- the derivative appears for free! Puzzle:
+          compute $\frac{1}{2+\varepsilon}$ as $a+b\varepsilon$ (hint: multiply by
+          $\frac{2-\varepsilon}{2-\varepsilon}$).
+        answer: "$\\frac{2-\\varepsilon}{4}=\\frac12-\\frac14\\varepsilon$, and indeed $\\frac{d}{dx}\\frac1x=-\\frac14$ at $x=2$."
+
+  - id: mc-hessian-taylor
+    title: "Hessians & Multivariate Taylor"
+    xp: 90
+    prereqs: [mv-extrema, ser-taylor, mc-matrix]
+    readings:
+      - {book: MML, sec: "5.7", title: "Higher-Order Derivatives"}
+      - {book: MML, sec: "5.8", title: "Linearization and Multivariate Taylor Series"}
+    summary: |
+      $f(\mathbf x+\boldsymbol\delta)\approx f(\mathbf x)+\nabla f^\top\boldsymbol\delta+
+      \frac12\boldsymbol\delta^\top H\boldsymbol\delta$. Curvature in every direction, in one
+      matrix.
+    key_ideas:
+      - 'Second-order model of the loss around current parameters.'
+      - 'Minimizing the quadratic model gives Newton''s step $\boldsymbol\delta=-H^{-1}\nabla f$.'
+      - 'For least squares, $H=2X^\top X$.'
+    ds: |
+      Explains learning-rate limits ($\eta<2/\lambda_{max}(H)$), Newton/quasi-Newton methods
+      (L-BFGS), Laplace approximations in Bayesian inference, and sharp vs flat minima.
+    lab: |
+      Use `jax.hessian` on the logistic-regression loss for a tiny dataset. Check that it's
+      positive semidefinite (all eigenvalues ≥ 0) -- that's convexity.
+    questions:
+      - {type: mc, d: 2, q: 'Minimizing $f+\mathbf g^\top\boldsymbol\delta+\frac12\boldsymbol\delta^\top H\boldsymbol\delta$ over $\boldsymbol\delta$ gives...', choices: ['$\boldsymbol\delta=-\eta\mathbf g$', '$\boldsymbol\delta=-H^{-1}\mathbf g$', '$\boldsymbol\delta=H\mathbf g$', '$\boldsymbol\delta=0$'], a: 1, exp: 'Gradient of the model: $\mathbf g+H\boldsymbol\delta=0$.'}
+      - {type: mc, d: 2, q: 'Hessian of $\|X\boldsymbol\theta-\mathbf y\|^2$ w.r.t. $\boldsymbol\theta$?', choices: ['$X^\top X$', '$2X^\top X$', '$2X^\top\mathbf y$', '$XX^\top$'], a: 1, exp: 'Differentiate $2X^\top(X\boldsymbol\theta-\mathbf y)$ again.'}
+    cards:
+      - {f: 'Second-order Taylor in many variables', b: '$f(\mathbf x+\boldsymbol\delta)\approx f+\nabla f^\top\boldsymbol\delta+\frac12\boldsymbol\delta^\top H\boldsymbol\delta$'}
+      - {f: 'Newton step (multivariate)', b: '$\boldsymbol\delta=-H^{-1}\nabla f$'}
+    fun:
+      - kind: fact
+        title: "Too big to store"
+        body: |
+          A model with $10^9$ parameters has a Hessian with $10^{18}$ entries -- about
+          4 exabytes in float32. That's why deep learning uses first-order methods and
+          Hessian-*vector* products, which autodiff computes without ever building $H$.

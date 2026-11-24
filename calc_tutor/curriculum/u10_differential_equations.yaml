@@ -1,0 +1,195 @@
+unit:
+  id: U10
+  ord: 170
+  course: core
+  title: "Differential Equations & Dynamics"
+  constellation: "The Flow"
+  color: "#9ccc65"
+  blurb: |
+    Equations about rates of change: growth, decay, saturation, and the continuous-time
+    view of optimization. The capstone ties derivatives, integrals and ML together.
+  ds_why: |
+    Epidemic and adoption curves (logistic), survival/decay models, time-series dynamics,
+    neural ODEs, diffusion models, and the "gradient flow" view of training.
+
+topics:
+  - id: de-basics
+    title: "Differential Equations, Direction Fields & Euler's Method"
+    xp: 70
+    prereqs: [app-antideriv, app-linear]
+    readings:
+      - {book: STW, sec: "9.1", title: "Modeling with Differential Equations"}
+      - {book: STW, sec: "9.2", title: "Direction Fields and Euler's Method"}
+      - {book: OS2, sec: "4.1", title: "Basics of Differential Equations"}
+      - {book: OS2, sec: "4.2", title: "Direction Fields and Numerical Methods"}
+    summary: |
+      $y'=f(t,y)$ specifies a slope at every point. Euler's method follows the slopes in
+      small steps: $y_{n+1}=y_n+h\,f(t_n,y_n)$.
+    key_ideas:
+      - 'Solution = function satisfying the equation; initial condition picks one curve.'
+      - 'Direction field: tiny slope segments everywhere.'
+      - 'Euler''s method = repeated linearization. Error $O(h)$.'
+    ds: |
+      Euler's method applied to $\boldsymbol\theta'=-\nabla L(\boldsymbol\theta)$ IS gradient
+      descent with learning rate $h$. Diffusion models generate images by numerically
+      solving differential equations.
+    lab: |
+      Solve $y'=y$, $y(0)=1$ with Euler for $h=0.1, 0.01$ up to $t=1$. Compare with $e$.
+      How does the error scale with $h$?
+    questions:
+      - {type: num, d: 1, q: 'Euler, $y''=y$, $y(0)=1$, $h=0.5$: $y$ after one step?', a: '1.5', exp: '$1+0.5\cdot1$.'}
+      - {type: num, d: 2, q: 'Two steps (reach $t=1$)?', a: '2.25', exp: '$1.5+0.5\cdot1.5$. (True: $e\approx2.718$.)'}
+      - {type: mc, d: 2, q: 'Euler''s method on $\boldsymbol\theta''=-\nabla L(\boldsymbol\theta)$ with step $h$ is...', choices: ['Newton''s method', 'gradient descent with learning rate $h$', 'Adam', 'Monte Carlo'], a: 1, exp: '$\boldsymbol\theta_{n+1}=\boldsymbol\theta_n-h\nabla L$.'}
+    cards:
+      - {f: 'Euler''s method', b: '$y_{n+1}=y_n+h\,f(t_n,y_n)$'}
+      - {f: 'Gradient descent as an ODE solver', b: 'GD = Euler''s method on the gradient flow $\boldsymbol\theta''=-\nabla L$.'}
+    fun:
+      - kind: fact
+        title: "Hidden Figures"
+        body: |
+          Katherine Johnson used Euler's method to calculate the re-entry trajectory for John
+          Glenn's 1962 orbital flight. Glenn reportedly said of the computer's numbers: "If
+          she says they're good, then I'm ready to go."
+
+  - id: de-separable
+    title: "Separable Equations & Exponential Growth/Decay"
+    xp: 70
+    optional: true
+    prereqs: [de-basics, int-sub]
+    readings:
+      - {book: STW, sec: "9.3", title: "Separable Equations"}
+      - {book: STW, sec: "6.5", title: "Exponential Growth and Decay"}
+      - {book: OS2, sec: "4.3", title: "Separable Equations"}
+      - {book: OS1, sec: "6.8", title: "Exponential Growth and Decay"}
+    summary: |
+      $\frac{dy}{dt}=g(t)h(y)$: separate and integrate both sides. Star example: $y'=ky$
+      gives $y=y_0e^{kt}$.
+    key_ideas:
+      - '$\int\frac{dy}{h(y)}=\int g(t)\,dt$.'
+      - '$y''=ky\Rightarrow y=y_0e^{kt}$; half-life $\frac{\ln2}{|k|}$, doubling time $\frac{\ln 2}{k}$.'
+    ds: |
+      Exponential decay of learning rates, survival analysis with constant hazard
+      (exponential distribution), and Newton's law of cooling for sensor drift.
+    lab: |
+      Running lab: model heart-rate recovery after a hard interval as $HR(t)=HR_{rest}+
+      (HR_0-HR_{rest})e^{-kt}$. Fit $k$ from your data. (Faster recovery = fitter!)
+    questions:
+      - {type: expr, d: 1, var: t, q: 'Solve $y''=3y$, $y(0)=2$.', a: '2*e^(3t)', exp: '$y_0e^{kt}$.'}
+      - {type: num, d: 2, q: 'Half-life if $y''=-0.1y$ (exact or decimal).', a: 'ln(2)/0.1', exp: '$\ln2/0.1\approx6.93$.'}
+      - {type: expr, d: 3, var: t, q: 'Solve $y''=ty$, $y(0)=1$.', a: 'e^(t^2/2)', exp: '$\ln y=t^2/2$.'}
+    cards:
+      - {f: 'Solution of $y''=ky$', b: '$y=y_0e^{kt}$'}
+      - {f: 'Half-life for decay rate $k$', b: '$\ln 2/k$'}
+    fun:
+      - kind: fact
+        title: "Carbon dating"
+        body: |
+          Carbon-14 decays with half-life about 5730 years, so $y'=-ky$ with $k=\ln2/5730$.
+          Willard Libby won the 1960 Nobel Prize for turning this separable ODE into a clock
+          for archaeology.
+
+  - id: de-logistic
+    title: "The Logistic Equation"
+    xp: 90
+    optional: true
+    prereqs: [de-separable, fn-activations]
+    readings:
+      - {book: STW, sec: "9.4", title: "Models for Population Growth"}
+      - {book: OS2, sec: "4.4", title: "The Logistic Equation"}
+    summary: |
+      $P'=rP\left(1-\frac PK\right)$: exponential growth that saturates at carrying capacity
+      $K$. Its solution is a shifted, scaled sigmoid!
+    key_ideas:
+      - 'Solution $P(t)=\frac{K}{1+Ae^{-rt}}$ -- a sigmoid.'
+      - 'Fastest growth at $P=K/2$ (the inflection point).'
+      - 'Equilibria: $P=0$ (unstable), $P=K$ (stable).'
+    ds: |
+      Product adoption, epidemic curves, and model learning curves are logistic. The sigmoid
+      from Unit 0 is literally the solution of this ODE with $r=1, K=1$.
+    lab: |
+      Fit a logistic curve to cumulative Strava kudos on a post (or any adoption-like data)
+      with `scipy.optimize.curve_fit`. Estimate $K$ and when growth peaked.
+    questions:
+      - {type: num, d: 2, q: 'For $P''=0.5P(1-P/1000)$, at what population is growth fastest?', a: '500', exp: '$K/2$.'}
+      - {type: mc, d: 2, q: 'Which equilibrium of the logistic equation is stable?', choices: ['$P=0$', '$P=K$', '$P=K/2$', 'none'], a: 1, exp: 'Near $K$, deviations shrink.'}
+      - {type: free, d: 3, q: 'Show that $\sigma(t)=\frac{1}{1+e^{-t}}$ satisfies $\sigma''=\sigma(1-\sigma)$.', a: 'Differentiate: $\sigma''=\frac{e^{-t}}{(1+e^{-t})^2}=\sigma\cdot\frac{e^{-t}}{1+e^{-t}}=\sigma(1-\sigma)$. So the sigmoid is the logistic ODE solution with $r=K=1$.'}
+    cards:
+      - {f: 'Logistic equation and solution', b: '$P''=rP(1-P/K)$; $P=\frac{K}{1+Ae^{-rt}}$'}
+      - {f: 'Connection between the sigmoid and the logistic ODE', b: '$\sigma$ solves $y''=y(1-y)$.'}
+    fun:
+      - kind: fact
+        title: "Verhulst's forgotten curve"
+        body: |
+          Pierre-François Verhulst proposed the logistic equation in 1838 to model population.
+          It was forgotten for 80 years, rediscovered in the 1920s, and now underlies both
+          epidemiology and the sigmoid in every logistic regression.
+
+  - id: de-linear
+    title: "First-Order Linear Equations"
+    xp: 60
+    optional: true
+    prereqs: [de-separable, int-parts]
+    readings:
+      - {book: STW, sec: "9.5", title: "Linear Equations"}
+      - {book: OS2, sec: "4.5", title: "First-order Linear Equations"}
+    summary: |
+      $y'+p(t)y=q(t)$: multiply by the integrating factor $\mu=e^{\int p}$ so the left side
+      becomes $(\mu y)'$, then integrate.
+    key_ideas:
+      - 'Integrating factor $\mu(t)=e^{\int p(t)dt}$.'
+      - 'Solution $y=\frac{1}{\mu}\left(\int\mu q\,dt+C\right)$.'
+    ds: |
+      Linear ODEs model mixing tanks, RC circuits, and exponential smoothing in continuous
+      time; they're the backbone of state-space models (S4/Mamba) in modern sequence ML.
+    lab: |
+      Solve $y'+y=\sin t$ by hand, then check with `sympy.dsolve`. Plot for several initial
+      conditions -- notice they all converge to the same steady oscillation.
+    questions:
+      - {type: expr, d: 2, var: t, q: 'Integrating factor for $y''+2y=e^t$?', a: 'e^(2t)', exp: '$e^{\int2\,dt}$.'}
+      - {type: expr, d: 3, var: t, q: 'Solve $y''+2y=e^t$ with $y(0)=1/3$.', a: 'e^t/3', exp: '$(e^{2t}y)''=e^{3t}$ gives $y=\frac{e^t}{3}+Ce^{-2t}$; $C=0$.'}
+    cards:
+      - {f: 'Integrating factor for $y''+p(t)y=q(t)$', b: '$\mu=e^{\int p\,dt}$'}
+    fun:
+      - kind: fact
+        title: "State-space models"
+        body: |
+          Some of the newest sequence architectures (S4, Mamba) are discretized linear ODEs
+          $\mathbf x'=A\mathbf x+B\mathbf u$ -- this lesson's equation, in matrix form, learning
+          to read language.
+
+  - id: de-capstone
+    title: "Capstone: Gradient Flow & Training as Dynamics"
+    xp: 150
+    prereqs: [de-basics, opt-gd, opt-mle, mc-backprop]
+    readings:
+      - {book: MML, sec: "7.1", title: "Optimization Using Gradient Descent (reread with fresh eyes)"}
+      - {book: MML, sec: "5.6", title: "Backpropagation (reread)"}
+    summary: |
+      Put it all together: training is a dynamical system $\boldsymbol\theta'=-\nabla L$.
+      Build, from scratch, a small neural network: derive gradients with the chain rule,
+      implement backprop, train with SGD/momentum, and analyze it with the Hessian.
+    key_ideas:
+      - 'Gradient flow: $\frac{d}{dt}L(\boldsymbol\theta(t))=-\|\nabla L\|^2\le0$ -- loss always decreases.'
+      - 'GD = Euler discretization; too-large steps break the continuous picture (instability).'
+      - 'Every unit of this course appears in one training loop.'
+    ds: |
+      The capstone project: a from-scratch numpy MLP trained on your own running data (e.g.
+      predict pace from HR, cadence, elevation, temperature). Write up which calculus idea
+      powers each line of code.
+    lab: |
+      Project: (1) pull 100+ runs via the running-data API; (2) features + target; (3) numpy
+      MLP with hand-written backprop; (4) gradient check; (5) train with SGD+momentum; (6)
+      plot loss curve and compare to linear regression via normal equations. Share the
+      write-up with your assistant for grading (record_grade, kind=lab).
+    questions:
+      - {type: free, d: 3, q: 'Using the chain rule, show that along gradient flow $\boldsymbol\theta''=-\nabla L$, the loss never increases.', a: '$\frac{d}{dt}L(\boldsymbol\theta(t))=\nabla L\cdot\boldsymbol\theta''=-\|\nabla L\|^2\le0$.'}
+      - {type: free, d: 3, q: 'Name one concept from each of Units 2, 4, 5, 7 and 8 that appears in a single PyTorch training step, and where.', a: 'E.g. U2 chain rule (backward), U4 expectation/average loss over batch, U5 EMA in Adam (geometric series), U7 Jacobian-vector products in autograd, U8 SGD update.'}
+    cards:
+      - {f: 'Loss along gradient flow', b: '$\frac{dL}{dt}=-\|\nabla L\|^2\le 0$'}
+    fun:
+      - kind: fact
+        title: "You made it"
+        body: |
+          From $f(g(x))$ in Unit 0 to training a neural network from scratch. Leibniz, Newton,
+          Euler, Gauss, Cauchy, Fisher and a thousand others built this ladder over 350
+          years -- and you just climbed it. Time to sign up for the next marathon.

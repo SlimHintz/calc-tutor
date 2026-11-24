@@ -1,0 +1,48 @@
+# Courses share one XP total, level, streak and review queue; each has its own star map.
+algebra:
+  title: "Algebra Foundations"
+  subtitle: "Algebra 1, 2 & 3 -- from signed numbers to the complex plane"
+  color: "#8bc34a"
+  blurb: |
+    A full algebra rebuild for a rusty adult: Algebra 1 (numbers, linear equations, lines,
+    polynomials, factoring), Algebra 2 (rational expressions, radicals, imaginary and complex
+    numbers, quadratics, functions, exponentials and logs) and Algebra 3 / College Algebra
+    (functions in depth, polynomial and rational functions, models fitted to data, matrices,
+    the complex plane and Euler's formula). Finishing it makes the precalculus bootcamp a review.
+  tutor_notes: |
+    Primary texts are the free OpenStax books, one per level: Elementary Algebra 2e (EA) for
+    Algebra 1, Intermediate Algebra 2e (IA) for Algebra 2, College Algebra 2e (CA) for Algebra 3;
+    Stewart Precalculus (PRE) for polar form. The learner is a rusty adult: go concrete-first, lots
+    of small wins, check each algebra step with check_step, and keep sign/fraction errors in the
+    mistake journal (they're the usual culprits). Tie examples to running (paces, splits, rates)
+    and to data science where natural. This course is the on-ramp to "Math for Data Science".
+core:
+  title: "Math for Data Science"
+  subtitle: "Calculus, linear algebra, probability & statistics, discrete math"
+  color: "#f5b942"
+  blurb: |
+    Rebalanced after an evidence review: calculus focused on what ML uses (Calc II/III
+    technique trimmed to optional), a full linear algebra track (vectors to SVD/PCA), a
+    probability-and-statistics track (expectation to Bayesian inference), and the discrete math
+    data scientists lean on -- converging on matrix calculus, optimization and ML.
+  tutor_notes: |
+    Primary texts: Stewart Calculus 7e (STW), Epp Discrete Mathematics 3e (EPP), VMLS + MML
+    ch 2-4/10 + 3Blue1Brown for linear algebra, Blitzstein-Hwang (BH) + OpenIntro (OI) + ISL +
+    Statistical Rethinking (SR) for probability/statistics. OpenStax (OS1-3) is the free backup.
+    Always tie ideas to data science / ML. Optional topics are genuinely optional: skip them
+    unless they're curious.
+neuro:
+  title: "Learning & Memory"
+  subtitle: "The neuroscience of how you learn, and how to use it"
+  color: "#c792ea"
+  blurb: |
+    From ion channels to the hippocampus: how neurons signal, how synapses change, how
+    memories form, consolidate and fade -- paired with the evidence-based study methods
+    this very app is built on (spacing, retrieval practice, interleaving, sleep, exercise).
+  tutor_notes: |
+    Primary text: Kandel et al., Principles of Neural Science 5e (KAN), cited by chapter.
+    Teach "science + apply it": after each mechanism, ask how it should change the way the learner
+    studies or trains. Bridge to the math course where natural (Nernst equation = logs,
+    Hodgkin-Huxley = ODEs, Hebbian learning = gradient-free learning rules, dopamine = reward
+    prediction error / RL). He is a marathoner: exercise, sleep and recovery land well.
+    Questions here are mostly mc/num/free.

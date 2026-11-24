@@ -1,0 +1,546 @@
+unit:
+  id: A02
+  ord: 10
+  course: algebra
+  title: "Algebra 2: Rationals, Radicals, Imaginary Numbers & Quadratics"
+  constellation: "The Spiral Staircase"
+  color: "#689f38"
+  blurb: |
+    Algebraic fractions, roots and rational exponents, then a whole new kind of number: i, the
+    square root of −1. With complex numbers every quadratic has solutions. Finish with
+    functions, inverses, exponentials and logarithms -- the doorway to precalculus.
+  ds_why: |
+    Rational expressions and roots appear in every formula you simplify; exponentials and logs
+    are the language of growth, decay, log-loss and log-scales; complex numbers power Fourier
+    transforms and signal processing.
+
+topics:
+  - id: al-rational-simplify
+    title: "Simplifying, Multiplying & Dividing Rational Expressions"
+    xp: 50
+    prereqs: [al-special-factoring]
+    readings:
+      - {book: EA, sec: "8.1, 8.2", title: "Simplify Rational Expressions; Multiply and Divide Rational Expressions"}
+      - {book: IA, sec: "7.1", title: "Multiply and Divide Rational Expressions"}
+    summary: |
+      A rational expression is a fraction of polynomials. Factor top and bottom, cancel common
+      FACTORS, and note the values that make the denominator zero (they're excluded).
+    key_ideas:
+      - 'Factor completely before cancelling; cancel factors, never terms.'
+      - 'Excluded values: zeros of the ORIGINAL denominator.'
+      - 'Multiply straight across; divide by multiplying by the reciprocal.'
+    ds: |
+      Ratios of model quantities (odds, likelihood ratios, softmax terms) simplify the same way.
+    lab: |
+      Simplify $\frac{x^2-9}{x^2+5x+6}$ by hand and with `sympy.cancel`; plot both and see the
+      hole at $x=-3$.
+    questions:
+      - {type: mc, d: 1, q: 'Simplify $\frac{x^2-9}{x^2+5x+6}$.', choices: ['$\frac{x-3}{x+2}$', '$\frac{x+3}{x+2}$', '$\frac{-9}{5x+6}$', '$\frac{x-3}{x+3}$'], a: 0, exp: '$\frac{(x-3)(x+3)}{(x+2)(x+3)}$.'}
+      - {type: mc, d: 2, q: 'Values excluded from $\frac{x+1}{x^2-4}$?', choices: ['$x=-1$', '$x=\pm2$', '$x=4$', 'none'], a: 1, exp: 'Denominator $(x-2)(x+2)=0$.'}
+      - {type: mc, d: 2, q: '$\frac{x}{x+1}\div\frac{x^2}{x^2-1}=$', choices: ['$\frac{x-1}{x}$', '$\frac{x}{x-1}$', '$x(x-1)$', '$\frac{1}{x}$'], a: 0, exp: '$\frac{x}{x+1}\cdot\frac{(x-1)(x+1)}{x^2}$.'}
+    cards:
+      - {f: 'Excluded values of a rational expression', b: 'Values that make the original denominator zero.'}
+    fun:
+      - kind: fact
+        title: "Holes in graphs"
+        body: |
+          After cancelling $(x+3)$, the graph of $\frac{x^2-9}{x^2+5x+6}$ looks like
+          $\frac{x-3}{x+2}$ but has a single missing point at $x=-3$ -- a "removable
+          discontinuity" you'll meet again in limits.
+
+  - id: al-rational-addsub
+    title: "Adding, Subtracting & Simplifying Complex Fractions"
+    xp: 50
+    prereqs: [al-rational-simplify]
+    readings:
+      - {book: EA, sec: "8.3, 8.4, 8.5", title: "Add and Subtract Rational Expressions; Simplify Complex Rational Expressions"}
+      - {book: IA, sec: "7.2, 7.3", title: "Add and Subtract Rational Expressions; Simplify Complex Rational Expressions"}
+    summary: |
+      Find the least common denominator (LCD) by factoring, rewrite each fraction over it, then
+      combine numerators. For fractions within fractions, multiply top and bottom by the LCD of
+      the inner fractions.
+    key_ideas:
+      - 'LCD = product of each distinct factor to its highest power.'
+      - 'Subtracting: distribute the minus over the whole second numerator.'
+    ds: |
+      Combining rates (e.g. two machines working together) and simplifying derivative quotients
+      (calculus' difference quotient) are this skill.
+    lab: |
+      Simplify $\frac{\frac1x-\frac12}{x-2}$ by hand (answer $-\frac{1}{2x}$); confirm with sympy.
+    questions:
+      - {type: mc, d: 2, q: '$\frac{2}{x-1}+\frac{3}{x+1}=$', choices: ['$\frac{5x-1}{x^2-1}$', '$\frac{5}{2x}$', '$\frac{5x+1}{x^2-1}$', '$\frac{5}{x^2-1}$'], a: 0, exp: '$\frac{2(x+1)+3(x-1)}{(x-1)(x+1)}$.'}
+      - {type: mc, d: 2, q: '$\frac{x}{x-3}-\frac{3}{x-3}=$', choices: ['$1$', '$\frac{x+3}{x-3}$', '$0$', '$\frac{x-3}{x+3}$'], a: 0, exp: '$\frac{x-3}{x-3}=1$ (for $x\ne3$).'}
+      - {type: mc, d: 3, q: 'Simplify $\dfrac{\frac1x-\frac12}{x-2}$.', choices: ['$-\frac{1}{2x}$', '$\frac{1}{2x}$', '$\frac{2-x}{2x}$', '$\frac12$'], a: 0, exp: 'Numerator $\frac{2-x}{2x}=-\frac{x-2}{2x}$; divide by $x-2$.'}
+    cards:
+      - {f: 'Least common denominator of rational expressions', b: 'Factor each denominator; take every distinct factor to its highest power.'}
+    fun:
+      - kind: puzzle
+        title: "Two hoses"
+        body: |
+          Hose A fills a pool in 3 hours, hose B in 6. How long together? (Add RATES, not times.)
+        answer: "Rates $\\frac13+\\frac16=\\frac12$ pool per hour, so 2 hours."
+
+  - id: al-rational-equations
+    title: "Rational Equations & Work/Rate Problems"
+    xp: 50
+    prereqs: [al-rational-addsub]
+    readings:
+      - {book: EA, sec: "8.6", title: "Solve Rational Equations"}
+      - {book: IA, sec: "7.4, 7.5", title: "Solve Rational Equations; Applications with Rational Equations"}
+    summary: |
+      Multiply both sides by the LCD to clear denominators, solve, then CHECK: any solution that
+      makes an original denominator zero is extraneous and must be discarded.
+    key_ideas:
+      - 'Clearing denominators can create extraneous solutions.'
+      - 'Work problems: rates add (1/time).'
+    ds: |
+      Harmonic means (F1 score is one!) come from rational equations: $F_1=\frac{2}{1/P+1/R}$.
+    lab: |
+      Compute F1 for precision 0.8 and recall 0.5 by hand, then with sklearn's `f1_score` on toy
+      labels that give those values.
+    questions:
+      - {type: num, d: 1, q: 'Solve $\frac{3}{x+1}=\frac{2}{x-1}$.', a: '5', exp: '$3(x-1)=2(x+1)$.'}
+      - {type: mc, d: 2, q: 'Solve $\frac{x}{x-3}=\frac{3}{x-3}+2$.', choices: ['$x=3$', 'no solution', '$x=-3$', '$x=0$'], a: 1, exp: 'Clearing gives $x=3$, which makes a denominator 0: extraneous.'}
+      - {type: num, d: 2, q: 'F1 score with precision 0.8 and recall 0.5 (harmonic mean)?', a: '8/13', exp: '$\frac{2(0.8)(0.5)}{0.8+0.5}=\frac{0.8}{1.3}$.'}
+    cards:
+      - {f: 'Extraneous solution', b: 'A value produced by clearing denominators that makes an original denominator zero -- discard it.'}
+    fun:
+      - kind: fact
+        title: "The F1 score is a harmonic mean"
+        body: |
+          The harmonic mean punishes imbalance: precision 1.0 with recall 0.01 gives F1 ≈ 0.02,
+          not 0.5. That's why it, not the average, is used to score classifiers.
+
+  - id: al-radicals
+    title: "Square Roots & Radical Expressions"
+    xp: 50
+    prereqs: [al-exponents, al-real-numbers]
+    readings:
+      - {book: EA, sec: "9.1, 9.2, 9.3, 9.4, 9.5", title: "Simplify and Use Square Roots; Add, Subtract, Multiply and Divide Square Roots"}
+      - {book: IA, sec: "8.1, 8.2", title: "Simplify Expressions with Roots; Simplify Radical Expressions"}
+    summary: |
+      $\sqrt{ab}=\sqrt a\sqrt b$ (for $a,b\ge0$): pull out perfect squares. Combine only LIKE
+      radicals. Rationalize denominators by multiplying by a radical or a conjugate.
+    key_ideas:
+      - 'Simplify: $\sqrt{72}=\sqrt{36\cdot2}=6\sqrt2$.'
+      - '$\sqrt{a+b}\ne\sqrt a+\sqrt b$.'
+      - 'Conjugates: $(\sqrt a+b)(\sqrt a-b)=a-b^2$ removes the radical.'
+      - '$\sqrt{x^2}=|x|$, not $x$.'
+    ds: |
+      Standard deviation, RMSE and Euclidean distance are square roots; standard error is
+      $\sigma/\sqrt n$.
+    lab: |
+      Compute the RMSE of predictions $(3,5,8)$ vs actuals $(2,5,10)$ by hand, then with numpy.
+    questions:
+      - {type: num, d: 1, q: 'Simplify $\sqrt{72}$ (exact or decimal).', a: '6*sqrt(2)', exp: '$\sqrt{36}\sqrt2$.'}
+      - {type: num, d: 2, q: 'Simplify $\sqrt{12}+\sqrt{27}$ (exact or decimal).', a: '5*sqrt(3)', exp: '$2\sqrt3+3\sqrt3$.'}
+      - {type: num, d: 2, q: 'Rationalize $\frac{6}{\sqrt3}$ (exact or decimal).', a: '2*sqrt(3)', exp: '$\frac{6\sqrt3}{3}$.'}
+      - {type: num, d: 2, q: 'Compute $(\sqrt5+2)(\sqrt5-2)$.', a: '1', exp: '$5-4$.'}
+    cards:
+      - {f: 'Can you split $\sqrt{a+b}$?', b: 'No. Only products split: $\sqrt{ab}=\sqrt a\sqrt b$ (for $a,b\ge0$).'}
+      - {f: '$\sqrt{x^2}$', b: '$|x|$'}
+    fun:
+      - kind: fact
+        title: "The square root symbol"
+        body: |
+          The radical sign √ likely evolved from a stylized lowercase r for "radix" (root). It
+          first appeared in print in 1525 in Christoph Rudolff's German algebra book.
+
+  - id: al-rational-exponents
+    title: "Higher Roots & Rational Exponents"
+    xp: 50
+    prereqs: [al-radicals]
+    readings:
+      - {book: EA, sec: "9.7, 9.8", title: "Higher Roots; Rational Exponents"}
+      - {book: IA, sec: "8.3", title: "Simplify Rational Exponents"}
+    summary: |
+      $a^{1/n}=\sqrt[n]a$ and $a^{m/n}=(\sqrt[n]a)^m$. Every exponent rule still works with
+      fractional exponents.
+    key_ideas:
+      - 'Take the root first to keep numbers small: $32^{3/5}=(\sqrt[5]{32})^3=8$.'
+      - 'Negative rational exponent: reciprocal, then root and power.'
+    ds: |
+      Power laws ($y=ax^k$ with fractional $k$) model city sizes, metabolic rates and Riegel's
+      race-time formula ($k=1.06$).
+    lab: |
+      Use Riegel's formula $T_2=T_1(D_2/D_1)^{1.06}$ to predict a marathon from a half you ran.
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $32^{3/5}$.', a: '8', exp: '$\sqrt[5]{32}=2$, $2^3=8$.'}
+      - {type: expr, d: 2, var: x, q: 'Simplify $x^{1/2}\cdot x^{1/3}$ to a single power.', a: 'x^(5/6)', exp: '$\frac12+\frac13=\frac56$.'}
+      - {type: num, d: 2, q: 'Evaluate $27^{-2/3}$.', a: '1/9', exp: '$\frac{1}{(\sqrt[3]{27})^2}$.'}
+    cards:
+      - {f: '$a^{m/n}$', b: '$(\sqrt[n]a)^m=\sqrt[n]{a^m}$'}
+    fun:
+      - kind: fact
+        title: "Kleiber's law"
+        body: |
+          An animal's metabolic rate scales like mass$^{3/4}$: an elephant 10,000× a mouse's mass
+          burns only about 1,000× the energy. Rational exponents run biology.
+
+  - id: al-radical-equations
+    title: "Solving Radical Equations"
+    xp: 40
+    prereqs: [al-rational-exponents, al-special-factoring]
+    readings:
+      - {book: IA, sec: "8.6", title: "Solve Radical Equations"}
+      - {book: EA, sec: "9.6", title: "Solve Equations with Square Roots"}
+    summary: |
+      Isolate the radical, raise both sides to the power that removes it, solve, and check every
+      candidate: squaring can create extraneous solutions.
+    key_ideas:
+      - 'Isolate the radical before squaring.'
+      - 'Squaring both sides is not reversible: check answers in the ORIGINAL equation.'
+    ds: |
+      Solving $\sigma/\sqrt n=\text{target}$ for the sample size $n$ is a radical equation.
+    lab: |
+      How many runs do you need so the standard error of your mean pace (σ = 20 s) is under 5 s?
+    questions:
+      - {type: num, d: 2, q: 'Solve $\sqrt{x+7}=x+1$.', a: '2', exp: '$x^2+x-6=0$ gives 2 or $-3$; $-3$ fails the check.'}
+      - {type: num, d: 1, q: 'Solve $\sqrt{2x-1}=5$.', a: '13', exp: '$2x-1=25$.'}
+      - {type: num, d: 2, q: 'Smallest sample size $n$ with $\frac{20}{\sqrt n}\le5$?', a: '16', exp: '$\sqrt n\ge4$.'}
+    cards:
+      - {f: 'Why check radical-equation solutions?', b: 'Squaring both sides can introduce extraneous solutions.'}
+    fun:
+      - kind: puzzle
+        title: "The impossible equation"
+        body: |
+          Solve $\sqrt{x}=-3$. (Careful: squaring gives $x=9$...)
+        answer: "No solution. $\\sqrt{9}=3\\ne-3$; the principal square root is never negative."
+
+  - id: al-imaginary
+    title: "Imaginary Numbers: Meet i"
+    xp: 60
+    prereqs: [al-radicals]
+    readings:
+      - {book: IA, sec: "8.8", title: "Use the Complex Number System"}
+      - {book: CA, sec: "2.4", title: "Complex Numbers"}
+    summary: |
+      No real number squares to −1, so we invent one: $i=\sqrt{-1}$, with $i^2=-1$. Then
+      $\sqrt{-b}=i\sqrt b$ for $b>0$, and powers of $i$ cycle with period 4: $i, -1, -i, 1$.
+    key_ideas:
+      - '$i^2=-1$; $i^3=-i$; $i^4=1$; then it repeats. $i^n$ depends on $n \bmod 4$.'
+      - '$\sqrt{-25}=5i$. Write $\sqrt{-b}$ as $i\sqrt b$ FIRST, before multiplying.'
+      - 'Trap: $\sqrt{-4}\cdot\sqrt{-9}=(2i)(3i)=-6$, not $\sqrt{36}=6$.'
+      - 'A complex number is $a+bi$: real part $a$, imaginary part $b$. Reals are the case $b=0$.'
+    ds: |
+      Imaginary numbers aren't imaginary in practice: the FFT (`np.fft`), audio and signal
+      processing, and eigenvalues of oscillating systems all return complex numbers.
+    lab: |
+      In Python, try `(-1) ** 0.5`, `1j ** 2`, and `cmath.sqrt(-25)`. Print `1j ** n` for
+      n = 0..8 and spot the cycle.
+    questions:
+      - {type: num, d: 1, q: 'Simplify $\sqrt{-49}$ (use i, e.g. 7i).', a: '7*I', exp: '$i\sqrt{49}$.'}
+      - {type: num, d: 1, q: 'Simplify $i^{2}$.', a: '-1', exp: 'Definition of $i$.'}
+      - {type: num, d: 2, q: 'Simplify $i^{23}$.', a: '-I', exp: '$23\equiv3\pmod 4$, and $i^3=-i$.'}
+      - {type: num, d: 3, q: 'Compute $\sqrt{-4}\cdot\sqrt{-9}$.', a: '-6', exp: '$(2i)(3i)=6i^2=-6$. The rule $\sqrt a\sqrt b=\sqrt{ab}$ fails for negatives.'}
+    cards:
+      - {f: 'Powers of $i$ cycle...', b: '$i^1=i$, $i^2=-1$, $i^3=-i$, $i^4=1$, repeat (period 4).'}
+      - {f: '$\sqrt{-4}\cdot\sqrt{-9}$', b: '$-6$ (convert to $2i\cdot3i$ first; $\sqrt a\sqrt b=\sqrt{ab}$ needs $a,b\ge0$).'}
+    fun:
+      - kind: fact
+        title: "Invented to solve cubics"
+        body: |
+          Imaginary numbers first appeared in 16th-century Italy, when Cardano and Bombelli found
+          that formulas for REAL roots of cubic equations sometimes passed through square roots of
+          negatives along the way. Descartes coined "imaginary" as a put-down in 1637.
+
+  - id: al-complex-arithmetic
+    title: "Complex Arithmetic & Conjugates"
+    xp: 60
+    prereqs: [al-imaginary, al-polynomials]
+    readings:
+      - {book: CA, sec: "2.4", title: "Complex Numbers (add, subtract, multiply, divide)"}
+      - {book: IA, sec: "8.8", title: "Use the Complex Number System"}
+    summary: |
+      Add and subtract by combining real and imaginary parts. Multiply like binomials, replacing
+      $i^2$ with $-1$. Divide by multiplying top and bottom by the conjugate of the denominator.
+    key_ideas:
+      - 'Conjugate of $a+bi$ is $a-bi$; $(a+bi)(a-bi)=a^2+b^2$ is real.'
+      - 'Divide: $\frac{z}{w}=\frac{z\bar w}{w\bar w}$, so the denominator becomes real.'
+      - 'Modulus $|a+bi|=\sqrt{a^2+b^2}$: distance from 0 in the complex plane.'
+    ds: |
+      The magnitude $|z|$ of an FFT coefficient is the strength of a frequency in a signal --
+      e.g. the cadence frequency hidden in your watch's accelerometer data.
+    lab: |
+      Use Python complex numbers (`3+2j`) to check your hand calculations below, and `abs()` for
+      the modulus.
+    questions:
+      - {type: num, d: 1, q: 'Compute $(3+2i)+(5-6i)$ (form a+bi).', a: '8-4*I', exp: 'Real: 8; imaginary: $-4$.'}
+      - {type: num, d: 2, q: 'Compute $(3+2i)(1-4i)$ (form a+bi).', a: '11-10*I', exp: '$3-12i+2i-8i^2=11-10i$.'}
+      - {type: num, d: 3, q: 'Compute $\frac{5+i}{1-i}$ (form a+bi).', a: '2+3*I', exp: 'Multiply by $\frac{1+i}{1+i}$: $\frac{4+6i}{2}$.'}
+      - {type: num, d: 1, q: 'Modulus $|6-8i|$?', a: '10', exp: '$\sqrt{36+64}$.'}
+    cards:
+      - {f: 'Complex conjugate of $a+bi$ and why it helps', b: '$a-bi$; $(a+bi)(a-bi)=a^2+b^2$ is real, which clears $i$ from denominators.'}
+      - {f: 'Modulus of $a+bi$', b: '$\sqrt{a^2+b^2}$'}
+    fun:
+      - kind: fact
+        title: "The engineers' j"
+        body: |
+          Electrical engineers write $j$ for $\sqrt{-1}$ because $i$ was already taken (current).
+          Python followed them: `1j` is the imaginary unit.
+
+  - id: al-quadratic-equations
+    title: "Solving Quadratics: Square Roots, Completing the Square, the Formula"
+    xp: 70
+    prereqs: [al-special-factoring, al-radicals]
+    readings:
+      - {book: EA, sec: "10.1, 10.2, 10.3", title: "Square Root Property; Completing the Square; Quadratic Formula"}
+      - {book: IA, sec: "9.1, 9.2, 9.3, 9.4", title: "Square Root Property; Completing the Square; Quadratic Formula; Equations in Quadratic Form"}
+    summary: |
+      Three tools: the square root property ($x^2=k\Rightarrow x=\pm\sqrt k$), completing the
+      square, and the quadratic formula $x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$ (which comes FROM
+      completing the square).
+    key_ideas:
+      - 'Don''t forget the $\pm$.'
+      - 'Completing the square: add $(b/2)^2$ to both sides of $x^2+bx=c$.'
+      - 'Equations in quadratic form: substitute $u=x^2$ (or $u=\sqrt x$, $u=e^x$).'
+    ds: |
+      Completing the square turns $ax^2+bx+c$ into vertex form -- the same trick derives the
+      normal distribution's formulas and the least-squares minimum.
+    lab: |
+      Solve $2x^2-4x-1=0$ by the formula, then with `numpy.roots([2,-4,-1])`.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $(x-2)^2=9$.', choices: ['$\{5\}$', '$\{-1,5\}$', '$\{1,-5\}$', '$\{3,-3\}$'], a: 1, exp: '$x-2=\pm3$.'}
+      - {type: mc, d: 2, q: 'Solve $x^2+6x-7=0$ by completing the square.', choices: ['$\{1,-7\}$', '$\{-1,7\}$', '$\{3,-3\}$', '$\{7\}$'], a: 0, exp: '$(x+3)^2=16$.'}
+      - {type: num, d: 2, q: 'Solve $2x^2-4x-1=0$; give the LARGER solution (exact or decimal).', a: '1+sqrt(6)/2', exp: '$\frac{4\pm\sqrt{24}}{4}=1\pm\frac{\sqrt6}{2}$.'}
+      - {type: mc, d: 3, q: 'Solve $x^4-5x^2+4=0$ (let $u=x^2$).', choices: ['$\{1,4\}$', '$\{\pm1,\pm2\}$', '$\{\pm1\}$', '$\{2,-2\}$'], a: 1, exp: '$u^2-5u+4=0$: $u=1,4$, so $x=\pm1,\pm2$.'}
+    cards:
+      - {f: 'Quadratic formula', b: '$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$'}
+      - {f: 'Completing the square for $x^2+bx$', b: 'Add $(b/2)^2$: $x^2+bx+(b/2)^2=(x+b/2)^2$.'}
+    fun:
+      - kind: fact
+        title: "4,000-year-old quadratics"
+        body: |
+          Babylonian clay tablets (around 2000-1600 BC) solve quadratic problems by a recipe
+          equivalent to completing the square -- written in words, with no symbols at all.
+
+  - id: al-complex-roots
+    title: "The Discriminant & Complex Solutions"
+    xp: 60
+    prereqs: [al-quadratic-equations, al-complex-arithmetic]
+    readings:
+      - {book: IA, sec: "9.3", title: "Solve Quadratic Equations Using the Quadratic Formula (discriminant)"}
+      - {book: CA, sec: "2.5", title: "Quadratic Equations"}
+    summary: |
+      $D=b^2-4ac$ decides the solutions: $D>0$ two real, $D=0$ one repeated real, $D<0$ two
+      complex conjugates $p\pm qi$. With complex numbers, every quadratic has exactly two
+      solutions (counting repeats).
+    key_ideas:
+      - 'Negative discriminant ⇒ $\sqrt{D}=i\sqrt{|D|}$ in the formula.'
+      - 'Complex roots of real quadratics come in conjugate pairs.'
+      - 'The parabola doesn''t cross the $x$-axis exactly when the roots are complex.'
+    ds: |
+      Characteristic equations with complex roots signal oscillation -- in recurrences, ODEs, and
+      the dynamics of momentum-based optimizers.
+    lab: |
+      Plot $y=x^2+2x+5$ (never crosses the axis) and compute its roots with `numpy.roots` --
+      notice they come back complex.
+    questions:
+      - {type: num, d: 1, q: 'Discriminant of $2x^2+3x+5$?', a: '-31', exp: '$9-40$.'}
+      - {type: mc, d: 1, q: 'A quadratic with discriminant $-31$ has...', choices: ['two real roots', 'one real root', 'two complex conjugate roots', 'no roots at all'], a: 2, exp: 'Negative discriminant.'}
+      - {type: num, d: 2, q: 'Solve $x^2+2x+5=0$; give the root with POSITIVE imaginary part (form a+bi).', a: '-1+2*I', exp: '$\frac{-2\pm\sqrt{-16}}{2}=-1\pm2i$.'}
+      - {type: num, d: 2, q: 'Solve $x^2+9=0$; give the root with positive imaginary part.', a: '3*I', exp: '$x=\pm3i$.'}
+    cards:
+      - {f: 'Discriminant cases', b: '$D>0$: two real; $D=0$: one repeated; $D<0$: complex conjugate pair.'}
+    fun:
+      - kind: fact
+        title: "The Fundamental Theorem of Algebra"
+        body: |
+          Gauss proved (1799, his PhD thesis) that every polynomial of degree $n$ has exactly $n$
+          complex roots. Without $i$, $x^2+1$ would have none -- with it, the books always balance.
+
+  - id: al-quadratic-graphs
+    title: "Graphing Quadratic Functions"
+    xp: 50
+    prereqs: [al-quadratic-equations]
+    readings:
+      - {book: IA, sec: "9.6, 9.7", title: "Graph Quadratic Functions Using Properties; Using Transformations"}
+      - {book: EA, sec: "10.5", title: "Graphing Quadratic Equations in Two Variables"}
+    summary: |
+      $y=a(x-h)^2+k$ has vertex $(h,k)$, opens up if $a>0$, down if $a<0$. In standard form the
+      axis of symmetry is $x=-\frac{b}{2a}$.
+    key_ideas:
+      - 'Vertex = minimum (if $a>0$) or maximum ($a<0$).'
+      - '$|a|>1$ narrows, $|a|<1$ widens the parabola.'
+    ds: |
+      A squared-error loss in one parameter is a parabola; its vertex is the best estimate.
+    lab: |
+      For runs of 7, 8 and 10 minutes, write $L(c)=\sum(t_i-c)^2$ as a quadratic in $c$ and find
+      its vertex. Compare with the mean.
+    questions:
+      - {type: mc, d: 1, q: 'Vertex of $y=2(x-3)^2+1$?', choices: ['$(3,1)$', '$(-3,1)$', '$(1,3)$', '$(3,-1)$'], a: 0, exp: 'Read $(h,k)$.'}
+      - {type: num, d: 2, q: 'Minimum value of $y=x^2-4x+1$?', a: '-3', exp: 'Vertex at $x=2$: $4-8+1$.'}
+      - {type: num, d: 1, q: 'Axis of symmetry of $y=-x^2+6x$ ($x=$)?', a: '3', exp: '$-\frac{6}{2(-1)}$.'}
+    cards:
+      - {f: 'Axis of symmetry of $ax^2+bx+c$', b: '$x=-\frac{b}{2a}$'}
+    fun:
+      - kind: fact
+        title: "The arc of a free throw"
+        body: |
+          Ignoring air resistance, every thrown ball, jumping athlete and water fountain traces a
+          parabola. Galileo proved it in 1638 by rolling balls down ramps.
+
+  - id: al-abs-compound
+    title: "Compound & Absolute Value Inequalities"
+    xp: 40
+    prereqs: [al-inequalities]
+    readings:
+      - {book: IA, sec: "2.6, 2.7", title: "Solve Compound Inequalities; Solve Absolute Value Inequalities"}
+    summary: |
+      "And" inequalities are intersections, "or" are unions. $|x-a|<r$ means "within $r$ of $a$"
+      ($a-r<x<a+r$); $|x-a|>r$ means "farther than $r$ from $a$".
+    key_ideas:
+      - '$|u|<r\iff -r<u<r$ (one interval).'
+      - '$|u|>r\iff u<-r$ or $u>r$ (two pieces).'
+    ds: |
+      Tolerances ("within 5% of target"), confidence intervals and outlier rules
+      (|z| > 3) are absolute value inequalities.
+    lab: |
+      Flag runs whose pace is more than 2 standard deviations from your mean pace: write the rule
+      as an absolute value inequality and apply it in pandas.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $|2x-3|<7$.', choices: ['$-2<x<5$', '$x<-2$ or $x>5$', '$-5<x<2$', '$x<5$'], a: 0, exp: '$-7<2x-3<7$.'}
+      - {type: mc, d: 2, q: 'Solve $|x+1|\ge4$.', choices: ['$-5\le x\le3$', '$x\le-5$ or $x\ge3$', '$x\ge3$', '$x\le-5$'], a: 1, exp: '$x+1\le-4$ or $x+1\ge4$.'}
+      - {type: mc, d: 2, q: 'Solve $-1<2x+3\le9$.', choices: ['$-2<x\le3$', '$-1<x\le3$', '$-2\le x<3$', '$2<x\le6$'], a: 0, exp: 'Subtract 3, divide by 2.'}
+    cards:
+      - {f: '$|u|<r$ vs $|u|>r$', b: '$<$: one interval $-r<u<r$. $>$: two rays $u<-r$ or $u>r$.'}
+    fun:
+      - kind: fact
+        title: "The 3-sigma rule"
+        body: |
+          Quality engineers flag anything with $|z|>3$: for normal data that happens about 0.3% of
+          the time. Six Sigma programs aim for defects 6 standard deviations out.
+
+  - id: al-functions
+    title: "Functions, Notation, Domain & Graphs"
+    xp: 50
+    prereqs: [al-slope]
+    readings:
+      - {book: IA, sec: "3.5, 3.6", title: "Relations and Functions; Graphs of Functions"}
+    summary: |
+      A function assigns each input exactly one output. $f(x)$ is notation, not multiplication.
+      Use the vertical line test on graphs, and find domains by excluding division by zero and
+      even roots of negatives.
+    key_ideas:
+      - 'Vertical line test: a graph is a function iff no vertical line hits it twice.'
+      - '$f(a+h)$ means substitute $a+h$ everywhere $x$ appears.'
+      - 'Domain: all allowed inputs; range: all outputs.'
+    ds: |
+      A trained model is a function from features to predictions; `def f(x): ...` is the same
+      idea in code.
+    lab: |
+      Write `f = lambda x: x**2 - 3*x` and evaluate `f(-2)`, `f(a+1)` symbolically with sympy.
+    questions:
+      - {type: num, d: 1, q: 'If $f(x)=x^2-3x$, find $f(-2)$.', a: '10', exp: '$4+6$.'}
+      - {type: expr, d: 2, var: a, q: 'If $f(x)=x^2-3x$, find $f(a+1)$ (simplified).', a: 'a^2-a-2', exp: '$(a+1)^2-3(a+1)$.'}
+      - {type: mc, d: 1, q: 'Domain of $f(x)=\frac{1}{x-4}$?', choices: ['all reals', '$x\ne4$', '$x>4$', '$x\ne0$'], a: 1, exp: 'Exclude where the denominator is 0.'}
+      - {type: mc, d: 2, q: 'Domain of $g(x)=\sqrt{3-x}$?', choices: ['$x\le3$', '$x\ge3$', '$x<3$', 'all reals'], a: 0, exp: 'Need $3-x\ge0$.'}
+    cards:
+      - {f: 'Vertical line test', b: 'A graph is a function iff every vertical line crosses it at most once.'}
+    fun:
+      - kind: fact
+        title: "Euler's f(x)"
+        body: |
+          Leonhard Euler introduced the notation $f(x)$ in 1734. He also gave us $e$, $i$, $\pi$ as
+          a standard symbol, and $\sum$ -- most of the notation on this page is his.
+
+  - id: al-inverse-functions
+    title: "Composition & Inverse Functions"
+    xp: 50
+    prereqs: [al-functions]
+    readings:
+      - {book: IA, sec: "10.1", title: "Finding Composite and Inverse Functions"}
+    summary: |
+      $(f\circ g)(x)=f(g(x))$: apply $g$ then $f$. An inverse $f^{-1}$ undoes $f$:
+      $f(f^{-1}(x))=x$. Find it by swapping $x$ and $y$ and solving for $y$. Only one-to-one
+      functions have inverses.
+    key_ideas:
+      - 'Order matters: $f\circ g\ne g\circ f$ in general.'
+      - 'Horizontal line test ⇔ one-to-one ⇔ inverse exists.'
+      - 'Graphs of $f$ and $f^{-1}$ mirror across $y=x$.'
+    ds: |
+      Pipelines compose functions; `inverse_transform` undoes a scaler. Logs are the inverse of
+      exponentials (next topics).
+    lab: |
+      Fit sklearn's `StandardScaler` on a column, transform it, then `inverse_transform` it back
+      and check you recover the original.
+    questions:
+      - {type: expr, d: 1, var: x, q: '$f(x)=2x+3$, $g(x)=x^2$. Find $f(g(x))$.', a: '2x^2+3', exp: 'Apply $g$ first.'}
+      - {type: num, d: 1, q: 'Same $f, g$: compute $g(f(1))$.', a: '25', exp: '$f(1)=5$, $g(5)=25$.'}
+      - {type: expr, d: 2, var: x, q: 'Find the inverse of $f(x)=\frac{x+5}{2}$.', a: '2x-5', exp: 'Swap and solve: $x=\frac{y+5}{2}$.'}
+    cards:
+      - {f: 'Finding an inverse function', b: 'Write $y=f(x)$, swap $x$ and $y$, solve for $y$.'}
+    fun:
+      - kind: puzzle
+        title: "Undo the morning"
+        body: |
+          Putting on socks then shoes is $f\circ g$. What's the inverse, and in what order?
+        answer: "Shoes off, then socks off: $(f\\circ g)^{-1}=g^{-1}\\circ f^{-1}$ -- reverse order."
+
+  - id: al-exponentials
+    title: "Exponential Functions & Growth"
+    xp: 50
+    prereqs: [al-inverse-functions, al-rational-exponents]
+    readings:
+      - {book: IA, sec: "10.2", title: "Evaluate and Graph Exponential Functions"}
+    summary: |
+      $f(x)=a\cdot b^x$ multiplies by $b$ for each unit step in $x$: growth if $b>1$, decay if
+      $0<b<1$. Compound interest $A=P(1+\frac rn)^{nt}$; continuous growth uses $e$.
+    key_ideas:
+      - 'Equal steps in $x$ ⇒ equal RATIOS in $y$.'
+      - 'Solve $b^{f(x)}=b^{g(x)}$ by matching exponents.'
+      - '$e\approx2.718$: continuous compounding $A=Pe^{rt}$.'
+    ds: |
+      User growth, viral spread, learning-rate decay ($\eta_t=\eta_0\cdot0.95^t$) and
+      compounding all follow exponentials.
+    lab: |
+      Plot $\eta_t=0.1\cdot0.95^t$ for $t=0..100$. After how many epochs does it fall below 0.01?
+    questions:
+      - {type: num, d: 1, q: 'Solve $2^{x+1}=32$.', a: '4', exp: '$32=2^5$.'}
+      - {type: num, d: 2, q: '1000 at 5% compounded yearly for 2 years: amount?', a: '1102.5', exp: '$1000(1.05)^2$.'}
+      - {type: num, d: 2, q: 'Solve $9^x=27$.', a: '3/2', exp: '$3^{2x}=3^3$.'}
+    cards:
+      - {f: 'Compound interest formula', b: '$A=P(1+\frac rn)^{nt}$; continuous: $A=Pe^{rt}$.'}
+    fun:
+      - kind: puzzle
+        title: "Rice on the chessboard"
+        body: |
+          One grain on the first square, doubling each square. How many grains on the 64th square
+          alone, as a power of 2?
+        answer: "$2^{63}\\approx9.2\\times10^{18}$ -- more rice than humans have ever grown."
+
+  - id: al-logarithms
+    title: "Logarithms & Exponential Equations"
+    xp: 70
+    prereqs: [al-exponentials]
+    readings:
+      - {book: IA, sec: "10.3, 10.4, 10.5", title: "Logarithmic Functions; Properties of Logarithms; Exponential and Logarithmic Equations"}
+    summary: |
+      $\log_b x=y$ means $b^y=x$: a logarithm is an exponent. Properties: product → sum,
+      quotient → difference, power → multiple. Solve exponential equations by taking logs.
+    key_ideas:
+      - '$\log_b(xy)=\log_bx+\log_by$; $\log_b(x/y)=\log_bx-\log_by$; $\log_b(x^r)=r\log_bx$.'
+      - 'Change of base: $\log_bx=\frac{\ln x}{\ln b}$.'
+      - 'Log equations: check that arguments stay positive (extraneous solutions again).'
+    ds: |
+      Log-likelihood, log-loss, log-scaled features and decibels are logs; "orders of magnitude"
+      thinking is $\log_{10}$.
+    lab: |
+      Plot website traffic (or your weekly mileage) on a log axis. Then compute how many
+      doublings get you from 10 to 1000 using $\log_2$.
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $\log_2 32$.', a: '5', exp: '$2^5=32$.'}
+      - {type: num, d: 1, q: 'Evaluate $\log_{10}0.001$.', a: '-3', exp: '$10^{-3}$.'}
+      - {type: num, d: 2, q: 'Solve $\log_3 x=4$.', a: '81', exp: '$3^4$.'}
+      - {type: num, d: 2, q: 'Solve $e^{2x}=10$ (exact or decimal).', a: 'ln(10)/2', exp: '$2x=\ln10$.'}
+      - {type: num, d: 3, q: 'Solve $\log x+\log(x-3)=1$ (base 10).', a: '5', exp: '$x(x-3)=10$ gives 5 or $-2$; $-2$ is extraneous.'}
+    cards:
+      - {f: 'Definition of $\log_bx=y$', b: '$b^y=x$ (a log is an exponent).'}
+      - {f: 'Log of a product / power', b: '$\log(xy)=\log x+\log y$; $\log(x^r)=r\log x$.'}
+    fun:
+      - kind: fact
+        title: "Benford's law"
+        body: |
+          In many real datasets (populations, invoices, river lengths) about 30% of numbers start
+          with 1 and under 5% with 9 -- the frequency of leading digit $d$ is $\log_{10}(1+1/d)$.
+          Auditors use it to spot fabricated numbers.

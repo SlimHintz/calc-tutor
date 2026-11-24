@@ -1,0 +1,339 @@
+unit:
+  id: U03
+  ord: 60
+  course: core
+  title: "Applications of Derivatives & 1-D Optimization"
+  constellation: "The Summit"
+  color: "#5ce1a8"
+  blurb: |
+    Derivatives find peaks, valleys and best choices. This unit turns slopes into
+    optimization -- the core activity of all machine learning -- and introduces gradient
+    descent and Newton's method in one dimension.
+  ds_why: |
+    Training a model = minimizing a loss. Critical points, convexity, Newton's method and
+    gradient descent are the literal algorithms inside scikit-learn and PyTorch.
+
+topics:
+  - id: app-linear
+    title: "Linear Approximation & Differentials"
+    xp: 60
+    prereqs: [d-rules]
+    readings:
+      - {book: STW, sec: "2.9", title: "Linear Approximations and Differentials"}
+      - {book: OS1, sec: "4.2", title: "Linear Approximations and Differentials"}
+    summary: |
+      Near $a$, $f(x)\approx f(a)+f'(a)(x-a)$. Zoom in far enough and every smooth curve
+      looks like its tangent line.
+    key_ideas:
+      - 'Linearization $L(x)=f(a)+f''(a)(x-a)$.'
+      - 'Differential $dy=f''(x)\,dx$ estimates the change $\Delta y$.'
+      - 'Error propagation: relative error in $x^n$ is about $n\times$ relative error in $x$.'
+    ds: |
+      Gradient descent assumes the loss is locally linear: a small step $-\eta\nabla L$
+      changes the loss by about $-\eta\|\nabla L\|^2$. The delta method in statistics uses
+      linearization to get standard errors of transformed estimates.
+    lab: |
+      Estimate $\sqrt{4.1}$ with linearization at 4, compare to `np.sqrt(4.1)`. Then compute
+      the error for steps 0.1, 0.01, 0.001 -- how does error scale with step size?
+    questions:
+      - {type: num, d: 1, q: 'Use linearization of $\sqrt{x}$ at $x=4$ to estimate $\sqrt{4.1}$.', a: '2.025', tol: 0.0001, exp: '$2+\frac{1}{4}(0.1)=2.025$ (true: 2.0248...).'}
+      - {type: expr, d: 1, var: x, q: 'Linearization of $e^x$ at $x=0$.', a: '1+x', exp: '$e^0+e^0(x-0)$.'}
+      - {type: num, d: 2, q: 'A circle''s radius is measured as 10 cm with error $\pm 0.1$. Using differentials, approximate the error in area (in cm²).', a: '2*pi', tol: 0.01, exp: '$dA=2\pi r\,dr=2\pi(10)(0.1)=2\pi$.'}
+    cards:
+      - {f: 'Linearization of $f$ at $a$', b: '$L(x)=f(a)+f''(a)(x-a)$'}
+      - {f: 'Differential $dy$', b: '$dy=f''(x)\,dx$'}
+    fun:
+      - kind: fact
+        title: "Small-angle physics"
+        body: |
+          $\sin\theta\approx\theta$ for small angles is just linearization at 0. It's how
+          Galileo-era physics got pendulum periods, and how your phone's GPS handles tiny angle
+          corrections cheaply.
+
+  - id: app-extrema
+    title: "Maxima, Minima & Critical Points"
+    xp: 70
+    prereqs: [d-rules, lim-continuity]
+    readings:
+      - {book: STW, sec: "3.1", title: "Maximum and Minimum Values"}
+      - {book: OS1, sec: "4.3", title: "Maxima and Minima"}
+    summary: |
+      Local extrema occur at critical points ($f'=0$ or undefined). On a closed interval,
+      check critical points AND endpoints (Extreme Value Theorem).
+    key_ideas:
+      - 'Fermat: interior local extremum + differentiable => $f''=0$.'
+      - '$f''=0$ does not guarantee an extremum ($x^3$ at 0).'
+      - 'Closed interval method: evaluate $f$ at critical points and endpoints; pick biggest/smallest.'
+    ds: |
+      "Set the gradient to zero" is how closed-form solutions (OLS, MLE for Gaussians) are
+      derived. In deep learning, most zero-gradient points are saddles, not minima.
+    lab: |
+      Find all critical points of $f(x)=x^4-4x^3+4x^2$ with sympy (`solve(diff(f))`), then
+      classify them by plotting.
+    questions:
+      - {type: num, d: 1, q: 'Find the $x$-value of the critical point of $f(x)=x^2-6x+5$.', a: '3', exp: '$2x-6=0$.'}
+      - {type: num, d: 2, q: 'Absolute max of $f(x)=x^3-3x$ on $[0,2]$?', a: '2', exp: 'Critical point $x=1$ gives $-2$; endpoints give $0$ and $2$. Max is 2 at $x=2$.'}
+      - {type: mc, d: 1, q: 'For $f(x)=x^3$, $x=0$ is...', choices: ['a local max', 'a local min', 'a critical point but not an extremum', 'not a critical point'], a: 2, exp: '$f''(0)=0$ but $f$ increases through 0.'}
+    cards:
+      - {f: 'Critical point', b: 'Where $f''(x)=0$ or $f''$ undefined (in the domain).'}
+      - {f: 'Closed interval method', b: 'Check all critical points AND both endpoints.'}
+    fun:
+      - kind: fact
+        title: "Saddles everywhere"
+        body: |
+          In a 1-D function, most critical points are mins or maxes. In a neural network with
+          a billion parameters, a random critical point is overwhelmingly likely to be a saddle
+          (a min in some directions, max in others). That's a big reason SGD works at all.
+
+  - id: app-mvt
+    title: "The Mean Value Theorem"
+    xp: 50
+    optional: true
+    prereqs: [app-extrema]
+    readings:
+      - {book: STW, sec: "3.2", title: "The Mean Value Theorem"}
+      - {book: OS1, sec: "4.4", title: "The Mean Value Theorem"}
+    summary: |
+      Somewhere between $a$ and $b$, the instantaneous rate equals the average rate:
+      $f'(c)=\frac{f(b)-f(a)}{b-a}$.
+    key_ideas:
+      - 'Needs continuity on $[a,b]$ and differentiability on $(a,b)$.'
+      - 'Corollary: $f''=0$ everywhere => $f$ constant; $f''=g''$ => $f=g+C$.'
+      - 'Lipschitz bound: $|f(b)-f(a)|\le \max|f''|\cdot|b-a|$.'
+    ds: |
+      Lipschitz constants (bounds on derivatives) appear in convergence proofs for gradient
+      descent, in GAN training (WGAN), and in robustness certificates for neural networks.
+    lab: |
+      For your last race: average pace was (total time / distance). MVT says at some instant
+      you ran exactly that pace. Find such a moment in the pace stream.
+    questions:
+      - {type: num, d: 2, q: 'For $f(x)=x^2$ on $[1,3]$, find $c$ guaranteed by the MVT.', a: '2', exp: 'Average slope $4$; $2c=4$.'}
+      - {type: free, d: 2, q: 'You drive 120 miles in 1.5 hours on a 65 mph road. Explain with the MVT why you deserve a ticket.', a: 'Average speed is 80 mph, so by the MVT at some instant your speed was exactly 80 mph > 65.'}
+    cards:
+      - {f: 'Mean Value Theorem', b: 'Continuous on $[a,b]$, differentiable on $(a,b)$ => some $c$ has $f''(c)=\frac{f(b)-f(a)}{b-a}$.'}
+    fun:
+      - kind: fact
+        title: "Average-speed cameras"
+        body: |
+          Some highways (UK, Italy) catch speeders with two cameras miles apart, computing
+          average speed. The legal justification is literally the Mean Value Theorem: if your
+          average exceeded the limit, you exceeded it at some instant.
+
+  - id: app-shape
+    title: "Shape of a Graph: Concavity & Convexity"
+    xp: 70
+    prereqs: [app-extrema]
+    readings:
+      - {book: STW, sec: "3.3", title: "How Derivatives Affect the Shape of a Graph"}
+      - {book: STW, sec: "3.5", title: "Summary of Curve Sketching"}
+      - {book: OS1, sec: "4.5", title: "Derivatives and the Shape of a Graph"}
+    summary: |
+      First derivative: increasing/decreasing. Second derivative: concave up (convex, holds
+      water) or down. Second derivative test classifies critical points.
+    key_ideas:
+      - '$f''''>0$ => concave up (convex). $f''''<0$ => concave down.'
+      - 'Second derivative test: $f''(c)=0$, $f''''(c)>0$ => local min.'
+      - 'Inflection point: concavity changes sign.'
+      - 'Convex functions: any local min is a global min.'
+    ds: |
+      Convexity is the dividing line between "easy" (linear/logistic regression, SVMs: one
+      global optimum) and "hard" (neural networks) optimization problems.
+    lab: |
+      Show numerically that MSE loss $(w-3)^2$ and log-loss are convex in $w$ by checking the
+      sign of a finite-difference second derivative on a grid.
+    questions:
+      - {type: mc, d: 1, q: '$f''(2)=0$ and $f''''(2)=-5$. Then $x=2$ is...', choices: ['local min', 'local max', 'inflection point', 'cannot tell'], a: 1, exp: 'Concave down at a critical point => local max.'}
+      - {type: num, d: 2, q: 'Inflection point $x$-value of $f(x)=x^3-6x^2+1$?', a: '2', exp: '$f''''=6x-12=0$.'}
+      - {type: mc, d: 2, q: 'Why is convexity so prized in ML?', choices: ['Convex functions are faster to evaluate', 'Every local minimum is a global minimum', 'Convex functions have no derivatives', 'They never overfit'], a: 1, exp: 'No bad local minima to get stuck in.'}
+    cards:
+      - {f: 'Second derivative test', b: 'At a critical point: $f''''>0$ min, $f''''<0$ max, $=0$ inconclusive.'}
+      - {f: 'Key property of convex functions', b: 'Every local minimum is global.'}
+    fun:
+      - kind: puzzle
+        title: "Smiles and frowns"
+        body: |
+          Mnemonic: concave up = cup = smile ($f''>0$, holds water). Puzzle: the function
+          $\ln x$ -- smile or frown? What does that imply about $\ln$ of an average vs. the
+          average of $\ln$? (This is Jensen's inequality, used to derive the ELBO in VAEs!)
+        answer: "Frown ($f''=-1/x^2<0$). So $\\ln(\\text{mean}) \\ge \\text{mean}(\\ln)$."
+
+  - id: app-optimization
+    title: "Applied Optimization & Least Squares by Hand"
+    xp: 80
+    prereqs: [app-shape]
+    readings:
+      - {book: STW, sec: "3.7", title: "Optimization Problems"}
+      - {book: OS1, sec: "4.7", title: "Applied Optimization Problems"}
+    summary: |
+      Model the quantity, express it in one variable, differentiate, set to zero, verify.
+      Then the data-science classic: which constant $c$ best fits data in squared error?
+    key_ideas:
+      - 'Recipe: draw, define variables, objective, constraint -> one variable, differentiate, check.'
+      - '$\arg\min_c \sum (y_i-c)^2 = \bar y$ (the mean).'
+      - '$\arg\min_c \sum |y_i-c| = $ median.'
+    ds: |
+      This is your first derivation of a statistical estimator: the mean minimizes squared
+      error. Loss choice determines the estimator (mean vs. median vs. quantiles) -- the
+      basis of quantile regression and robust losses.
+    lab: |
+      For your last 20 runs' paces, minimize $\sum(y_i-c)^2$ and $\sum|y_i-c|$ numerically
+      with `scipy.optimize.minimize_scalar`. Compare to `np.mean` and `np.median`.
+    questions:
+      - {type: free, d: 2, q: 'Show that $c=\bar y$ minimizes $S(c)=\sum_{i=1}^n (y_i-c)^2$.', a: '$S''(c)=-2\sum(y_i-c)=0 \Rightarrow nc=\sum y_i \Rightarrow c=\bar y$; $S''''=2n>0$ so it is a min.'}
+      - {type: num, d: 2, q: 'A rectangle has perimeter 40. What is its maximum possible area?', a: '100', exp: '$A=x(20-x)$, max at $x=10$.'}
+      - {type: num, d: 2, q: 'Data $\{1,2,9\}$: which constant $c$ minimizes $\sum(y_i-c)^2$?', a: '4', exp: 'The mean.'}
+      - {type: num, d: 2, q: 'Same data $\{1,2,9\}$: which $c$ minimizes $\sum|y_i-c|$?', a: '2', exp: 'The median -- robust to the outlier 9.'}
+    cards:
+      - {f: 'Which constant minimizes squared error? Absolute error?', b: 'Mean; median.'}
+    fun:
+      - kind: fact
+        title: "Gauss and the lost dwarf planet"
+        body: |
+          In 1801 the dwarf planet Ceres vanished behind the Sun. 24-year-old Gauss used least
+          squares (minimizing squared errors, as you just did) to predict where it would
+          reappear. Astronomers found it right where he said.
+
+  - id: app-lhopital
+    title: "L'Hôpital's Rule"
+    xp: 50
+    prereqs: [d-explog, lim-infinity]
+    readings:
+      - {book: STW, sec: "6.8", title: "Indeterminate Forms and l'Hospital's Rule"}
+      - {book: OS1, sec: "4.8", title: "L'Hôpital's Rule"}
+    videos:
+      - {book: 3B1B, n: 7, title: "Limits, L'Hopital's rule, and epsilon delta definitions"}
+    summary: |
+      For $\frac00$ or $\frac{\infty}{\infty}$: $\lim\frac{f}{g}=\lim\frac{f'}{g'}$ (if the
+      latter exists). Rewrite $0\cdot\infty$, $1^\infty$, $\infty-\infty$ first.
+    key_ideas:
+      - 'Only for indeterminate quotient forms!'
+      - 'Differentiate top and bottom separately (NOT the quotient rule).'
+      - 'For $1^\infty$, $0^0$, $\infty^0$: take logs first.'
+    ds: |
+      Proves the growth ladder rigorously (e.g. $\frac{\ln x}{x}\to0$) and explains limits like
+      $x\ln x\to0$, which is why $0\log 0$ is defined as 0 in entropy calculations.
+    lab: |
+      Show numerically and via L'Hopital that $x\ln x\to 0$ as $x\to0^+$. Then compute the
+      entropy of $[1, 0, 0]$ with `scipy.stats.entropy` and see it handles $0\log0$.
+    questions:
+      - {type: num, d: 1, q: '$\lim_{x\to0}\frac{e^x-1}{x}$', a: '1', exp: 'L''Hopital: $e^x/1\to1$.'}
+      - {type: num, d: 2, q: '$\lim_{x\to0^+}x\ln x$', a: '0', exp: 'Write as $\frac{\ln x}{1/x}$: $\frac{1/x}{-1/x^2}=-x\to0$.'}
+      - {type: num, d: 2, q: '$\lim_{x\to0}\frac{1-\cos x}{x^2}$', a: '1/2', exp: 'Twice: $\frac{\sin x}{2x}\to\frac12$.'}
+    cards:
+      - {f: 'When can you apply L''Hopital?', b: 'Only to $0/0$ or $\infty/\infty$ forms; differentiate top and bottom separately.'}
+      - {f: 'Why is $0\log0$ taken as 0 in entropy?', b: 'Because $\lim_{x\to0^+}x\ln x=0$.'}
+    fun:
+      - kind: fact
+        title: "L'Hôpital bought it"
+        body: |
+          L'Hôpital's rule was discovered by Johann Bernoulli. The Marquis de L'Hôpital paid
+          Bernoulli a salary for his discoveries and published them in the first calculus
+          textbook (1696) under his own name. Perhaps the most famous math purchase ever.
+
+  - id: app-newton
+    title: "Newton's Method"
+    xp: 70
+    prereqs: [app-linear]
+    readings:
+      - {book: STW, sec: "3.8", title: "Newton's Method"}
+      - {book: OS1, sec: "4.9", title: "Newton's Method"}
+    summary: |
+      Solve $f(x)=0$ by repeatedly jumping to the tangent line's root:
+      $x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}$. Converges *quadratically* near a root.
+    key_ideas:
+      - 'Each step: linearize, solve the linear equation, repeat.'
+      - 'Quadratic convergence: correct digits roughly double each step.'
+      - 'Can diverge with a bad start or $f''\approx0$.'
+      - 'For optimization, apply it to $f''$: $x_{n+1}=x_n-\frac{f''(x_n)}{f''''(x_n)}$.'
+    ds: |
+      Newton's method on $f'$ is the second-order optimizer behind logistic regression's
+      IRLS solver (`solver="newton-cg"` in scikit-learn) and many statistical packages.
+    lab: |
+      Implement Newton for $\sqrt{2}$ (root of $x^2-2$) from $x_0=1$. Print digits of error
+      per iteration -- watch them double. Compare with bisection's iteration count.
+    questions:
+      - {type: num, d: 2, q: 'Newton for $x^2-2=0$ from $x_0=1$: what is $x_1$?', a: '1.5', exp: '$1-\frac{1-2}{2}=1.5$.'}
+      - {type: num, d: 2, q: 'And $x_2$? (fraction or decimal)', a: '17/12', exp: '$1.5-\frac{0.25}{3}=1.41\overline{6}$.'}
+      - {type: mc, d: 2, q: 'Newton''s method for MINIMIZING $f$ uses which update?', choices: ['$x-f(x)/f''(x)$', '$x-f''(x)/f''''(x)$', '$x-\eta f''(x)$', '$x-f''''(x)/f''(x)$'], a: 1, exp: 'Minimizing means finding a root of $f''$, so apply Newton to $f''$.'}
+    cards:
+      - {f: 'Newton''s method update (root finding)', b: '$x_{n+1}=x_n-f(x_n)/f''(x_n)$'}
+      - {f: 'Newton''s method for minimization', b: '$x_{n+1}=x_n-f''(x_n)/f''''(x_n)$'}
+    fun:
+      - kind: fact
+        title: "Babylonian square roots"
+        body: |
+          4000 years ago Babylonians computed $\sqrt2$ by averaging $x$ and $2/x$ repeatedly.
+          That's *exactly* Newton's method for $x^2-2$. A Babylonian tablet (YBC 7289) gives
+          $\sqrt2$ correct to 6 decimal places.
+
+  - id: app-gd1d
+    title: "Gradient Descent in One Dimension"
+    xp: 90
+    prereqs: [app-shape, app-linear]
+    readings:
+      - {book: MML, sec: "7.1", title: "Optimization Using Gradient Descent"}
+    videos:
+      - {book: 3B1B-NN, n: 2, title: "Gradient descent, how neural networks learn"}
+    summary: |
+      $x_{k+1}=x_k-\eta f'(x_k)$: walk downhill in small steps. The learning rate $\eta$ trades
+      speed against stability.
+    key_ideas:
+      - 'Move opposite the derivative; step size $\eta$ = learning rate.'
+      - 'Too small: slow. Too big: overshoot and diverge. For $f=\frac a2 x^2$, stable iff $0<\eta<2/a$.'
+      - 'Converges to a critical point, not necessarily the global min (unless convex).'
+    ds: |
+      This is the algorithm that trains nearly every model. Every concept here -- learning
+      rate, divergence, local minima -- carries straight into deep learning.
+    lab: |
+      Minimize $f(x)=(x-3)^2$ with GD from $x_0=0$ using $\eta=0.1, 0.5, 0.9, 1.1$. Plot the
+      trajectories. Which oscillates? Which diverges? Explain with $\eta<2/a$.
+    questions:
+      - {type: num, d: 1, q: 'GD on $f(x)=x^2$ with $\eta=0.1$ from $x_0=5$: what is $x_1$?', a: '4', exp: '$5-0.1\cdot10=4$.'}
+      - {type: num, d: 2, q: 'For $f(x)=2x^2$ (so $f''''=4$), what is the largest stable learning rate (exclusive bound)?', a: '1/2', exp: '$\eta<2/4$.'}
+      - {type: mc, d: 2, q: 'GD with $\eta=1$ on $f(x)=x^2$ from $x_0=1$ produces...', choices: ['convergence to 0', 'oscillation 1, -1, 1, ...', 'divergence to infinity', 'it stays at 1'], a: 1, exp: '$x_{k+1}=x_k-2x_k=-x_k$: exactly at the stability boundary, it bounces forever.'}
+    cards:
+      - {f: 'Gradient descent update', b: '$x_{k+1}=x_k-\eta f''(x_k)$'}
+      - {f: 'Stability condition for GD on a quadratic with curvature $a$', b: '$0<\eta<2/a$'}
+    fun:
+      - kind: puzzle
+        title: "Lost in the fog"
+        body: |
+          You're on a mountain in thick fog and must reach the valley. You can only feel the
+          slope under your feet. Gradient descent is exactly this. Puzzle: what natural
+          terrain feature can trap you forever, even though lower ground exists?
+        answer: "A local minimum (a crater/basin) -- or on a flat plateau, the slope is ~0 and you barely move."
+
+  - id: app-antideriv
+    title: "Antiderivatives"
+    xp: 60
+    prereqs: [d-explog]
+    readings:
+      - {book: STW, sec: "3.9", title: "Antiderivatives"}
+      - {book: OS1, sec: "4.10", title: "Antiderivatives"}
+    summary: |
+      Run differentiation backward: $F'=f$. Antiderivatives come in families $F(x)+C$.
+      The bridge into integration.
+    key_ideas:
+      - '$\int x^n dx=\frac{x^{n+1}}{n+1}+C$ ($n\ne-1$), $\int \frac1x dx=\ln|x|+C$.'
+      - '$\int e^x dx=e^x+C$.'
+      - 'Initial conditions pin down $C$.'
+    ds: |
+      Recovering position from velocity, cumulative counts from rates, and CDFs from PDFs are
+      all antidifferentiation.
+    lab: |
+      Running lab: integrate your speed stream with `np.cumsum(speed*dt)` and compare to the
+      watch's distance stream. That's numerical antidifferentiation.
+    questions:
+      - {type: antideriv, d: 1, var: x, q: 'Find an antiderivative of $3x^2+4x$.', a: 'x^3+2x^2', exp: 'Reverse the power rule.'}
+      - {type: antideriv, d: 1, var: x, q: 'Antiderivative of $\frac1x+e^x$ (for $x>0$).', a: 'ln(x)+e^x', exp: '$\ln x+e^x+C$.'}
+      - {type: num, d: 2, q: 'If $F''(x)=2x$ and $F(1)=5$, what is $F(3)$?', a: '13', exp: '$F=x^2+C$, $C=4$, $F(3)=13$.'}
+    cards:
+      - {f: '$\int x^n\,dx$', b: '$\frac{x^{n+1}}{n+1}+C$, $n\ne-1$'}
+      - {f: '$\int \frac1x\,dx$', b: '$\ln|x|+C$'}
+    fun:
+      - kind: fact
+        title: "Differentiation is easy, integration is hard"
+        body: |
+          Every elementary function has an elementary derivative, but many have no elementary
+          antiderivative -- like $e^{-x^2}$, the bell curve! That's why the normal CDF has no
+          closed form and statistics tables (and `scipy.special.erf`) exist.

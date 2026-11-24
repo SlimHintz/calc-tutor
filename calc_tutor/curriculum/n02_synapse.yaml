@@ -1,0 +1,158 @@
+unit:
+  id: N02
+  ord: 10
+  course: neuro
+  title: "The Synapse"
+  constellation: "The Bridge"
+  color: "#4dd0e1"
+  blurb: |
+    Where neurons meet. Chemical synapses convert electrical signals into chemical ones and
+    back, and every one of them is a tunable weight -- the physical substrate of learning.
+  ds_why: |
+    Apply it: neuromodulators like dopamine, norepinephrine and acetylcholine set the brain's
+    "learning rate" -- arousal, attention and reward literally change how strongly experience
+    is written in. Bridge: a synapse is the biological version of a weight in a neural net.
+
+topics:
+  - id: nr-synapse-overview
+    title: "Chemical & Electrical Synapses"
+    xp: 50
+    prereqs: [nr-action-potential]
+    readings:
+      - {book: KAN, sec: "Ch 8", title: "Overview of Synaptic Transmission"}
+      - {book: KAN, sec: "Ch 9", title: "Signaling at the Nerve-Muscle Synapse (skim)"}
+    summary: |
+      Electrical synapses (gap junctions) pass current directly -- fast, symmetric. Chemical
+      synapses release neurotransmitter that binds receptors on the next cell -- slower but
+      amplifiable, modifiable, excitatory or inhibitory.
+    key_ideas:
+      - 'Chemical synapse: spike → Ca²⁺ entry → vesicle release → receptor binding → postsynaptic potential.'
+      - 'Ionotropic receptors (fast, channels) vs metabotropic (slow, second messengers).'
+      - 'Chemical synapses are where plasticity mostly happens.'
+    ds: |
+      Apply it: the neuromuscular junction is the synapse your running depends on -- it's
+      deliberately "high safety factor" (always fires), unlike brain synapses which are tunable.
+    lab: |
+      Draw the chemical synapse sequence as a numbered flowchart (8 steps) from memory, then
+      check against Kandel Ch 8.
+    questions:
+      - {type: mc, d: 1, q: 'What ion''s entry into the presynaptic terminal triggers vesicle release?', choices: ['Na⁺', 'K⁺', 'Ca²⁺', 'Cl⁻'], a: 2, exp: 'Voltage-gated calcium channels open when the spike arrives.'}
+      - {type: mc, d: 2, q: 'Metabotropic receptors differ from ionotropic ones in that they...', choices: ['are channels themselves', 'act via G-proteins/second messengers and are slower', 'only exist on muscle', 'are always inhibitory'], a: 1, exp: 'Slower, longer-lasting, and able to change cell biochemistry -- key for modulation and memory.'}
+    cards:
+      - {f: 'Ionotropic vs metabotropic receptor', b: 'Ionotropic: ligand-gated channel, fast. Metabotropic: G-protein/second messenger, slow and modulatory.'}
+    fun:
+      - kind: fact
+        title: "Soup vs sparks"
+        body: |
+          In the 1920s-30s the "war of the soups and sparks" raged: is synaptic transmission
+          chemical or electrical? Otto Loewi settled it for the heart with an experiment that
+          he said came to him in a dream: fluid from a stimulated frog heart slowed a second
+          heart. Both sides turned out to be partly right.
+
+  - id: nr-integration
+    title: "Synaptic Integration: EPSPs, IPSPs & Summation"
+    xp: 60
+    prereqs: [nr-synapse-overview]
+    readings:
+      - {book: KAN, sec: "Ch 10", title: "Synaptic Integration in the Central Nervous System"}
+    summary: |
+      Glutamate mostly excites (EPSPs); GABA and glycine mostly inhibit (IPSPs). A neuron sums
+      thousands of inputs in space and time, and fires if the axon hillock crosses threshold.
+    key_ideas:
+      - 'Spatial and temporal summation.'
+      - 'Glutamate receptors: AMPA (fast) and NMDA (voltage- and ligand-gated -- key for learning).'
+      - 'Inhibition sculpts timing and prevents runaway excitation.'
+    ds: |
+      Bridge: "weighted sum of inputs, then threshold" is exactly the McCulloch-Pitts /
+      perceptron neuron. Apply it: inhibition is what makes focus possible -- attention is as
+      much about suppressing distractors as boosting targets.
+    lab: |
+      Code a neuron receiving 100 Poisson input trains (80 excitatory, 20 inhibitory), sum
+      weighted PSPs with exponential decay, and count threshold crossings. Vary the inhibitory
+      weight and watch firing change.
+    questions:
+      - {type: mc, d: 1, q: 'The main excitatory neurotransmitter in the brain is...', choices: ['GABA', 'glutamate', 'glycine', 'dopamine'], a: 1, exp: 'Glutamate; GABA is the main inhibitory one.'}
+      - {type: mc, d: 2, q: 'Two weak EPSPs arriving close together in time can trigger a spike due to...', choices: ['spatial summation', 'temporal summation', 'refractoriness', 'myelination'], a: 1, exp: 'The second arrives before the first has decayed.'}
+    cards:
+      - {f: 'Main excitatory / inhibitory transmitters', b: 'Glutamate / GABA (glycine in spinal cord).'}
+      - {f: 'Where is the firing decision made?', b: 'At the axon initial segment (hillock), which has the lowest threshold.'}
+    fun:
+      - kind: fact
+        title: "The first artificial neuron"
+        body: |
+          In 1943, neurophysiologist Warren McCulloch and teenage logician Walter Pitts modeled
+          neurons as threshold units summing weighted inputs and showed networks of them could
+          compute logic. Every deep-learning neuron is a descendant.
+
+  - id: nr-transmitter-release
+    title: "Transmitter Release & Short-Term Plasticity"
+    xp: 50
+    prereqs: [nr-synapse-overview]
+    readings:
+      - {book: KAN, sec: "Ch 12", title: "Transmitter Release"}
+    summary: |
+      Transmitter is released in quanta (vesicles), probabilistically. Release probability
+      changes over milliseconds to minutes with use: facilitation, depression, post-tetanic
+      potentiation.
+    key_ideas:
+      - 'Quantal hypothesis (Katz): release = whole vesicles, with a probability per site.'
+      - 'Synaptic transmission is stochastic -- the brain computes with noise.'
+      - 'Short-term plasticity is a temporary change in release probability.'
+    ds: |
+      Bridge: release is binomial -- $n$ release sites each with probability $p$ (the discrete
+      probability unit!). Apply it: unreliable synapses mean one exposure rarely makes a
+      memory; repetition stacks the odds.
+    lab: |
+      Model a synapse with $n=10$ release sites, $p=0.3$: simulate 1,000 trials with
+      `np.random.binomial` and plot the histogram of quanta released. Compare with Katz's data
+      shape described in Ch 12.
+    questions:
+      - {type: num, d: 2, q: 'A synapse has 10 release sites each releasing with probability 0.3. Expected number of vesicles released per spike?', a: '3', exp: 'Binomial mean $np$.'}
+      - {type: num, d: 3, q: 'Same synapse: probability that NO vesicle is released (a failure)? (decimal)', a: '0.7^10', tol: 0.01, exp: '$0.7^{10}\approx0.028$.'}
+    cards:
+      - {f: 'Quantal hypothesis', b: 'Transmitter is released in discrete packets (vesicles), each with some release probability.'}
+    fun:
+      - kind: fact
+        title: "Katz's frog muscles"
+        body: |
+          Bernard Katz noticed tiny spontaneous "miniature" potentials at frog neuromuscular
+          junctions -- all the same size. They were single vesicles. He won the 1970 Nobel
+          for revealing that synapses talk in discrete packets.
+
+  - id: nr-neuromodulators
+    title: "Neuromodulators: Dopamine, Norepinephrine, ACh, Serotonin"
+    xp: 70
+    prereqs: [nr-integration]
+    readings:
+      - {book: KAN, sec: "Ch 11", title: "Modulation of Synaptic Transmission: Second Messengers"}
+      - {book: KAN, sec: "Ch 13", title: "Neurotransmitters"}
+      - {book: KAN, sec: "Ch 46", title: "The Modulatory Functions of the Brain Stem"}
+    summary: |
+      Small brainstem and basal-forebrain nuclei broadcast modulators across the brain via
+      metabotropic receptors, changing excitability and plasticity: dopamine (reward,
+      motivation), norepinephrine (arousal, alertness), acetylcholine (attention, encoding),
+      serotonin (mood, patience).
+    key_ideas:
+      - 'Modulators change HOW circuits respond rather than carrying the message itself.'
+      - 'cAMP/PKA second-messenger cascades -- the same pathway that later writes long-term memory.'
+      - 'Arousal and memory follow an inverted U (Yerkes-Dodson): some is good, too much impairs.'
+    ds: |
+      Apply it: you encode better when alert, curious and slightly challenged -- modulators
+      open the "write enable" gate. Bridge: modulators act like a global, context-dependent
+      learning rate.
+    lab: |
+      Log one week of study sessions with a 1-5 alertness rating, then compare your quiz
+      accuracy in this app by alertness (export attempts). Do you see an inverted U?
+    questions:
+      - {type: mc, d: 1, q: 'Which modulator is most associated with arousal and alertness (locus coeruleus)?', choices: ['dopamine', 'norepinephrine', 'serotonin', 'GABA'], a: 1, exp: 'The locus coeruleus is the main source of norepinephrine.'}
+      - {type: mc, d: 2, q: 'Acetylcholine from the basal forebrain is especially important for...', choices: ['attention and encoding new memories', 'muscle relaxation only', 'sleep onset only', 'pain'], a: 0, exp: 'Cholinergic drive is high during attentive wakefulness and supports encoding.'}
+      - {type: free, d: 2, q: 'Describe the Yerkes-Dodson (inverted U) idea and one way it should change how you schedule hard study sessions.', a: 'Performance/encoding improves with arousal up to a point then declines. Schedule hard material when moderately alert (not exhausted, not highly stressed), e.g. not right after a hard workout or late at night.'}
+    cards:
+      - {f: 'Four major neuromodulators and associations', b: 'Dopamine: reward/motivation. Norepinephrine: arousal. Acetylcholine: attention/encoding. Serotonin: mood/patience.'}
+    fun:
+      - kind: fact
+        title: "Runner's high isn't (just) endorphins"
+        body: |
+          The classic story credits endorphins, but they barely cross the blood-brain barrier.
+          A 2015 mouse study pointed to endocannabinoids as a key driver of the runner's-high
+          calm. Your marathon brain chemistry is still an active research question.

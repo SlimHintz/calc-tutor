@@ -1,0 +1,243 @@
+unit:
+  id: U05
+  ord: 100
+  course: core
+  title: "Sequences, Series & Taylor Approximation"
+  constellation: "The Spiral"
+  color: "#c792ea"
+  blurb: |
+    Infinite sums that add to finite numbers, and the stunning idea that smooth functions
+    are secretly polynomials (Taylor series). The ultimate approximation toolkit.
+  ds_why: |
+    Taylor expansions justify gradient descent, Newton's method, the delta method, and
+    numerical tricks like log1p. Geometric series give discounted rewards in RL and the
+    stationary behavior of Markov chains.
+
+topics:
+  - id: ser-sequences
+    title: "Sequences & Convergence"
+    xp: 50
+    prereqs: [lim-infinity]
+    readings:
+      - {book: STW, sec: "11.1", title: "Sequences"}
+      - {book: OS2, sec: "5.1", title: "Sequences"}
+    summary: |
+      A sequence $a_1,a_2,\dots$ converges if $a_n\to L$. Monotone + bounded => convergent.
+    key_ideas:
+      - 'Limit of a sequence = limit at infinity of $a_n$.'
+      - 'Monotone convergence theorem: bounded and monotone sequences converge.'
+      - 'Recursive sequences $a_{n+1}=g(a_n)$ converge to fixed points $L=g(L)$ when stable.'
+    ds: |
+      An optimizer's iterates $\theta_0,\theta_1,\dots$ form a sequence; "convergence" of
+      training is literally convergence of this sequence. Fixed-point iteration underlies
+      PageRank and EM.
+    lab: |
+      Iterate $a_{n+1}=\cos(a_n)$ from $a_0=1$. It converges to the "Dottie number". Plot it.
+      Why does it converge? (Hint: $|\cos'|<1$ near the fixed point.)
+    questions:
+      - {type: num, d: 1, q: '$\lim_{n\to\infty}\frac{2n+1}{n+5}$', a: '2', exp: 'Leading terms.'}
+      - {type: num, d: 2, q: 'Recursive $a_{n+1}=\frac12a_n+3$. If it converges, to what?', a: '6', exp: 'Fixed point $L=L/2+3$.'}
+      - {type: mc, d: 1, q: '$a_n=(-1)^n$ ...', choices: ['converges to 0', 'converges to 1', 'diverges (oscillates)', 'converges to -1'], a: 2, exp: 'Bounces between -1 and 1.'}
+    cards:
+      - {f: 'Monotone convergence theorem', b: 'A bounded, monotone sequence converges.'}
+      - {f: 'Limit of $a_{n+1}=g(a_n)$ if it converges', b: 'A fixed point: $L=g(L)$.'}
+    fun:
+      - kind: puzzle
+        title: "The Dottie number"
+        body: |
+          Set a calculator to radians and press cos over and over from any start. You'll land
+          on 0.739085... -- the only solution of $\cos x=x$. It's named after a French
+          professor's student, Dottie, who noticed it. Puzzle: why can't you do the same with
+          $\sin$ and get a nonzero answer?
+        answer: "The only fixed point of $\\sin x=x$ is 0, and iteration creeps toward it very slowly."
+
+  - id: ser-geometric
+    title: "Infinite Series & Geometric Series"
+    xp: 70
+    prereqs: [ser-sequences]
+    readings:
+      - {book: STW, sec: "11.2", title: "Series"}
+      - {book: PRE, sec: "11.3", title: "Geometric Sequences"}
+      - {book: OS2, sec: "5.2", title: "Infinite Series"}
+    summary: |
+      $\sum_{n=0}^\infty ar^n=\frac{a}{1-r}$ for $|r|<1$. Partial sums, telescoping, and the
+      divergence test.
+    key_ideas:
+      - 'Series = limit of partial sums $S_N=\sum_{n=1}^N a_n$.'
+      - 'Geometric: converges iff $|r|<1$, to $\frac{a}{1-r}$ (first term over one minus ratio).'
+      - 'Divergence test: if $a_n\not\to0$, the series diverges. ($a_n\to0$ is NOT enough.)'
+    ds: |
+      RL's discounted return $\sum\gamma^tr_t$ is bounded by $\frac{r_{max}}{1-\gamma}$. With
+      $\gamma=0.99$, the "effective horizon" is $\frac{1}{1-\gamma}=100$ steps. Same trick for
+      exponential moving averages (Adam's $\beta$).
+    lab: |
+      Compute the effective window of an EMA with $\beta=0.9, 0.99, 0.999$ via
+      $\frac{1}{1-\beta}$. Then simulate: what fraction of the weight sits in the last
+      $\frac{1}{1-\beta}$ steps?
+    questions:
+      - {type: num, d: 1, q: '$\sum_{n=0}^\infty \left(\frac13\right)^n$', a: '3/2', exp: '$\frac{1}{1-1/3}$.'}
+      - {type: num, d: 2, q: '$\sum_{n=1}^\infty \frac{5}{2^n}$', a: '5', exp: 'First term $5/2$, ratio $1/2$: $\frac{5/2}{1/2}$.'}
+      - {type: num, d: 2, q: 'RL: reward 1 every step forever, discount $\gamma=0.9$. Total discounted return?', a: '10', exp: '$\frac{1}{1-0.9}$.'}
+      - {type: num, d: 3, q: 'Telescoping: $\sum_{n=1}^\infty \frac{1}{n(n+1)}$', a: '1', exp: '$\frac1n-\frac1{n+1}$ telescopes to $1$.'}
+    cards:
+      - {f: 'Geometric series sum', b: '$\sum_{n=0}^\infty ar^n=\frac{a}{1-r}$, $|r|<1$'}
+      - {f: 'Effective horizon of discount $\gamma$', b: '$\frac{1}{1-\gamma}$'}
+    fun:
+      - kind: fact
+        title: "0.999... = 1"
+        body: |
+          $0.999\ldots=\sum_{n=1}^\infty 9\cdot10^{-n}=\frac{9/10}{1-1/10}=1$. Not
+          "infinitely close to" 1: equal to 1. Geometric series settle internet arguments.
+
+  - id: ser-tests
+    title: "Convergence Tests (Survey)"
+    xp: 50
+    optional: true
+    prereqs: [ser-geometric, int-improper]
+    readings:
+      - {book: STW, sec: "11.3-11.7", title: "Integral, Comparison, Alternating, Ratio/Root Tests; Strategy"}
+      - {book: OS2, sec: "5.3", title: "The Divergence and Integral Tests"}
+      - {book: OS2, sec: "5.4", title: "Comparison Tests"}
+      - {book: OS2, sec: "5.5", title: "Alternating Series"}
+      - {book: OS2, sec: "5.6", title: "Ratio and Root Tests"}
+    summary: |
+      A toolkit for "does it converge?": integral test, p-series, comparison, alternating
+      series, ratio test. Learn to recognize which to use.
+    key_ideas:
+      - 'p-series $\sum 1/n^p$ converges iff $p>1$ (harmonic series diverges!).'
+      - 'Ratio test: $\lim|a_{n+1}/a_n|<1$ converges, $>1$ diverges, $=1$ inconclusive.'
+      - 'Alternating series with decreasing terms -> 0 converge.'
+    ds: |
+      Robbins-Monro conditions for SGD learning rates: $\sum\eta_t=\infty$ but
+      $\sum\eta_t^2<\infty$. $\eta_t=1/t$ works because the harmonic series diverges while
+      $\sum 1/t^2$ converges.
+    lab: |
+      Compute partial sums of $\sum1/n$ up to $10^7$ and compare with $\ln n+0.5772$. The
+      harmonic series diverges -- but painfully slowly.
+    questions:
+      - {type: mc, d: 1, q: '$\sum_{n=1}^\infty \frac1n$ ...', choices: ['converges to 2', 'converges to $\pi^2/6$', 'diverges', 'converges to $\ln 2$'], a: 2, exp: 'Harmonic series diverges (p=1).'}
+      - {type: mc, d: 2, q: '$\sum \frac{n!}{10^n}$ -- ratio test says...', choices: ['converges', 'diverges', 'inconclusive'], a: 1, exp: 'Ratio $\frac{n+1}{10}\to\infty$.'}
+      - {type: mc, d: 2, q: 'Which learning-rate schedule satisfies $\sum\eta_t=\infty$, $\sum\eta_t^2<\infty$?', choices: ['$\eta_t=1/t^2$', '$\eta_t=1/t$', '$\eta_t=0.01$', '$\eta_t=2^{-t}$'], a: 1, exp: 'Harmonic diverges; its squares converge.'}
+    cards:
+      - {f: 'p-series convergence', b: '$\sum 1/n^p$ converges iff $p>1$.'}
+      - {f: 'Robbins-Monro step-size conditions', b: '$\sum\eta_t=\infty$, $\sum\eta_t^2<\infty$ (e.g. $\eta_t=1/t$).'}
+    fun:
+      - kind: fact
+        title: "The Basel problem"
+        body: |
+          $\sum 1/n^2=\pi^2/6$. Euler proved it in 1734, aged 28, and became instantly famous.
+          Why $\pi$, from a sum with no circles? 3Blue1Brown has a gorgeous answer involving
+          lighthouses around a lake.
+
+  - id: ser-power
+    title: "Power Series"
+    xp: 60
+    prereqs: [ser-geometric]
+    readings:
+      - {book: STW, sec: "11.8", title: "Power Series"}
+      - {book: STW, sec: "11.9", title: "Representations of Functions as Power Series"}
+      - {book: OS2, sec: "6.1", title: "Power Series and Functions"}
+      - {book: OS2, sec: "6.2", title: "Properties of Power Series"}
+    summary: |
+      $\sum c_n(x-a)^n$: a polynomial with infinitely many terms. It converges on an interval
+      (radius of convergence) and can be differentiated/integrated term by term.
+    key_ideas:
+      - '$\frac{1}{1-x}=\sum x^n$ for $|x|<1$ -- the mother series.'
+      - 'Radius of convergence via the ratio test.'
+      - 'Differentiate/integrate term by term inside the radius.'
+    ds: |
+      Power series are how computers evaluate $e^x$, $\sin$, $\log$. Generating functions
+      (power series with probabilities as coefficients) compute moments of distributions.
+    lab: |
+      Integrate $\frac{1}{1+x}=\sum(-1)^nx^n$ term by term to get a series for $\ln(1+x)$.
+      Sum 10, 100, 1000 terms at $x=0.5$ and $x=1$. Which converges faster? Why?
+    questions:
+      - {type: expr, d: 2, var: x, q: 'Write $\frac{1}{1-2x}$ as a power series and give its first three terms (as a polynomial).', a: '1+2x+4x^2', exp: 'Replace $x$ by $2x$ in $\sum x^n$.'}
+      - {type: num, d: 2, q: 'Radius of convergence of $\sum \frac{x^n}{3^n}$?', a: '3', exp: 'Geometric in $x/3$: need $|x/3|<1$.'}
+    cards:
+      - {f: 'The mother power series', b: '$\frac{1}{1-x}=\sum_{n\ge0}x^n$, $|x|<1$'}
+    fun:
+      - kind: fact
+        title: "How your calculator computes sin"
+        body: |
+          Chips don't "know" $\sin$. They reduce the angle to a small range and then evaluate
+          a short polynomial (from series ideas, often tuned with minimax methods or CORDIC).
+          Every `np.exp` call you make runs a polynomial under the hood.
+
+  - id: ser-taylor
+    title: "Taylor & Maclaurin Series"
+    xp: 100
+    prereqs: [ser-power, d-explog]
+    readings:
+      - {book: STW, sec: "11.10", title: "Taylor and Maclaurin Series"}
+      - {book: OS2, sec: "6.3", title: "Taylor and Maclaurin Series"}
+    videos:
+      - {book: 3B1B, n: 11, title: "Taylor series"}
+    summary: |
+      $f(x)=\sum\frac{f^{(n)}(a)}{n!}(x-a)^n$. Match value, slope, curvature, ... at one
+      point and you can rebuild the function. Key series: $e^x$, $\sin$, $\cos$, $\ln(1+x)$.
+    key_ideas:
+      - '$e^x=\sum\frac{x^n}{n!}$, $\sin x=x-\frac{x^3}{6}+\dots$, $\cos x=1-\frac{x^2}{2}+\dots$.'
+      - '$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\dots$ for $|x|\le1$, $x\ne-1$.'
+      - 'Second-order Taylor: $f(a)+f''(a)(x-a)+\frac12f''''(a)(x-a)^2$ -- the basis of Newton''s method.'
+    ds: |
+      Second-order Taylor expansion of the loss explains why gradient descent works, how to
+      pick learning rates, and what Newton's method does. It also justifies $\ln(1+x)\approx
+      x$ for small returns (finance) and the delta method (statistics).
+    lab: |
+      Plot $e^x$ against its Taylor polynomials of degree 1, 2, 4, 8 on $[-3,3]$. Then plot
+      $\ln(1+x)$ with its polynomials on $[-1, 2]$ -- what happens past $x=1$?
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Degree-2 Maclaurin polynomial of $e^x$.', a: '1+x+x^2/2', exp: '$\frac{x^n}{n!}$ terms.'}
+      - {type: expr, d: 2, var: x, q: 'Degree-3 Maclaurin polynomial of $\sin x$.', a: 'x-x^3/6', exp: 'Odd powers with alternating signs.'}
+      - {type: num, d: 2, q: 'Coefficient of $x^4$ in the Maclaurin series of $e^{x}$ (fraction ok).', a: '1/24', exp: '$1/4!$.'}
+      - {type: expr, d: 3, var: x, q: 'Degree-2 Taylor polynomial of $\ln x$ about $a=1$.', a: '(x-1)-(x-1)^2/2', exp: '$f(1)=0, f''(1)=1, f''''(1)=-1$.'}
+    cards:
+      - {f: 'Taylor series of $f$ at $a$', b: '$\sum_n \frac{f^{(n)}(a)}{n!}(x-a)^n$'}
+      - {f: 'Maclaurin series of $e^x$', b: '$\sum x^n/n! = 1+x+x^2/2+x^3/6+\dots$'}
+      - {f: 'Maclaurin series of $\ln(1+x)$', b: '$x-x^2/2+x^3/3-\dots$'}
+    fun:
+      - kind: fact
+        title: "The most beautiful equation"
+        body: |
+          Plug $ix$ into the series for $e^x$, separate real and imaginary parts, and you get
+          $e^{ix}=\cos x+i\sin x$. At $x=\pi$: $e^{i\pi}+1=0$, linking five fundamental
+          constants. Taylor series made it a two-line proof.
+
+  - id: ser-approx
+    title: "Working with Taylor: Error & Numerical Tricks"
+    xp: 80
+    prereqs: [ser-taylor]
+    readings:
+      - {book: STW, sec: "11.11", title: "Applications of Taylor Polynomials"}
+      - {book: OS2, sec: "6.4", title: "Working with Taylor Series"}
+      - {book: MML, sec: "5.8", title: "Linearization and Multivariate Taylor Series (1-D parts)"}
+    summary: |
+      Taylor's remainder bounds the approximation error. Use series to approximate
+      integrals, evaluate limits, and design numerically stable functions.
+    key_ideas:
+      - 'Remainder: error of degree-$n$ polynomial $\approx\frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}$.'
+      - 'Small $x$: $e^x-1\approx x$, $\ln(1+x)\approx x$ -- use `expm1`, `log1p` to keep precision.'
+      - 'Log-sum-exp: $\log\sum e^{x_i}=m+\log\sum e^{x_i-m}$ with $m=\max x_i$.'
+    ds: |
+      Every stable softmax/cross-entropy implementation uses these tricks. Taylor-expanding
+      the loss to second order gives the Hessian-based analysis behind learning-rate
+      warmup and second-order optimizers.
+    lab: |
+      Compute `np.log(1 + 1e-12)` vs `np.log1p(1e-12)`. Then implement softmax naively and
+      with the max-subtraction trick on inputs `[1000, 1001, 1002]`.
+    questions:
+      - {type: num, d: 2, q: 'Approximate $\int_0^{0.1}e^{-x^2}dx$ using $e^{-x^2}\approx1-x^2$ (6 decimals ok).', a: '0.1-0.001/3', tol: 0.00001, exp: '$[x-\frac{x^3}{3}]_0^{0.1}=0.0996667$.'}
+      - {type: num, d: 2, q: '$\lim_{x\to0}\frac{e^x-1-x}{x^2}$ via Taylor.', a: '1/2', exp: 'Numerator $\approx x^2/2$.'}
+      - {type: num, d: 3, q: 'Using log-sum-exp, compute $\log(e^{1000}+e^{1000})$ exactly.', a: '1000+ln(2)', exp: '$1000+\log(1+1)$.'}
+    cards:
+      - {f: 'Why use `log1p(x)`?', b: '$\ln(1+x)$ loses precision for tiny $x$; log1p computes it accurately (~$x$).'}
+      - {f: 'Log-sum-exp trick', b: '$\log\sum e^{x_i}=m+\log\sum e^{x_i-m}$, $m=\max x_i$.'}
+    fun:
+      - kind: puzzle
+        title: "The rule of 72"
+        body: |
+          Money at $r$% doubles in about $72/r$ years. Why? Solve $(1+r)^t=2$:
+          $t=\frac{\ln2}{\ln(1+r)}\approx\frac{0.693}{r}$ using $\ln(1+r)\approx r$. Puzzle: why
+          72 instead of 69?
+        answer: "72 corrects for the next Taylor term at typical rates (~8%) and has many divisors (2,3,4,6,8,9,12) for mental math."

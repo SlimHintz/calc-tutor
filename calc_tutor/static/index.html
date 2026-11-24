@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculus Quest</title>
+<meta name="description" content="A calculus-for-data-science tutor">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script defer src="/static/lessons.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f4ee; --bg-2: #efece3; --surface: #fffdf8; --surface-2: #f4f1e8;
+  --line: #e2ddcf; --line-2: #d3ccba;
+  --ink: #17140f; --ink-2: #57524a; --ink-3: #8a8478;
+  --accent: #b7791f; --accent-ink: #1a1300; --accent-soft: #f6e7c8;
+  --good: #1f8a4c; --good-soft: #def3e5; --bad: #c2412d; --bad-soft: #fbe3dd;
+  --star-dim: #c9c2b0; --sky: #fffdf8;
+  --heat-0: #ebe6d9; --heat-1: #b7d3f6; --heat-2: #6da7ec; --heat-3: #2a78d6; --heat-4: #184f95;
+  --shadow: 0 1px 2px rgba(30,20,0,.06), 0 6px 24px rgba(30,20,0,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #070b18; --bg-2: #0b1124; --surface: #10172e; --surface-2: #151e3a;
+    --line: #222c4d; --line-2: #2e3a63;
+    --ink: #eef1fb; --ink-2: #aab3d1; --ink-3: #6e7899;
+    --accent: #f5b942; --accent-ink: #1a1300; --accent-soft: #3a2f14;
+    --good: #4cd38a; --good-soft: #10301f; --bad: #ff7a66; --bad-soft: #3a1712;
+    --star-dim: #3b4672; --sky: #0a1022;
+    --heat-0: #18213f; --heat-1: #184f95; --heat-2: #2a78d6; --heat-3: #5598e7; --heat-4: #9ec5f4;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #070b18; --bg-2: #0b1124; --surface: #10172e; --surface-2: #151e3a;
+  --line: #222c4d; --line-2: #2e3a63;
+  --ink: #eef1fb; --ink-2: #aab3d1; --ink-3: #6e7899;
+  --accent: #f5b942; --accent-ink: #1a1300; --accent-soft: #3a2f14;
+  --good: #4cd38a; --good-soft: #10301f; --bad: #ff7a66; --bad-soft: #3a1712;
+  --star-dim: #3b4672; --sky: #0a1022;
+  --heat-0: #18213f; --heat-1: #184f95; --heat-2: #2a78d6; --heat-3: #5598e7; --heat-4: #9ec5f4;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 30px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.55 Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased; min-height: 100vh;
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; letter-spacing: -.01em; margin: 0; }
+h1 { font-size: 1.7rem; } h2 { font-size: 1.25rem; } h3 { font-size: 1.02rem; }
+code, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .88em; }
+code { background: var(--surface-2); padding: .08em .35em; border-radius: 5px; }
+button { font: inherit; cursor: pointer; }
+input, textarea, select {
+  font: inherit; color: var(--ink); background: var(--bg-2); border: 1px solid var(--line-2);
+  border-radius: 10px; padding: .65rem .8rem; width: 100%;
+}
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+.topbar {
+  position: sticky; top: 0; z-index: 20; backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid var(--line);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; }
+.brand { font-family: Fraunces, serif; font-weight: 700; font-size: 1.1rem; color: var(--ink); display: flex; gap: 8px; align-items: center; }
+.brand:hover { text-decoration: none; }
+.brand .glyph { color: var(--accent); font-size: 1.3rem; }
+.chips { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line); font-size: .82rem; font-weight: 600; color: var(--ink);
+  white-space: nowrap;
+}
+.chip.muted { color: var(--ink-2); font-weight: 500; }
+nav.tabs {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; display: flex; justify-content: center;
+  background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+nav.tabs a {
+  flex: 1; max-width: 120px; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  color: var(--ink-3); font-size: .7rem; font-weight: 600; padding: 4px 0; border-radius: 10px; position: relative;
+}
+nav.tabs a .ic { font-size: 1.25rem; line-height: 1.2; }
+nav.tabs a.on { color: var(--accent); }
+nav.tabs a:hover { text-decoration: none; color: var(--ink); }
+.badge {
+  position: absolute; top: 0; right: calc(50% - 20px); background: var(--bad); color: #fff;
+  border-radius: 999px; font-size: .62rem; padding: 0 5px; min-width: 16px; text-align: center;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 18px; box-shadow: var(--shadow);
+}
+.stack > * + * { margin-top: 14px; }
+.grid > *, .stats > * { margin-top: 0 !important; }
+.grid { display: grid; gap: 14px; }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 720px) { .g2, .g3 { grid-template-columns: minmax(0, 1fr); } }
+.eyebrow { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); font-weight: 600; }
+.muted { color: var(--ink-2); } .faint { color: var(--ink-3); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink);
+  padding: .6rem 1rem; border-radius: 11px; font-weight: 600; font-size: .92rem; transition: transform .08s;
+}
+.btn:hover { text-decoration: none; border-color: var(--accent); }
+.btn:active { transform: scale(.97); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.good { background: var(--good); border-color: var(--good); color: #fff; }
+.btn.bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+.btn.ghost { background: transparent; }
+.btn.sm { padding: .35rem .7rem; font-size: .82rem; border-radius: 9px; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.hero { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+.ring { position: relative; width: 108px; height: 108px; }
+.ring svg { transform: rotate(-90deg); }
+.ring .lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring .big { font-family: Fraunces, serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+.bar { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--line); }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .6s ease; }
+.stat { display: flex; flex-direction: column; }
+.stat b { font-family: Fraunces, serif; font-size: 1.5rem; line-height: 1.1; }
+.stat span { font-size: .78rem; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+@media (max-width: 520px) { .stats { grid-template-columns: repeat(2, minmax(0,1fr)); } .hero { grid-template-columns: 1fr; justify-items: start; } }
+.list { list-style: none; padding: 0; margin: 0; }
+.list li { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: center; }
+.list li:last-child { border-bottom: 0; }
+.pill { font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2); white-space: nowrap; }
+.pill.new { } .pill.learning { color: var(--accent); border-color: var(--accent); }
+.pill.completed { color: var(--good); border-color: var(--good); }
+.pill.mastered { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pill.opt { border-style: dashed; }
+.fact { border-left: 3px solid var(--accent); }
+.fact .reveal { margin-top: 10px; }
+.toast-host { position: fixed; top: 64px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 60; pointer-events: none; }
+.toast {
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line-2); box-shadow: var(--shadow);
+  padding: 8px 14px; border-radius: 12px; font-weight: 600; font-size: .9rem; animation: pop .25s ease, fade .4s ease 2.6s forwards;
+}
+.toast.xp { border-color: var(--accent); }
+@keyframes pop { from { transform: translateY(-8px) scale(.96); opacity: 0; } }
+@keyframes fade { to { opacity: 0; transform: translateY(-6px); } }
+.modal-bg { position: fixed; inset: 0; background: rgba(5,8,20,.55); z-index: 70; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal { max-width: 520px; width: 100%; max-height: 86vh; overflow: auto; }
+.q-prompt { font-size: 1.08rem; line-height: 1.6; }
+.choices { display: grid; gap: 8px; margin-top: 12px; }
+.choice {
+  text-align: left; border: 1px solid var(--line-2); background: var(--bg-2); color: var(--ink);
+  padding: .7rem .9rem; border-radius: 11px; font-size: .98rem;
+}
+.choice:hover { border-color: var(--accent); }
+.choice.sel { border-color: var(--accent); background: var(--accent-soft); }
+.choice.right { border-color: var(--good); background: var(--good-soft); }
+.choice.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.verdict { margin-top: 14px; padding: 12px 14px; border-radius: 12px; }
+.verdict.ok { background: var(--good-soft); border: 1px solid var(--good); }
+.verdict.no { background: var(--bad-soft); border: 1px solid var(--bad); }
+.verdict.warn { background: var(--surface-2); border: 1px dashed var(--line-2); }
+.progress-dots { display: flex; gap: 5px; }
+.progress-dots i { width: 22px; height: 5px; border-radius: 3px; background: var(--line-2); }
+.progress-dots i.ok { background: var(--good); } .progress-dots i.no { background: var(--bad); } .progress-dots i.cur { background: var(--accent); }
+.flash { animation: flash .5s ease; }
+@keyframes flash { 50% { transform: scale(1.02); } }
+.sky { background: radial-gradient(ellipse at 30% 0%, color-mix(in srgb, var(--accent) 8%, var(--sky)), var(--sky) 60%); border-radius: 16px; border: 1px solid var(--line); overflow: hidden; position: relative; }
+.sky svg { display: block; width: 100%; height: auto; }
+.star { cursor: pointer; transition: r .2s; }
+.star.learning { animation: twinkle 2.2s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: .55; } }
+.tip {
+  position: fixed; z-index: 80; pointer-events: none; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: 10px; padding: 7px 10px; font-size: .82rem; box-shadow: var(--shadow);
+  max-width: 260px; display: none;
+}
+.tip b { display: block; }
+.heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 12px); gap: 2px; overflow-x: auto; padding-bottom: 4px; }
+.heat i { width: 12px; height: 12px; border-radius: 3px; background: var(--heat-0); }
+.legend-ramp { display: flex; gap: 2px; align-items: center; font-size: .72rem; color: var(--ink-3); }
+.legend-ramp i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+table.t { width: 100%; border-collapse: collapse; font-size: .88rem; }
+table.t th, table.t td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+table.t th { color: var(--ink-3); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+table.t td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.meter { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.meter i { display: block; height: 100%; border-radius: 3px; }
+.ach { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.ach .a { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--surface); text-align: center; }
+.ach .a .i { font-size: 1.8rem; }
+.ach .a.locked { opacity: .42; filter: grayscale(1); }
+.ach .a b { display: block; font-size: .88rem; margin-top: 4px; }
+.ach .a span { font-size: .74rem; color: var(--ink-2); }
+.reading { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; }
+.reading .src { font-family: "JetBrains Mono", monospace; font-size: .76rem; padding: 1px 7px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); white-space: nowrap; color: var(--ink-2); }
+ul.ideas { padding-left: 1.1rem; margin: 8px 0 0; } ul.ideas li { margin: 6px 0; }
+.login { max-width: 420px; margin: 12vh auto; }
+.empty { text-align: center; padding: 30px 10px; color: var(--ink-2); }
+.empty .i { font-size: 2.4rem; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--ink-2); padding: .4rem .8rem; font-weight: 600; font-size: .85rem; }
+.seg button.on { background: var(--accent); color: var(--accent-ink); }
+.widget-box { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--bg-2); }
+.wsvg { display: block; width: 100%; max-width: 420px; margin: 0 auto; height: auto; user-select: none; -webkit-user-select: none; }
+.wctl { margin-top: 10px; justify-content: center; }
+.weq { text-align: center; margin-top: 8px; font-size: 1rem; }
+.tile-anim { animation: pop .35s ease; }
+.lesson-card { border-color: var(--heat-3); }
+canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 90; }
+.katex { font-size: 1.05em; }
+.prompt-copy { white-space: pre-wrap; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font-size: .85rem; }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="#/"><span class="glyph">∫</span>Calculus Quest</a>
+  <div class="chips" id="chips"></div>
+</div></header>
+<main class="wrap" id="app"></main>
+<nav class="tabs" id="tabs">
+  <a href="#/" data-r=""><span class="ic">⌂</span>Home</a>
+  <a href="#/map" data-r="map"><span class="ic">✦</span>Star map</a>
+  <a href="#/review" data-r="review"><span class="ic">↻</span>Review<span class="badge" id="dueBadge" hidden></span></a>
+  <a href="#/mistakes" data-r="mistakes"><span class="ic">✎</span>Mistakes</a>
+  <a href="#/trophies" data-r="trophies"><span class="ic">🏆</span>Trophies</a>
+  <a href="#/settings" data-r="settings"><span class="ic">⚙</span>More</a>
+</nav>
+<div class="toast-host" id="toasts"></div>
+<div class="tip" id="tip"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+"use strict";
+// ---------------------------------------------------------------- utilities
+const $ = (s, el = document) => el.querySelector(s);
+const app = $("#app");
+const store = {
+  get(k, d = null) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// escape, then light inline formatting: `code` and **bold** (math stays for KaTeX)
+const rich = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*([^*\s][^*]*?)\*(?=[\s.,;:!?)]|$)/g, "$1<i>$2</i>").replace(/\n\n/g, "<br><br>");
+const pct = x => Math.round((x || 0) * 100) + "%";
+const timeAgo = iso => {
+  const s = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (s < 60) return "just now"; if (s < 3600) return Math.floor(s / 60) + "m ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h ago"; return Math.floor(s / 86400) + "d ago";
+};
+function math(el) {
+  if (window.renderMathInElement) {
+    renderMathInElement(el, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }], throwOnError: false });
+  } else { setTimeout(() => math(el), 150); }
+}
+function render(html) { app.innerHTML = html; math(app); window.scrollTo(0, 0); }
+
+// theme
+const applyTheme = t => { if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; };
+applyTheme(store.get("theme", "auto"));
+
+// ---------------------------------------------------------------- API
+async function api(path, body) {
+  const token = store.get("token");
+  const r = await fetch(path, {
+    method: body === undefined ? "GET" : "POST",
+    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  if (r.status === 401) { store.del("token"); route(); throw new Error("unauthorized"); }
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+// ---------------------------------------------------------------- feedback: toasts, confetti, awards
+function toast(msg, cls = "") {
+  const t = document.createElement("div"); t.className = "toast " + cls; t.innerHTML = msg;
+  $("#toasts").appendChild(t); setTimeout(() => t.remove(), 3200);
+}
+function confetti(n = 120) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = $("#confetti"), ctx = c.getContext("2d");
+  c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio; ctx.scale(devicePixelRatio, devicePixelRatio);
+  const glyphs = ["∫", "∂", "∑", "π", "e", "∇", "dx", "★", "✦", "λ"];
+  const cols = ["#f5b942", "#7aa2ff", "#4cd38a", "#ff8a5c", "#c792ea", "#4fc3f7"];
+  const P = Array.from({ length: n }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 120, y: innerHeight / 3, vx: (Math.random() - .5) * 11, vy: -Math.random() * 11 - 3, r: Math.random() * 6, g: glyphs[Math.floor(Math.random() * glyphs.length)], c: cols[Math.floor(Math.random() * cols.length)], s: 12 + Math.random() * 12 }));
+  let f = 0;
+  (function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .32; p.vx *= .99; ctx.fillStyle = p.c; ctx.font = `600 ${p.s}px Fraunces, serif`; ctx.fillText(p.g, p.x, p.y); });
+    if (++f < 130) requestAnimationFrame(tick); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  })();
+}
+// handle any {award, achievements} payload from the API
+function celebrate(res) {
+  if (!res) return;
+  const a = res.award;
+  if (a && a.xp) toast(`<span style="color:var(--accent)">+${a.xp} XP</span> · ${esc(a.reason)}`, "xp");
+  if (a && a.level_up) { confetti(180); modal(`<div class="eyebrow">Level up!</div><h1 style="margin:.3rem 0">Level ${a.level_up.level}</h1><h2 class="muted" style="font-weight:600">${esc(a.level_up.title)}</h2><p class="muted">Next title at ${a.level_up.next_level_at} XP.</p><button class="btn primary" data-close>Onward ↗</button>`); }
+  (res.achievements || []).forEach((x, i) => setTimeout(() => { toast(`${x.icon} <b>${esc(x.name)}</b> unlocked · +${x.xp} XP`); confetti(80); }, 500 + i * 700));
+  refreshChips();
+}
+function modal(html) {
+  const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="card modal">${html}</div>`;
+  bg.addEventListener("click", e => { if (e.target === bg || e.target.closest("[data-close]")) bg.remove(); });
+  document.body.appendChild(bg); math(bg); return bg;
+}
+const tip = $("#tip");
+function showTip(e, html) { tip.innerHTML = html; tip.style.display = "block"; const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8); tip.style.left = x + "px"; tip.style.top = (e.clientY + 14) + "px"; }
+function hideTip() { tip.style.display = "none"; }
+
+// ---------------------------------------------------------------- chips (top bar)
+let DASH = null;
+async function refreshChips() {
+  try {
+    DASH = await api("/api/dashboard");
+    const d = DASH, c = d.consistency;
+    $("#chips").innerHTML = `
+      <span class="chip" title="This week: study days / target">📅 ${c.week.days}/${c.week.target}</span>
+      <span class="chip" title="Never-miss-twice chain (days)">🔗 ${c.chain}</span>
+      <span class="chip" title="Level">⭐ Lv ${d.level.level}</span>
+      <a class="chip muted" href="#/inbox" title="Notifications">🔔${d.unread_notifications ? " " + d.unread_notifications : ""}</a>`;
+    const b = $("#dueBadge"); b.hidden = !d.due_reviews; b.textContent = d.due_reviews;
+  } catch (e) { /* login screen handles it */ }
+}
+
+// ---------------------------------------------------------------- router
+const routes = {};
+function route() {
+  const token = store.get("token");
+  $("#tabs").style.display = token ? "" : "none";
+  if (!token) return viewLogin();
+  const [path, qs] = location.hash.replace(/^#\/?/, "").split("?");
+  const parts = path.split("/");
+  const params = new URLSearchParams(qs || "");
+  document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.r === parts[0]));
+  hideTip();
+  const fn = routes[parts[0] || ""] || routes[""];
+  fn(parts.slice(1), params).catch(e => render(`<div class="card empty"><div class="i">🛰️</div><p>${esc(e.message)}</p><a class="btn" href="#/">Home</a></div>`));
+}
+addEventListener("hashchange", route);
+
+// ---------------------------------------------------------------- login
+function viewLogin() {
+  $("#chips").innerHTML = "";
+  render(`<div class="card login stack">
+    <div class="eyebrow">Welcome, mathematician</div>
+    <h1>∫ Calculus Quest</h1>
+    <p class="muted">Paste your tutor access token (the <code>CALC_TUTOR_TOKEN</code> on the Pi). It stays on this device.</p>
+    <form id="lf" class="stack" method="post" action="/" autocomplete="on">
+    <input id="usr" name="username" type="text" value="learner" autocomplete="username" aria-label="Username">
+    <input id="tok" name="password" type="password" placeholder="Access token" autocomplete="current-password" required>
+    <button class="btn primary" type="submit" style="width:100%">Enter</button></form><p id="lerr" class="faint"></p></div>`);
+  $("#lf").onsubmit = async e => {
+    e.preventDefault(); store.set("token", $("#tok").value.trim());
+    try {
+      await api("/api/dashboard");
+      // Tell the password manager this was a successful login (Chrome/Edge/Android); Safari and
+      // 1Password offer to save when the login form leaves the page after a successful submit.
+      if (window.PasswordCredential) {
+        try { await navigator.credentials.store(new PasswordCredential({ id: $("#usr").value || "learner", password: $("#tok").value.trim(), name: "Calculus Quest" })); } catch {}
+      }
+      history.pushState(null, "", "/#/"); route(); refreshChips();
+    } catch { $("#lerr").textContent = "That token didn't work."; }
+  };
+}
+
+// ---------------------------------------------------------------- home
+routes[""] = async () => {
+  const d = await api("/api/dashboard"); DASH = d;
+  const L = d.level, c = d.consistency, H = d.learning_health, W = d.wellness, B = d.block;
+  const goalP = Math.min(1, c.week.days / c.week.target);
+  const C = 2 * Math.PI * 46;
+  const f = d.fact_of_the_day;
+  const fmt = (v, kind) => v === null || v === undefined ? "—" : kind === "pct" ? pct(v) : kind === "gap" ? (v > 0 ? "+" : "") + Math.round(v * 100) + " pts" : v;
+  render(`
+  ${!d.diagnostic.taken ? `<section class="card" style="margin-bottom:14px;border-color:var(--accent)">
+    <div class="row"><div style="flex:1;min-width:220px"><div class="eyebrow">🧭 Start here</div><h2 style="margin:.2rem 0">${d.diagnostic.in_progress ? "Finish your placement test" : "Take the placement test"}</h2>
+    <p class="muted" style="margin:0">About 60 questions across 13 algebra-to-trig skills (60–75 min, resumable). It finds exactly where to start and lets you skip what you already know.</p></div>
+    <div class="row"><a class="btn primary" href="#/diagnostic">${d.diagnostic.in_progress ? "Resume" : "Start test"}</a><a class="btn ghost" href="#/guide">How this works</a></div></div></section>` : ""}
+  ${W.recovery_day ? `<section class="card" style="margin-bottom:14px;border-color:var(--good)"><div class="row"><span style="font-size:1.6rem">🛌</span><div style="flex:1"><b>Recovery day: reviews only.</b><div class="muted" style="font-size:.88rem">${esc((W.reasons || []).join(" · "))}. Sleep and hard efforts hurt encoding; save new topics for a rested day.</div></div><a class="btn sm" href="#/review">Do reviews</a></div></section>` : ""}
+  ${d.backlog ? `<section class="card" style="margin-bottom:14px;border-color:var(--bad)"><div class="row"><span style="font-size:1.6rem">📥</span><div style="flex:1"><b>Review backlog (${d.due_reviews} due).</b><div class="muted" style="font-size:.88rem">Clear reviews before starting anything new. Old material first.</div></div><a class="btn primary sm" href="#/review">Clear reviews</a></div></section>` : ""}
+  <section class="card hero">
+    <div class="ring" title="This week's target">
+      <svg width="108" height="108"><circle cx="54" cy="54" r="46" fill="none" stroke="var(--surface-2)" stroke-width="9"/>
+      <circle cx="54" cy="54" r="46" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - goalP)}" style="transition:stroke-dashoffset .8s"/></svg>
+      <div class="lbl"><span class="big">${c.week.days}<span class="faint" style="font-size:1rem">/${c.week.target}</span></span><span class="faint" style="font-size:.68rem">days this week</span></div>
+    </div>
+    <div style="min-width:0;width:100%">
+      <div class="eyebrow">Level ${L.level}</div>
+      <h1>${esc(L.title)}</h1>
+      <div class="bar" style="margin:10px 0 4px"><i style="width:${L.progress * 100}%"></i></div>
+      <div class="row faint" style="font-size:.8rem"><span>${L.xp} XP</span><span class="spacer"></span><span>${L.next_level_at - L.xp} XP to level ${L.level + 1}</span></div>
+      <div class="row" style="margin-top:8px">${c.studied_today ? `<span class="chip">✓ studied today</span>` : c.protected_today ? `<span class="chip muted">🛡️ protected day</span>` : c.missed_yesterday ? `<span class="chip" style="border-color:var(--accent)">🔗 never miss twice: 10 minutes today keeps the chain</span>` : ""}
+        <button class="btn ghost sm" id="share">Share this week</button>${!c.studied_today && !c.protected_today ? `<button class="btn ghost sm" id="rest">Rest day 🛡️</button>` : ""}</div>
+    </div>
+  </section>
+  <section class="stats" style="margin-top:14px">
+    <div class="card stat"><b>🔗 ${c.chain}</b><span>never-miss-twice chain · best ${c.best_chain}</span></div>
+    <div class="card stat"><b>${c.lifetime_days}</b><span>study days, all time</span></div>
+    <div class="card stat"><b>⭐ ${d.topics_mastered}<span class="faint" style="font-size:1rem">/${d.topics_total}</span></b><span>mastered (${d.topics_completed} completed)</span></div>
+    <div class="card stat"><b>${fmt(H.unaided_delayed_accuracy.value, "pct")}</b><span>unaided recall, 30 days (n=${H.unaided_delayed_accuracy.n})</span></div>
+  </section>
+  <section class="grid g2" style="margin-top:14px">
+    <div class="card stack">
+      <div class="eyebrow">Today's session</div>
+      <ol style="margin:0;padding-left:1.1rem;line-height:1.8">
+        <li>${d.due_reviews ? `<a href="#/review">${d.due_reviews} reviews due</a>` : "Reviews: all caught up ✓"}${d.new_cards_ready ? ` <span class="faint">+${d.new_cards_ready} new cards</span>` : ""}</li>
+        <li><a href="#/quiz?mode=mixed">Mixed quiz</a> <span class="faint">(5 min, look-alike problems)</span></li>
+        <li>${W.recovery_day || d.backlog ? `<span class="faint">New topic: not today</span>` : "One new topic:"}</li>
+      </ol>
+      ${W.recovery_day || d.backlog ? "" : d.courses.map(co => `<div style="border-left:3px solid ${co.color};padding-left:12px">
+        <div class="row"><span class="faint" style="font-size:.78rem;font-weight:600">${esc(co.title)}</span><span class="spacer"></span><span class="faint" style="font-size:.75rem">${co.completed}/${co.topics}</span></div>
+        ${co.next_topic.id ? `<h3 style="margin:.15rem 0 .5rem">${esc(co.next_topic.title)}</h3><div class="row"><a class="btn primary sm" href="#/topic/${co.next_topic.id}">Open lesson</a></div>` : `<h3>${esc(co.next_topic.title)}</h3>`}</div>`).join("")}
+    </div>
+    <div class="stack">
+      <div class="card stack"><div class="row"><div class="eyebrow" style="flex:1">Learning health</div><span class="faint" style="font-size:.75rem">30 days</span></div>
+        <div class="grid g3" style="gap:8px">
+          <div class="stat"><b>${fmt(H.unaided_delayed_accuracy.value, "pct")}</b><span>unaided, delayed accuracy</span></div>
+          <div class="stat"><b>${fmt(H.hints_per_problem.value)}</b><span>hints per problem</span></div>
+          <div class="stat"><b>${fmt(H.calibration_gap.value, "gap")}</b><span>overconfidence</span></div>
+        </div>
+        <p class="faint" style="margin:0;font-size:.78rem">These three numbers, not XP, say whether learning is working: recall without help, less dependence on hints, confidence that matches accuracy.</p></div>
+      <div class="card stack"><div class="row"><div class="eyebrow" style="flex:1">🏁 Training block ${B.number}</div><span class="faint" style="font-size:.78rem">week ${B.week}/${B.weeks}</span></div>
+        <div class="bar"><i style="width:${Math.min(100, 100 * B.day / (B.weeks * 7))}%"></i></div>
+        ${B.test_ready ? `<a class="btn primary sm" href="#/quiz?mode=block">Take the block test</a>` : `<span class="faint" style="font-size:.8rem">A cumulative test, like a tune-up race, closes each 6-week block.</span>`}
+        ${B.history.length ? `<span class="faint" style="font-size:.78rem">Past blocks: ${B.history.map(h => `#${h.number} ${Math.round(h.score)}%`).join(" · ")}</span>` : ""}</div>
+    </div>
+  </section>
+  ${f ? `<section class="card fact" style="margin-top:14px">
+    <div class="eyebrow">${f.kind === "puzzle" ? "🧩 Puzzle of the day" : "✨ Fact of the day"}</div>
+    <h3 style="margin:.3rem 0">${esc(f.title)}</h3><div class="muted">${rich(f.body)}</div>
+    ${f.answer ? `<details class="reveal"><summary class="faint">Reveal answer</summary><p>${rich(f.answer)}</p></details>` : ""}
+  </section>` : ""}
+  <section class="card" style="margin-top:14px">
+    <div class="row"><h3>Activity</h3><span class="spacer"></span>
+      <span class="legend-ramp">less <i style="background:var(--heat-0)"></i><i style="background:var(--heat-1)"></i><i style="background:var(--heat-2)"></i><i style="background:var(--heat-3)"></i><i style="background:var(--heat-4)"></i> more · <i style="background:transparent;outline:2px dashed var(--good);outline-offset:-2px"></i> protected</span></div>
+    <div class="heat" id="heat" style="margin-top:10px" aria-label="XP per day, last 13 weeks"></div>
+  </section>
+  <section class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Recent XP</h3><ul class="list" style="margin-top:6px">${d.recent_xp.length ? d.recent_xp.map(x => `<li><b style="color:var(--accent);min-width:48px">+${x.amount}</b><span class="muted" style="flex:1">${esc(x.reason)}</span><span class="faint" style="font-size:.78rem">${timeAgo(x.ts)}</span></li>`).join("") : `<li class="faint">Your first XP is one click away.</li>`}</ul></div>
+    <div class="card stack"><h3>Last tutoring session</h3>${d.last_session ? `<p class="muted" style="margin:0">${rich(d.last_session.summary)}</p>${d.last_session.next_steps ? `<p style="margin:0"><b>Next:</b> ${rich(d.last_session.next_steps)}</p>` : ""}<span class="faint" style="font-size:.78rem">${timeAgo(d.last_session.ts)}</span>` : `<p class="muted" style="margin:0">No tutoring sessions yet. In your MCP client (with the Calculus Tutor connector) say <i>"Let's start my lesson."</i></p>`}</div>
+  </section>`);
+  heatmap($("#heat"), d.xp_by_day, d.study_days);
+  $("#share").onclick = async () => { const s = await api("/api/weekly_summary"); try { await navigator.clipboard.writeText(s.text); toast("Copied: paste it to your accountability buddy 📣"); } catch { modal(`<p>${esc(s.text)}</p><button class="btn" data-close>Close</button>`); } };
+  const rest = $("#rest"); if (rest) rest.onclick = async () => { await api("/api/protect", { reason: "rest day" }); toast("🛡️ Today is protected: your chain is safe."); route(); };
+  refreshChips();
+};
+
+function heatmap(el, rows, days) {
+  const by = Object.fromEntries(rows.map(r => [r.day, r.xp]));
+  const prot = Object.fromEntries((days || []).filter(x => x.protected).map(x => [x.day, x.reason || "protected"]));
+  const today = new Date(); const start = new Date(today); start.setDate(start.getDate() - 7 * 13 + 1 - start.getDay());
+  const cells = []; const max = Math.max(60, ...rows.map(r => r.xp));
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    const key = d.toLocaleDateString("en-CA"); const xp = by[key] || 0;
+    const lvl = xp === 0 ? 0 : Math.min(4, 1 + Math.floor(3.999 * xp / max));
+    const p = prot[key];
+    cells.push(`<i data-d="${key}" data-x="${xp}" data-p="${esc(p || "")}" style="background:var(--heat-${lvl});${p ? "outline:2px dashed var(--good);outline-offset:-2px" : ""}"></i>`);
+  }
+  el.innerHTML = cells.join("");
+  el.onmousemove = e => { const t = e.target.closest("i"); if (!t) return hideTip(); showTip(e, `<b>${t.dataset.x} XP</b>${new Date(t.dataset.d + "T12:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}${t.dataset.p ? `<br>🛡️ ${t.dataset.p}` : ""}`); };
+  el.onmouseleave = hideTip;
+}
+
+// ---------------------------------------------------------------- star map
+let CURR = null;
+async function curriculum(force) { if (!CURR || force) CURR = await api("/api/curriculum"); return CURR; }
+
+routes.map = async () => {
+  const all = await curriculum(true);
+  let course = store.get("course", all.courses[0].id);
+  if (!all.courses.some(c => c.id === course)) course = all.courses[0].id;
+  const cinfo = all.courses.find(c => c.id === course);
+  const units = all.units.filter(u => u.course === course);
+  const total = units.reduce((s, u) => s + u.topics.length, 0);
+  const done = units.reduce((s, u) => s + u.completed, 0);
+  render(`<div class="row" style="margin-bottom:6px"><div><div class="eyebrow">Your sky</div><h1>Star map</h1></div><span class="spacer"></span><span class="chip muted">✦ ${done}/${total} stars lit</span></div>
+    <div class="row" style="margin-bottom:12px"><div class="seg" id="ctabs">${all.courses.map(c => `<button data-c="${c.id}" class="${c.id === course ? "on" : ""}">${esc(c.title)}</button>`).join("")}</div>
+      <span class="faint" style="font-size:.85rem">${esc(cinfo.subtitle)}</span></div>
+    <div class="sky" id="sky"></div>
+    <div class="row faint" style="font-size:.8rem;margin-top:10px;gap:16px">
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="3.5" fill="none" stroke="var(--star-dim)" stroke-width="1.5"/></svg> not started</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="var(--ink-2)"/></svg> learning (twinkles)</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="var(--good)"/></svg> completed (provisional)</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5.5" fill="var(--accent)"/></svg> mastered (proven)</span>
+      <span>star size = mastery</span></div>
+    <div class="grid g3" style="margin-top:14px">${units.map(u => `<a class="card" href="#/unit/${u.id}" style="color:var(--ink)">
+      <div class="eyebrow" style="color:${u.color}">${esc(u.constellation)}</div><h3 style="margin:.2rem 0 .6rem">${esc(u.title)}</h3>
+      <div class="bar"><i style="width:${u.mastery * 100}%;background:${u.color}"></i></div>
+      <div class="row faint" style="font-size:.78rem;margin-top:4px"><span>${u.completed}/${u.topics.length} topics</span><span class="spacer"></span><span>${pct(u.mastery)} mastery</span></div></a>`).join("")}</div>`);
+  drawSky($("#sky"), units);
+  $("#ctabs").onclick = e => { const c = e.target.dataset.c; if (c) { store.set("course", c); route(); } };
+};
+
+function hashRand(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; }; }
+
+function drawSky(el, units) {
+  const W = el.clientWidth || 900; const cols = W < 640 ? 2 : 3;
+  const VW = 1000, cellW = VW / cols, cellH = cols === 2 ? 380 : 360;
+  const rowsN = Math.ceil(units.length / cols), VH = rowsN * cellH + 40;
+  const rnd = hashRand("sky");
+  let bg = ""; for (let i = 0; i < 160; i++) bg += `<circle cx="${rnd() * VW}" cy="${rnd() * VH}" r="${rnd() * 1.4 + .3}" fill="var(--star-dim)" opacity="${.25 + rnd() * .5}"/>`;
+  const centers = units.map((u, i) => { const r = Math.floor(i / cols); let c = i % cols; if (r % 2) c = cols - 1 - c; return { x: cellW * (c + .5), y: 40 + cellH * (r + .5) }; });
+  const path = "";
+  let g = "";
+  units.forEach((u, i) => {
+    const c = centers[i], n = u.topics.length, R = Math.min(cellW, cellH) * .3, r2 = hashRand(u.id);
+    const pos = {};
+    const span = cellW * .74, ph = r2() * 6;
+    u.topics.forEach((t, k) => { const f = n > 1 ? k / (n - 1) : .5; pos[t.id] = { x: c.x - span / 2 + span * f + (r2() - .5) * 14, y: c.y + Math.sin(f * Math.PI * 1.6 + ph) * R * .55 + (r2() - .5) * R * .5 }; });
+    let lines = "";
+    u.topics.forEach(t => t.prereqs.forEach(p => { if (pos[p]) { const lit = t.status !== "new" && (u.topics.find(x => x.id === p) || {}).status !== "new"; lines += `<line x1="${pos[p].x}" y1="${pos[p].y}" x2="${pos[t.id].x}" y2="${pos[t.id].y}" stroke="${lit ? u.color : "var(--line-2)"}" stroke-width="${lit ? 2 : 1.2}" opacity="${lit ? .8 : .7}"/>`; } }));
+    let stars = "";
+    u.topics.forEach(t => {
+      const p = pos[t.id], m = t.mastery || 0, st = t.status;
+      const r = st === "new" ? 5 : 6 + m * 9;
+      const fill = st === "mastered" ? "var(--accent)" : st === "completed" ? "var(--good)" : st === "learning" ? "var(--ink-2)" : "none";
+      const glow = st === "mastered" ? `<circle cx="${p.x}" cy="${p.y}" r="${r + 9}" fill="var(--accent)" opacity=".18"/>` : "";
+      stars += `${glow}<circle class="star ${st}" data-t="${t.id}" cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${st === "new" ? "var(--star-dim)" : "var(--sky)"}" stroke-width="2"/>
+        <circle data-t="${t.id}" cx="${p.x}" cy="${p.y}" r="${Math.max(r, 14)}" fill="transparent" style="cursor:pointer"/>`;
+    });
+    g += `<g>${lines}${stars}
+      <text x="${c.x}" y="${c.y + R * 1.18 + 26}" text-anchor="middle" font-family="Fraunces, serif" font-weight="700" font-size="${cols === 2 ? 30 : 22}" fill="var(--ink)">${esc(u.constellation)}</text>
+      <text x="${c.x}" y="${c.y + R * 1.18 + (cols === 2 ? 58 : 48)}" text-anchor="middle" font-size="${cols === 2 ? 21 : 15}" fill="var(--ink-3)">${esc(u.title.length > 34 ? u.title.slice(0, 32) + "…" : u.title)} · ${pct(u.mastery)}</text></g>`;
+  });
+  el.innerHTML = `<svg viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Star map of topics by unit">${bg}${path}${g}</svg>`;
+  const byId = {}; units.forEach(u => u.topics.forEach(t => byId[t.id] = { ...t, unit: u }));
+  el.onmousemove = e => { const id = e.target.dataset && e.target.dataset.t; if (!id) return hideTip(); const t = byId[id]; showTip(e, `<b>${esc(t.title)}</b>${esc(t.unit.constellation)} · ${t.status}${t.optional ? " · optional" : ""}<br>Mastery ${pct(t.mastery)}`); };
+  el.onmouseleave = hideTip;
+  el.onclick = e => { const id = e.target.dataset && e.target.dataset.t; if (id) location.hash = "#/topic/" + id; };
+}
+
+// ---------------------------------------------------------------- unit (radar)
+routes.unit = async ([id]) => {
+  const { units, books } = await curriculum(true);
+  const u = units.find(x => x.id === id); if (!u) throw new Error("Unknown unit");
+  render(`<a class="faint" href="#/map">← Star map</a>
+    <div class="row" style="margin:6px 0 14px"><div><div class="eyebrow" style="color:${u.color}">${esc(u.constellation)}</div><h1>${esc(u.title)}</h1></div></div>
+    <div class="grid g2">
+      <div class="card"><h3>Mastery by topic</h3><div id="radar" style="margin-top:6px"></div></div>
+      <div class="card stack"><div class="muted">${rich(u.blurb)}</div><div><div class="eyebrow">Why it matters for data science</div><p style="margin:.3rem 0 0">${rich(u.ds_why)}</p></div>
+        <div class="row"><a class="btn primary" href="#/quiz?mode=mixed">Mixed quiz</a></div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>Topics</h3>
+      <table class="t" style="margin-top:6px"><thead><tr><th>Topic</th><th>Read</th><th>Status</th><th class="num">Mastery</th></tr></thead><tbody>
+      ${u.topics.map(t => `<tr><td><a href="#/topic/${t.id}">${esc(t.title)}</a>${t.optional ? ` <span class="pill opt">optional</span>` : ""}</td>
+        <td class="faint mono" style="font-size:.75rem">${t.readings.slice(0, 2).map(r => esc(r.book + " " + r.sec)).join(", ")}</td>
+        <td><span class="pill ${t.status}">${t.status}</span></td>
+        <td class="num"><div class="row" style="justify-content:flex-end;gap:8px;flex-wrap:nowrap"><div class="meter" style="width:70px"><i style="width:${t.mastery * 100}%;background:${u.color}"></i></div>${pct(t.mastery)}</div></td></tr>`).join("")}
+      </tbody></table></div>`);
+  radar($("#radar"), u);
+};
+
+function radar(el, u) {
+  const n = u.topics.length, S = 420, cx = S / 2, cy = S / 2, R = 118;
+  const pt = (i, r) => { const a = -Math.PI / 2 + 2 * Math.PI * i / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
+  let grid = "";
+  [.25, .5, .75, 1].forEach(l => { grid += `<polygon points="${u.topics.map((_, i) => pt(i, R * l).join(",")).join(" ")}" fill="none" stroke="var(--line)" stroke-width="1"/>`; });
+  u.topics.forEach((_, i) => { const [x, y] = pt(i, R); grid += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`; });
+  const poly = u.topics.map((t, i) => pt(i, R * Math.max(.02, t.mastery)).join(",")).join(" ");
+  let labels = "", dots = "";
+  u.topics.forEach((t, i) => {
+    const [x, y] = pt(i, R + 22); const anchor = Math.abs(x - cx) < 8 ? "middle" : x > cx ? "start" : "end";
+    const words = t.title.replace(/[:&]/g, "").split(" "); let l1 = "", l2 = "";
+    for (const w of words) { if ((l1 + " " + w).trim().length <= 16 && !l2) l1 = (l1 + " " + w).trim(); else l2 = (l2 + " " + w).trim(); }
+    if (l2.length > 16) l2 = l2.slice(0, 15) + "…";
+    labels += `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="13" fill="var(--ink-2)"><tspan x="${x}" dy="${l2 ? -2 : 4}">${esc(l1)}</tspan>${l2 ? `<tspan x="${x}" dy="14">${esc(l2)}</tspan>` : ""}</text>`;
+    const [dx, dy] = pt(i, R * Math.max(.02, t.mastery));
+    dots += `<circle cx="${dx}" cy="${dy}" r="5" fill="${u.color}" stroke="var(--surface)" stroke-width="2"/><circle data-i="${i}" cx="${dx}" cy="${dy}" r="16" fill="transparent" style="cursor:pointer"/>`;
+  });
+  el.innerHTML = `<svg viewBox="-70 -10 ${S + 140} ${S + 20}" style="width:100%;max-width:520px;display:block;margin:auto" role="img" aria-label="Radar chart of topic mastery">
+    ${grid}
+    <polygon points="${poly}" fill="${u.color}" fill-opacity=".22" stroke="${u.color}" stroke-width="2" stroke-linejoin="round"/>${dots}${labels}</svg>`;
+  el.onmousemove = e => { const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return hideTip(); const t = u.topics[i]; showTip(e, `<b>${esc(t.title)}</b>Mastery ${pct(t.mastery)} · ${t.status}`); };
+  el.onmouseleave = hideTip;
+  el.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) location.hash = "#/topic/" + u.topics[i].id; };
+}
+
+// ---------------------------------------------------------------- topic (lesson)
+routes.topic = async ([id]) => {
+  const [t, { books }] = await Promise.all([api("/api/topic/" + id), curriculum()]);
+  const book = k => books[k] || { title: k, url: "#" };
+  const st = t.status, ev = t.mastery_evidence;
+  const assistantPrompt = `Let's work on "${t.title}" (topic ${t.id}). Check my dashboard, start with attempt-first problems, then teach me Socratically.`;
+  const check = (ok, label) => `<li style="list-style:none;margin-left:-1.1rem">${ok ? "✅" : "⬜"} ${label}</li>`;
+  render(`<a class="faint" href="#/unit/${t.unit.id}">← ${esc(t.unit.constellation)}</a>
+  <div class="row" style="margin:6px 0 14px;align-items:flex-start">
+    <div style="flex:1;min-width:220px"><div class="eyebrow" style="color:${t.unit.color}">${esc(t.unit.title)}</div><h1>${esc(t.title)}</h1>
+    <div class="row" style="margin-top:6px"><span class="pill ${st}">${st === "completed" ? "completed · provisional" : st}</span>${t.optional ? `<span class="pill opt">optional</span>` : ""}<span class="chip muted">✦ ${t.xp} XP</span><span class="chip muted">Mastery ${pct(t.mastery)}</span></div></div>
+    <div class="row">${st === "new" ? `<button class="btn primary" id="startBtn">Start lesson</button>` : ""}
+      ${st === "learning" ? `<button class="btn primary" id="doneBtn">Mark lesson complete ✓</button>` : ""}
+      <a class="btn" href="#/quiz?topic=${t.id}">Practice quiz</a></div>
+  </div>
+  ${st === "new" || st === "learning" ? `<div class="card" style="margin-bottom:14px;border-color:var(--accent)"><div class="row"><span style="font-size:1.4rem">🧪</span><div style="flex:1"><b>Attempt first.</b> <span class="muted">Try 1–2 problems <i>before</i> reading. Getting them wrong is expected and makes the lesson stick (productive failure).</span></div><a class="btn sm" href="#/quiz?topic=${t.id}&mode=pretest">Warm-up problems</a></div></div>` : ""}
+  ${(t.lessons || []).map(l => `<div class="card lesson-card" style="margin-bottom:14px"><div class="row"><span style="font-size:1.4rem">▶️</span><div style="flex:1"><b>Interactive lesson: ${esc(l.title)}</b> <span class="faint">· ${l.minutes} min${l.runs ? " · done ✓" : ""}</span><div class="muted" style="font-size:.88rem">${esc(l.blurb)}</div></div><a class="btn sm primary" href="#/lesson/${l.id}">${l.runs ? "Play again" : "Play"}</a></div></div>`).join("")}
+  <div class="grid g2">
+    <div class="card stack">
+      <div><div class="eyebrow">The big idea</div><p style="margin:.3rem 0 0">${rich(t.summary)}</p></div>
+      <div><div class="eyebrow">Key ideas</div><ul class="ideas">${t.key_ideas.map(k => `<li>${rich(k)}</li>`).join("")}</ul></div>
+    </div>
+    <div class="stack">
+      <div class="card"><div class="eyebrow">Read & watch</div>
+        ${t.readings.map(r => { const b = book(r.book); return `<div class="reading"><span class="src" title="${esc(b.title)}">${esc(r.book)} ${esc(r.sec)}</span>${b.url ? `<a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : `<span>${esc(r.title)} <span class="faint" style="font-size:.78rem">· 📚 your copy of ${esc(b.title)}</span></span>`}</div>`; }).join("")}
+        ${(t.videos || []).map(v => `<div class="reading"><span class="src">▶ ${esc(v.book)}${v.n ? " #" + v.n : ""}</span><a href="${esc(book(v.book).url)}" target="_blank" rel="noopener">${esc(v.title)}</a></div>`).join("")}
+        <p class="faint" style="font-size:.78rem;margin:.5rem 0 0">${t.unit.course === "neuro" ? "Tip: close the book after each section and write the main idea from memory." : "Tip: work 5 odd-numbered section exercises (answers in Stewart Appendix I / OpenStax)."}</p></div>
+      <div class="card"><div class="eyebrow">${t.unit.course === "neuro" ? "🧠 Apply it / bridges" : "📊 Data-science connection"}</div><p style="margin:.3rem 0 0">${rich(t.ds)}</p></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px"><div class="eyebrow">🧪 Lab</div><p style="margin:.3rem 0 0">${rich(t.lab)}</p></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card stack"><div class="eyebrow">⭐ Path to mastery</div>
+      <ul style="margin:0;padding-left:1.1rem;line-height:1.8">
+        ${check(ev.completed, "Lesson completed")}
+        ${check(ev.mastery_score.ok, `Mastery score ≥ ${pct(ev.mastery_score.need)} (now ${pct(ev.mastery_score.value)})`)}
+        ${check(ev.unaided_distinct_correct.ok, `3 different problems right with no hints (${ev.unaided_distinct_correct.value}/3)`)}
+        ${check(ev.delayed_or_interleaved_success, "One of them ≥3 days later, or in a mixed/review quiz")}
+      </ul><p class="faint" style="margin:0;font-size:.78rem">Mastery is earned from unaided, delayed evidence, and fades if you stop reviewing.</p></div>
+    <div class="card stack"><div class="eyebrow">Your record</div>
+      <p style="margin:0">${t.stats.attempts} attempts · ${t.stats.unaided_correct} unaided correct · ${t.hints_used} hints${t.grades.length ? ` · last grade <b>${Math.round(t.grades[0].score)}%</b>` : ""}</p>
+      ${t.mistakes.length ? `<ul class="list">${t.mistakes.slice(0, 4).map(m => `<li><span>${m.resolved ? "✅" : m.confident ? "🚩" : "⚠️"}</span><span class="muted" style="flex:1">${rich(m.what)}</span></li>`).join("")}</ul>` : `<p class="faint" style="margin:0">No mistakes logged yet.</p>`}
+      <div class="prompt-copy" id="cp" style="margin-top:6px">${esc(assistantPrompt)}</div><button class="btn sm" id="copyBtn">Copy prompt for your assistant</button></div>
+  </div>
+  ${t.facts.length ? t.facts.map(f => `<div class="card fact" style="margin-top:14px"><div class="eyebrow">${f.kind === "puzzle" ? "🧩 Unlocked puzzle" : "✨ Unlocked fact"}</div><h3 style="margin:.3rem 0">${esc(f.title)}</h3><div class="muted">${rich(f.body)}</div>${f.answer ? `<details class="reveal"><summary class="faint">Reveal answer</summary><p>${rich(f.answer)}</p></details>` : ""}</div>`).join("") : `<div class="card faint" style="margin-top:14px">🔒 Complete this lesson to unlock a fun fact or puzzle.</div>`}`);
+  $("#copyBtn").onclick = async () => { try { await navigator.clipboard.writeText(assistantPrompt); toast("Copied. Paste it into your assistant."); } catch { toast("Select the text to copy it."); } };
+  const s = $("#startBtn"); if (s) s.onclick = async () => { celebrate(await api(`/api/topic/${id}/start`, {})); route(); };
+  const dn = $("#doneBtn"); if (dn) dn.onclick = async () => {
+    const r = await api(`/api/topic/${id}/complete`, {}); celebrate(r); confetti(120);
+    const f = (r.unlocked_facts || [])[0];
+    modal(`<div class="eyebrow">Lesson complete (provisional) · +${r.award ? r.award.xp : 0} XP</div><h2 style="margin:.3rem 0 .8rem">You just learned ${esc(t.title)}! 🎉</h2>
+      ${f ? `<div class="card fact"><div class="eyebrow">${f.kind === "puzzle" ? "🧩 Puzzle unlocked" : "✨ Fun fact unlocked"}</div><h3 style="margin:.3rem 0">${esc(f.title)}</h3><div class="muted">${rich(f.body)}</div>${f.answer ? `<details class="reveal"><summary class="faint">Reveal answer</summary><p>${rich(f.answer)}</p></details>` : ""}</div>` : ""}
+      <p class="muted">${esc(r.to_master)} The rest of the XP comes with mastery.</p>
+      <div class="row">${r.next_topic && r.next_topic.id ? `<a class="btn primary" href="#/topic/${r.next_topic.id}" data-close>Next: ${esc(r.next_topic.title)}</a>` : ""}<button class="btn" data-close>Close</button></div>`);
+    curriculum(true); route();
+  };
+};
+
+// ---------------------------------------------------------------- question widget
+// One question. opts: {card_id, notification_id, channel, hideTopic, diagnostic, onDone(result)}
+// Guardrails: wrong answers don't reveal the solution; you can retry, climb the hint ladder,
+// or reveal the solution (then self-explain and try a follow-up problem).
+function questionWidget(host, q, opts = {}) {
+  const ph = q.type === "num" ? "e.g. 3/4, pi/2, e^2, 0.25" : q.type === "antideriv" ? "e.g. x^3/3 + C (the C is optional)" : `in terms of ${q.var || "x"}: e.g. 3x^2 + 2, sqrt(x), e^(2x), ln(x)`;
+  const channel = opts.channel || "ui";
+  let confidence = null, busy = false, tries = 0;
+  host.innerHTML = `<div class="eyebrow">${opts.hideTopic ? "Which method applies? You decide." : esc(q.topic_title || "")} · ${"★".repeat(q.difficulty || 1)}${q.verified === 0 ? ` · <span title="written by the assistant, not machine-verified">⚠ unverified</span>` : ""}</div>
+    <div class="q-prompt" style="margin-top:6px">${rich(q.prompt)}</div>
+    <div id="qin" style="margin-top:12px">${q.type === "mc" ? `<div class="choices">${q.choices.map((c, i) => `<button class="choice" data-i="${i}">${rich(c)}</button>`).join("")}</div>`
+      : q.type === "free" ? `<textarea id="ans" rows="4" placeholder="Explain in your own words, then compare with the model answer"></textarea>`
+      : `<input id="ans" placeholder="${esc(ph)}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text">`}</div>
+    ${opts.diagnostic || q.type === "free" ? "" : `<div class="row" style="margin-top:10px"><span class="faint" style="font-size:.8rem">Before checking, how sure are you?</span><div class="seg" id="conf"><button data-c="1">Sure</button><button data-c="0">Unsure</button></div></div>`}
+    <div class="row" style="margin-top:12px" id="qbtns">${q.type !== "mc" ? `<button class="btn primary" id="sub">Check</button>` : ""}${opts.diagnostic ? `<button class="btn ghost" id="idk">I don't know</button>` : ""}</div>
+    <div id="qout"></div>`;
+  math(host);
+  const out = () => $("#qout", host);
+  const conf = $("#conf", host);
+  if (conf) conf.onclick = e => { const b = e.target.closest("button"); if (!b) return; confidence = +b.dataset.c; conf.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); };
+  const lock = () => { host.querySelectorAll(".choice").forEach(b => b.disabled = true); const i = $("#ans", host); if (i) i.disabled = true; $("#qbtns", host).innerHTML = ""; };
+  const finish = (r) => {
+    lock();
+    out().innerHTML += `<div class="row" style="margin-top:12px"><button class="btn primary" id="nextq">Continue →</button></div>`;
+    $("#nextq", host).onclick = () => opts.onDone && opts.onDone(r); $("#nextq", host).focus();
+  };
+  const solved = (r, extra = "") => {
+    if (q.type === "mc") host.querySelectorAll(".choice").forEach(b => { if (r.answer === q.choices[+b.dataset.i]) b.classList.add("right"); });
+    out().innerHTML = `<div class="verdict ${r.correct ? "ok" : "no"} flash"><b>${r.correct ? pick(["Nailed it!", "Correct!", "Beautiful.", "Yes! ✨", "Spot on."]) + (r.first_try === false ? " (on retry)" : "") : r.dont_know ? "Noted. That's useful to know." : "Here's the solution."}</b>
+      ${r.answer !== undefined && (q.type !== "mc" || !r.correct) ? `<div style="margin-top:6px">Answer: ${rich(r.answer)}</div>` : ""}
+      ${r.explanation ? `<div class="muted" style="margin-top:6px">${rich(r.explanation)}</div>` : ""}${extra}</div>`;
+    math(host); finish(r);
+  };
+  const hintBox = () => $("#hints", host) || (out().insertAdjacentHTML("beforeend", `<div id="hints" class="stack" style="margin-top:10px"></div>`), $("#hints", host));
+  const revealFlow = async () => {
+    const h = await api("/api/hint", { question_id: q.id, level: 4 });
+    const follow = h.followup_question;
+    solved({ correct: false, answer: h.answer, explanation: h.solution }, `
+      <div class="stack" style="margin-top:10px"><label class="faint" style="font-size:.85rem">✍️ In one sentence: why does this solution work? (self-explaining is what turns a reveal into learning)</label>
+      <textarea id="selfx" rows="2"></textarea><div class="row"><button class="btn sm" id="saveSelfx">Save</button>
+      ${follow ? `<a class="btn sm ghost" href="#/q/${follow.id}">Try a similar problem →</a>` : ""}</div></div>`);
+    $("#saveSelfx", host).onclick = async () => { const t = $("#selfx", host).value.trim(); if (!t) return; celebrate(await api("/api/self_explain", { question_id: q.id, text: t })); $("#saveSelfx", host).outerHTML = `<span class="faint">Saved ✓</span>`; };
+    if (!opts.diagnostic) out().insertAdjacentHTML("beforeend", `<details style="margin-top:8px"><summary class="faint">Log this as a mistake (+5 XP for naming the misconception)</summary>
+      <div class="stack" style="margin-top:8px"><input id="mw" placeholder="What went wrong?"><input id="mm" placeholder="What did I believe that isn't true?"><label class="row faint" style="font-size:.85rem"><input type="checkbox" id="mc" style="width:auto" ${confidence === 1 ? "checked" : ""}> I was confident (gets priority in reviews)</label><button class="btn sm" id="ml">Save to mistake journal</button></div></details>`);
+    const ml = $("#ml", host); if (ml) ml.onclick = async () => { celebrate(await api("/api/mistake", { topic_id: q.topic_id, question_id: q.id, what: $("#mw", host).value || `Missed: ${q.prompt.slice(0, 80)}`, misconception: $("#mm", host).value, confident: $("#mc", host).checked })); ml.closest("details").outerHTML = `<div class="faint" style="margin-top:6px">Saved: it'll come back as a "spot the trap" card ✓</div>`; };
+  };
+  const notYet = (r) => {
+    tries++;
+    out().innerHTML = `<div class="verdict no flash"><b>Not yet.</b> ${r.confident_miss ? `<span class="faint">(a confident miss: those are the most valuable to fix)</span>` : ""}
+      ${r.feedback ? `<div class="faint" style="margin-top:4px">${esc(r.feedback)}</div>` : ""}
+      <div class="row" style="margin-top:10px"><button class="btn sm" id="retry">Try again</button><button class="btn sm" id="hint">Hint ${r.next_hint_level ? `(${r.next_hint_level}/3)` : ""}</button><button class="btn sm ghost" id="reveal">Show solution</button></div></div>`;
+    if (q.type === "mc") host.querySelectorAll(".choice").forEach(b => { b.disabled = false; b.classList.remove("sel"); });
+    $("#retry", host).onclick = () => { const i = $("#ans", host); if (i) { i.disabled = false; i.select(); } out().innerHTML = ""; };
+    $("#hint", host).onclick = async () => {
+      const h = await api("/api/hint", { question_id: q.id });
+      if (h.level >= 4) return revealFlow();
+      const box = hintBox();
+      box.insertAdjacentHTML("beforeend", h.worked_example ? `<div class="verdict warn"><b>Similar worked example</b><div style="margin-top:4px">${rich(h.worked_example.prompt)}</div><div class="muted" style="margin-top:4px">${rich(h.worked_example.solution || "")} → ${rich(h.worked_example.answer)}</div></div>` : `<div class="verdict warn">💡 ${rich(h.hint || "")}</div>`);
+      math(host); $("#hint", host).textContent = h.level >= 3 ? "Show solution" : `Hint (${h.level + 1}/3)`;
+      if (h.level >= 3) $("#hint", host).onclick = revealFlow;
+    };
+    $("#reveal", host).onclick = revealFlow;
+  };
+  const submit = async (given, self_grade, dont_know) => {
+    if (busy) return; busy = true;
+    try {
+      const r = opts.diagnostic
+        ? await api("/api/diagnostic/answer", { run_id: opts.diagnostic, question_id: q.id, answer: given || "", dont_know: !!dont_know })
+        : await api("/api/answer", { question_id: q.id, answer: given, card_id: tries ? undefined : opts.card_id, notification_id: opts.notification_id, self_grade, confidence, channel });
+      busy = false;
+      if (r.retry) { out().innerHTML = `<div class="verdict warn">🤔 ${esc(r.feedback)}. Tip: use <code>*</code> between things if in doubt, <code>^</code> for powers, <code>sqrt()</code>, <code>ln()</code>, <code>e^(…)</code>.</div>`; return; }
+      if (r.needs_grading) {
+        out().innerHTML = `<div class="verdict warn"><b>Model answer:</b><div style="margin-top:4px">${rich(r.model_answer)}</div><div class="row" style="margin-top:10px"><button class="btn good sm" id="sg1">I got it ✓</button><button class="btn bad sm" id="sg0">Not quite ✗</button></div></div>`;
+        math(host); $("#sg1", host).onclick = () => submit(given, true); $("#sg0", host).onclick = () => submit(given, false); return;
+      }
+      if (!opts.diagnostic) celebrate(r);
+      if (q.type === "mc" && !r.correct) host.querySelector(`.choice[data-i="${given}"]`)?.classList.add("wrong");
+      if (r.correct || opts.diagnostic || r.answer !== undefined) return solved(r);
+      notYet(r);
+    } catch (e) { busy = false; toast("⚠️ " + esc(e.message)); }
+  };
+  host.querySelectorAll(".choice").forEach(b => b.onclick = () => { if (b.disabled) return; host.querySelectorAll(".choice").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); submit(b.dataset.i); });
+  const sub = $("#sub", host), inp = $("#ans", host);
+  if (sub) sub.onclick = () => inp.value.trim() && submit(inp.value);
+  if (inp && q.type !== "free") { inp.onkeydown = e => { if (e.key === "Enter") sub.click(); }; setTimeout(() => inp.focus(), 50); }
+  const idk = $("#idk", host); if (idk) idk.onclick = () => submit("", undefined, true);
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+// ---------------------------------------------------------------- quiz session
+const MODE = {
+  topic: ["Practice quiz", "ui", false], pretest: ["Warm-up: attempt first", "pretest", false],
+  mixed: ["Mixed quiz", "mixed", true], weak: ["Weak-spot drill", "ui", false],
+  mistakes: ["Mistake redemption", "ui", false], block: ["Training block test", "block", true],
+};
+routes.quiz = async (_, p) => {
+  const topic = p.get("topic"), mode = p.get("mode") || "topic";
+  const [title, channel, hideTopic] = MODE[mode] || MODE.topic;
+  const n = mode === "block" ? 15 : 5;
+  const qs = await api(`/api/quiz?${topic ? "topic=" + encodeURIComponent(topic) + "&" : ""}mode=${mode}&n=${n}`);
+  if (!qs.length) return render(`<div class="card empty"><div class="i">🌱</div><h2>Nothing to quiz yet</h2><p>Start or complete a topic first, or try another mode.</p><a class="btn primary" href="#/map">Open the star map</a></div>`);
+  let i = 0; const res = [];
+  const intro = mode === "pretest" ? `<p class="muted" style="margin:0 0 10px">You haven't been taught this yet. Give it a real try; wrong answers are expected and you'll see the solution right after.</p>`
+    : hideTopic ? `<p class="muted" style="margin:0 0 10px">No topic labels: deciding which method to use is the skill being trained.</p>` : "";
+  const draw = () => {
+    if (i >= qs.length) return finish();
+    render(`<div class="row" style="margin-bottom:10px"><h2>${title}</h2><span class="spacer"></span><div class="progress-dots">${qs.map((_, k) => `<i class="${k < i ? (res[k] ? "ok" : "no") : k === i ? "cur" : ""}"></i>`).join("")}</div></div>${intro}<div class="card" id="qhost"></div>`);
+    questionWidget($("#qhost"), qs[i], { channel, hideTopic, onDone: r => { res.push(!!(r.correct && r.first_try !== false)); i++; draw(); } });
+  };
+  const finish = async () => {
+    const ok = res.filter(Boolean).length, sc = Math.round(100 * ok / res.length);
+    if (mode === "block") { const r = await api("/api/block/complete", { correct: ok, total: res.length }); celebrate(r); }
+    if (sc === 100) confetti(160);
+    render(`<div class="card empty"><div class="i">${mode === "pretest" ? "🧪" : sc === 100 ? "🏆" : sc >= 70 ? "🎯" : "🌱"}</div><h1>${ok} / ${res.length}</h1><p class="faint" style="margin-top:-6px">first try, without hints</p>
+      <p class="muted">${mode === "pretest" ? "Now do the reading: you've primed exactly what to look for." : sc >= 70 ? "Solid. Misses are now in your review queue." : "Every miss is now a review card. This is how mastery gets built."}</p>
+      <div class="row" style="justify-content:center">${topic ? `<a class="btn primary" href="#/topic/${topic}">${mode === "pretest" ? "On to the lesson" : "Back to lesson"}</a>` : `<a class="btn primary" href="#/quiz?${p.toString()}&r=${Date.now()}">Another round</a>`}<a class="btn" href="#/">Home</a></div></div>`);
+  };
+  draw();
+};
+
+// single question (pop quizzes and follow-ups link here)
+routes.q = async ([id], p) => {
+  const q = await api("/api/question/" + id);
+  const nid = p.get("n") ? +p.get("n") : undefined;
+  render(`<div class="row" style="margin-bottom:10px"><h2>${nid ? "⚡ One quick question" : "Try this one"}</h2></div><div class="card" id="qhost"></div>`);
+  questionWidget($("#qhost"), q, { notification_id: nid, channel: nid ? "pop" : "ui", hideTopic: !!nid, onDone: () => { history.length > 1 ? history.back() : location.hash = "#/"; } });
+};
+
+// ---------------------------------------------------------------- review (FSRS)
+routes.review = async () => {
+  const { cards } = await api("/api/review?n=40");
+  if (!cards.length) return render(`<div class="card empty"><div class="i">🌙</div><h2>No reviews due</h2><p>Cards come back right before you'd forget them. (Daily review cap and new-card limit apply.)</p><div class="row" style="justify-content:center"><a class="btn primary" href="#/quiz?mode=mixed">Mixed quiz instead</a></div></div>`);
+  let i = 0, ok = 0;
+  const draw = () => {
+    if (i >= cards.length) { confetti(100); return render(`<div class="card empty"><div class="i">✅</div><h1>Review complete</h1><p class="muted">${cards.length} cards · ${ok} remembered. See you tomorrow.</p><a class="btn primary" href="#/">Home</a></div>`); }
+    const c = cards[i];
+    render(`<div class="row" style="margin-bottom:10px"><h2>Review</h2><span class="spacer"></span><span class="chip muted">${i + 1} / ${cards.length}${c.last_review ? "" : " · new"}</span></div><div class="card" id="qhost"></div>`);
+    const host = $("#qhost");
+    if (c.question) return questionWidget(host, c.question, { card_id: c.id, channel: "review", hideTopic: true, onDone: r => { ok += r.correct && r.first_try !== false ? 1 : 0; i++; draw(); } });
+    host.innerHTML = `<div class="eyebrow">${c.kind === "mistake" ? "🚩 Spot the trap" : "Flashcard"}</div><div class="q-prompt" style="margin:8px 0 14px">${rich(c.front)}</div>
+      <p class="faint" style="font-size:.8rem">Say or write your answer first, then reveal.</p><button class="btn primary" id="show">Show answer</button><div id="back"></div>`;
+    math(host);
+    $("#show").onclick = () => {
+      $("#show").remove();
+      $("#back").innerHTML = `<div class="verdict warn" style="margin-top:0">${rich(c.back)}</div><p class="faint" style="font-size:.8rem;margin:10px 0 6px">How well did you remember it?</p>
+        <div class="row">${[["Again", 1, "bad"], ["Hard", 2, ""], ["Good", 3, "good"], ["Easy", 4, "primary"]].map(([l, v, k]) => `<button class="btn ${k}" data-r="${v}">${l}</button>`).join("")}</div>`;
+      math(host);
+      host.querySelectorAll("[data-r]").forEach(b => b.onclick = async () => { const r = await api(`/api/review/${c.id}`, { rating: +b.dataset.r }); celebrate(r); ok += +b.dataset.r > 1 ? 1 : 0; i++; draw(); });
+    };
+  };
+  draw();
+};
+
+// ---------------------------------------------------------------- mistakes
+routes.mistakes = async () => {
+  const ms = await api("/api/mistakes");
+  const open = ms.filter(m => !m.resolved), done = ms.filter(m => m.resolved);
+  const item = m => `<div class="card" style="margin-top:10px;${m.confident && !m.resolved ? "border-color:var(--bad)" : ""}"><div class="row"><span class="eyebrow" style="flex:1"><a href="#/topic/${m.topic_id}">${esc(m.topic_title)}</a> · ${timeAgo(m.ts)}${m.confident ? " · 🚩 confident miss" : ""}</span>${m.resolved ? `<span class="pill completed">${m.override ? "closed (override)" : "conquered"}</span>` : `<button class="btn sm" data-res="${m.id}">Check if conquered</button>`}</div>
+    <p style="margin:.4rem 0 0">${rich(m.what)}</p>${m.misconception ? `<p class="muted" style="margin:.3rem 0 0"><b>Misconception:</b> ${rich(m.misconception)}</p>` : ""}${m.fix ? `<p class="muted" style="margin:.3rem 0 0"><b>Fix:</b> ${rich(m.fix)}</p>` : ""}</div>`;
+  render(`<div class="row"><div><div class="eyebrow">Mistakes are data</div><h1>Mistake journal</h1></div><span class="spacer"></span>${open.length ? `<a class="btn primary" href="#/quiz?mode=mistakes">Redemption quiz</a>` : ""}</div>
+    <p class="muted">Each mistake becomes a "spot the trap" review card. It's conquered automatically when you solve a <i>new</i> problem from that topic, unaided, at least a day later. Confident misses come first.</p>
+    ${open.length ? open.map(item).join("") : `<div class="card empty"><div class="i">🐛</div><p>No open mistakes. Either you're brilliant, or it's time for a harder quiz.</p></div>`}
+    ${done.length ? `<h3 style="margin-top:22px">Conquered (${done.length})</h3>${done.map(item).join("")}` : ""}`);
+  app.querySelectorAll("[data-res]").forEach(b => b.onclick = async () => {
+    try { celebrate(await api(`/api/mistake/${b.dataset.res}/resolve`, {})); route(); }
+    catch (e) {
+      modal(`<h3>Not yet</h3><p class="muted">${esc(e.message.replace(" Pass override=true to force it.", ""))}</p>
+        <div class="row"><a class="btn primary" href="#/quiz?mode=mistakes" data-close>Redemption quiz</a><button class="btn ghost" id="force">Close it anyway</button></div>`);
+      $("#force").onclick = async () => { celebrate(await api(`/api/mistake/${b.dataset.res}/resolve`, { override: true })); document.querySelectorAll(".modal-bg").forEach(x => x.remove()); route(); };
+    }
+  });
+};
+
+// ---------------------------------------------------------------- trophies (achievements + fact vault)
+routes.trophies = async () => {
+  const [ach, facts] = await Promise.all([api("/api/achievements"), api("/api/facts")]);
+  const got = ach.filter(a => a.unlocked_at).length;
+  render(`<div class="row"><div><div class="eyebrow">Trophy room</div><h1>Achievements</h1></div><span class="spacer"></span><span class="chip">🏆 ${got} / ${ach.length}</span></div>
+    <div class="ach" style="margin-top:14px">${ach.map(a => `<div class="a ${a.unlocked_at ? "" : "locked"}" title="${esc(a.desc)}"><div class="i">${a.icon}</div><b>${esc(a.name)}</b><span>${esc(a.desc)}</span>${a.xp ? `<div class="faint" style="font-size:.7rem;margin-top:4px">+${a.xp} XP</div>` : ""}</div>`).join("")}</div>
+    <h2 style="margin-top:28px">Fact & puzzle vault <span class="faint" style="font-size:1rem">(${facts.length})</span></h2>
+    ${facts.length ? facts.map(f => `<div class="card fact" style="margin-top:10px"><div class="eyebrow">${f.kind === "puzzle" ? "🧩" : "✨"} ${esc(f.topic_title)}</div><h3 style="margin:.3rem 0">${esc(f.title)}</h3><div class="muted">${rich(f.body)}</div>${f.answer ? `<details class="reveal"><summary class="faint">Reveal answer</summary><p>${rich(f.answer)}</p></details>` : ""}</div>`).join("")
+      : `<div class="card empty" style="margin-top:10px"><div class="i">🔒</div><p>Complete lessons to unlock facts and puzzles.</p></div>`}`);
+};
+routes.facts = routes.trophies;
+
+// ---------------------------------------------------------------- inbox
+routes.inbox = async () => {
+  const ns = await api("/api/notifications");
+  render(`<div class="row"><h1>Inbox</h1><span class="spacer"></span><button class="btn sm" id="mr">Mark all read</button></div>
+    ${ns.length ? ns.map(n => { const link = n.link && n.link.includes("#/") ? "#/" + n.link.split("#/")[1] : null; return `<div class="card" style="margin-top:10px;${n.read ? "" : "border-color:var(--accent)"}"><div class="row"><b style="flex:1">${esc(n.title)}</b><span class="faint" style="font-size:.78rem">${timeAgo(n.ts)}</span></div><p class="muted" style="margin:.3rem 0 0;white-space:pre-line">${esc(n.body)}</p>${link ? `<a class="btn sm" style="margin-top:8px" href="${esc(link)}">${n.kind === "popquiz" ? (n.answered ? "Answered ✓" : "Answer now ⚡") : "Open"}</a>` : ""}</div>`; }).join("")
+      : `<div class="card empty"><div class="i">📭</div><p>Nothing yet. Pop quizzes and fun facts will land here (and on your phone).</p></div>`}`);
+  $("#mr").onclick = async () => { await api("/api/notifications/read", {}); refreshChips(); route(); };
+};
+
+// ---------------------------------------------------------------- settings
+routes.settings = async () => {
+  const s = await api("/api/settings");
+  const theme = store.get("theme", "auto");
+  const mcpUrl = location.origin + "/mcp";
+  render(`<h1>Settings</h1>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card stack"><h3>Rhythm</h3>
+      <label>Study days per week (target)<input id="wt" type="number" min="1" max="7" value="${s.weekly_target}"></label>
+      <label>Planned study time (one reminder, only if you haven't studied)<input id="stime" type="time" value="${s.study_time}"></label>
+      <label class="row"><input type="checkbox" id="pq" style="width:auto" ${s.pop_quizzes_per_day ? "checked" : ""}> One optional pop question a day</label>
+      <div class="row"><label style="flex:1">Between<input id="pw0" type="number" min="0" max="23" value="${s.pop_window[0]}"></label><label style="flex:1">and<input id="pw1" type="number" min="1" max="24" value="${s.pop_window[1]}"></label></div>
+      <label>New cards per day<input id="ncd" type="number" min="0" max="50" value="${s.new_cards_per_day}"></label>
+      <label>Daily review cap (≈25 min at 60)<input id="rcap" type="number" min="10" max="300" value="${s.review_cap}"></label>
+      <label class="row"><input type="checkbox" id="paused" style="width:auto" ${s.paused ? "checked" : ""}> Vacation mode (pause all reminders)</label>
+      <label class="row"><input type="checkbox" id="push" style="width:auto" ${s.push_enabled ? "checked" : ""}> Push to my phone ${s.push_configured ? "" : `<span class="faint">(ntfy not configured on server)</span>`}</label>
+      <div class="row"><button class="btn primary" id="save">Save</button><button class="btn" id="rest">Protect today 🛡️</button></div>
+      <p class="faint" style="margin:0;font-size:.8rem">${s.running_data_connected ? "🏃 Running data connected: race and long-run days are protected automatically, and short-sleep or post-race days become review-only." : "Running data not connected (set RUNNING_API_TOKEN on the server for sleep/run-aware scheduling)."}</p></div>
+    <div class="stack">
+      <div class="card stack"><h3>Appearance</h3><div class="seg" id="theme">${["auto", "light", "dark"].map(t => `<button data-t="${t}" class="${theme === t ? "on" : ""}">${t}</button>`).join("")}</div></div>
+      <div class="card stack"><h3>Learning</h3><a class="btn" href="#/guide">📖 How to study with Calculus Quest</a><a class="btn" href="#/lessons">▶️ Interactive lessons</a><a class="btn" href="#/diagnostic">🧭 Placement test</a></div>
+      <div class="card stack"><h3>Connect your assistant</h3><p class="muted" style="margin:0">Custom connector URL (authorize with your token):</p><div class="prompt-copy mono">${esc(mcpUrl)}</div></div>
+      <div class="card stack"><h3>Account</h3><a class="btn" href="#/inbox">Open inbox</a><button class="btn bad" id="logout">Log out of this device</button></div>
+    </div>
+  </div>`);
+  $("#save").onclick = async () => {
+    await api("/api/settings", { weekly_target: +$("#wt").value, study_time: $("#stime").value, pop_quizzes_per_day: $("#pq").checked ? 1 : 0, pop_window_start_hour: +$("#pw0").value, pop_window_end_hour: +$("#pw1").value, new_cards_per_day: +$("#ncd").value, review_cap: +$("#rcap").value, paused: $("#paused").checked, push_enabled: $("#push").checked });
+    toast("Saved ✓"); refreshChips();
+  };
+  $("#rest").onclick = async () => { await api("/api/protect", { reason: "rest day" }); toast("🛡️ Today is protected."); refreshChips(); };
+  $("#theme").onclick = e => { const t = e.target.dataset.t; if (!t) return; store.set("theme", t); applyTheme(t); route(); };
+  $("#logout").onclick = () => { store.del("token"); route(); };
+};
+
+// ---------------------------------------------------------------- placement diagnostic
+routes.diagnostic = async (_, p) => {
+  let st = await api("/api/diagnostic");
+  const showResults = (res) => {
+    const rs = res.results;
+    const lvl = { strong: ["Strong", "var(--good)", "place out"], review: ["Review", "var(--accent)", "skim + practice"], learn: ["Learn", "var(--bad)", "full lessons"] };
+    render(`<div class="row"><div><div class="eyebrow">Placement results</div><h1>Your starting map</h1></div><span class="spacer"></span>${res.overall !== undefined ? `<span class="chip">${pct(res.overall)} overall</span>` : ""}</div>
+      <p class="muted">Strong areas (85%+) can be placed out of. Their cards still come back for a quick confirmation review in 2 days. Review areas (60–85%): skim the lesson, then practice. Learn areas: full lessons.</p>
+      <div class="card"><table class="t"><thead><tr><th style="width:28px"></th><th>Skill area</th><th class="num">Score</th><th style="width:38%"></th><th>Plan</th></tr></thead><tbody>
+      ${rs.map(r => `<tr><td><input type="checkbox" data-s="${r.id}" style="width:auto" ${r.level === "strong" ? "checked" : ""}></td>
+        <td><b>${esc(r.title)}</b><div class="faint" style="font-size:.75rem">${r.topics.map(t => esc(t.title)).join(" · ")}</div></td>
+        <td class="num">${r.correct}/${r.total}</td>
+        <td><div class="meter" style="height:9px"><i style="width:${r.score * 100}%;background:${lvl[r.level][1]}"></i></div></td>
+        <td><span class="pill" style="color:${lvl[r.level][1]};border-color:${lvl[r.level][1]}">${lvl[r.level][0]}</span> <span class="faint" style="font-size:.75rem">${lvl[r.level][2]}</span></td></tr>`).join("")}
+      </tbody></table>
+      <div class="row" style="margin-top:14px"><button class="btn primary" id="apply" ${st.last_result && st.last_result.applied ? "disabled" : ""}>${st.last_result && st.last_result.applied ? "Placement applied ✓" : "Place out of checked areas"}</button>
+      <a class="btn" href="#/map">Star map</a><button class="btn ghost" id="retake">Retake test</button></div></div>`);
+    const ap = $("#apply"); if (ap && !ap.disabled) ap.onclick = async () => {
+      const ids = [...app.querySelectorAll("[data-s]:checked")].map(x => x.dataset.s);
+      const out = await api("/api/diagnostic/apply", { run_id: res.run_id, section_ids: ids });
+      celebrate(out); confetti(120);
+      modal(`<div class="eyebrow">Placement applied</div><h2 style="margin:.3rem 0">Placed out of ${out.placed.length} topic${out.placed.length === 1 ? "" : "s"}</h2>
+        <p class="muted">${out.placed.map(t => esc(t.title)).join(", ") || "Nothing selected, so everything stays on your path."}</p>
+        ${out.next_topic && out.next_topic.id ? `<a class="btn primary" href="#/topic/${out.next_topic.id}" data-close>Start: ${esc(out.next_topic.title)}</a>` : ""}`);
+      CURR = null; route();
+    };
+    $("#retake").onclick = async () => { await api("/api/diagnostic/start", {}); route(); };
+  };
+  if (!st.run && st.last_result) return showResults({ ...st.last_result, run_id: st.last_result.id });
+  if (!st.run) {
+    const n = st.sections.reduce((a, s) => a + s.question_ids.length, 0);
+    render(`<div class="card stack" style="max-width:720px;margin:auto"><div class="eyebrow">🧭 ${esc(st.meta.title || "Placement test")}</div><h1>Find your starting line</h1>
+      <p class="muted">${esc(st.meta.blurb || "")}</p>
+      <ul class="ideas">${st.sections.map(s => `<li>${esc(s.title)} <span class="faint">(${s.question_ids.length})</span></li>`).join("")}</ul>
+      <p class="faint" style="margin:0">${n} questions · no XP per question (it's a measurement) · +50 XP for finishing. Have paper ready.</p>
+      <div class="row"><button class="btn primary" id="go">Begin</button><a class="btn ghost" href="#/guide">How this works</a></div></div>`);
+    $("#go").onclick = async () => { await api("/api/diagnostic/start", {}); route(); };
+    return;
+  }
+  const queue = st.sections.flatMap(s => s.questions.filter(q => !q.answered).map(q => ({ q, s })));
+  let done = st.run.answered;
+  const total = st.run.total;
+  const next = async () => {
+    if (!queue.length) {
+      const res = await api("/api/diagnostic/finish", { run_id: st.run.id });
+      celebrate(res); confetti(150); st = await api("/api/diagnostic"); return showResults(res);
+    }
+    const { q, s } = queue.shift();
+    render(`<div class="row" style="margin-bottom:8px"><div><div class="eyebrow">Placement test · ${esc(s.title)}</div></div><span class="spacer"></span><span class="chip muted">${done + 1} / ${total}</span><button class="btn ghost sm" id="pause">Pause</button></div>
+      <div class="bar" style="margin-bottom:12px"><i style="width:${100 * done / total}%"></i></div><div class="card" id="qhost"></div>`);
+    questionWidget($("#qhost"), q, { diagnostic: st.run.id, onDone: () => { done++; next(); } });
+    $("#pause").onclick = () => { toast("Saved. Resume any time from Home."); location.hash = "#/"; };
+  };
+  next();
+};
+
+// ---------------------------------------------------------------- interactive lessons
+routes.lesson = async ([id]) => {
+  const ls = await api("/api/lesson/" + id);
+  render(`<a class="faint" href="#/topic/${ls.topic.id}">← ${esc(ls.topic.title)}</a>
+    <div class="row" style="margin:6px 0 12px"><div><div class="eyebrow">▶️ Interactive lesson · ${ls.minutes} min</div><h1>${esc(ls.title)}</h1></div></div>
+    <div id="player"></div>`);
+  const start = () => runLesson($("#player"), ls, api, { rich, math, esc, finish: async ({ correct, total }) => {
+    const r = await api(`/api/lesson/${id}/complete`, { correct, total });
+    celebrate(r); confetti(120);
+    $("#player").innerHTML = `<div class="card empty"><div class="i">🎉</div><h2>Lesson complete</h2>
+      <p class="muted">${correct}/${total} predictions and checks right. Predicting first, even wrongly, is what makes the picture stick.</p>
+      <p class="faint">${esc(r.next)}</p>
+      <div class="row" style="justify-content:center"><a class="btn primary" href="#/quiz?topic=${ls.topic.id}">Practice quiz (unaided)</a><a class="btn" href="#/topic/${ls.topic.id}">Back to topic</a><a class="btn ghost" href="#/lessons">More lessons</a></div></div>`;
+  } });
+  if (window.runLesson) start(); else window.addEventListener("load", start, { once: true });
+};
+
+routes.lessons = async () => {
+  const ls = await api("/api/lessons");
+  render(`<div><div class="eyebrow">Explorables</div><h1>Interactive lessons</h1>
+    <p class="muted">Predict, manipulate, then see why. Best when a concept isn't clicking, or before the reading.</p></div>
+    ${ls.map(l => `<a class="card" href="#/lesson/${l.id}" style="display:block;margin-top:10px;color:var(--ink)"><div class="row"><span style="font-size:1.4rem">▶️</span><div style="flex:1"><b>${esc(l.title)}</b> <span class="faint">· ${esc(l.topic_title)} · ${l.minutes} min</span><div class="muted" style="font-size:.88rem">${esc(l.blurb)}</div></div>${l.runs ? `<span class="pill completed">done</span>` : ""}</div></a>`).join("")}`);
+};
+
+// ---------------------------------------------------------------- study guide
+routes.guide = async () => {
+  render(`<div class="stack" style="max-width:780px;margin:auto">
+  <div><div class="eyebrow">Study guide</div><h1>How to study with Calculus Quest</h1>
+  <p class="muted">Built on the evidence review: retrieval, spacing and interleaving work; help during practice can hide what you can't do alone; consistency beats intensity.</p></div>
+  <div class="card stack"><h3>Once: find your starting line</h3><p style="margin:0">Take the <a href="#/diagnostic">placement test</a>. Press <b>I don't know</b> rather than guessing, read each solution as you go (it's a pretest), and place out of your strong areas.</p></div>
+  <div class="card stack"><h3>Each session (45–60 min)</h3>
+    <table class="t"><thead><tr><th>Block</th><th>Min</th><th>How</th></tr></thead><tbody>
+      <tr><td><b>1. Reviews</b> + open mistakes</td><td class="num">5–10</td><td><a href="#/review">Review</a>, alone: commit to an answer before revealing</td></tr>
+      <tr><td><b>2. Mixed quiz</b></td><td class="num">~5</td><td><a href="#/quiz?mode=mixed">Look-alike problems</a>, no labels: choosing the method is the skill</td></tr>
+      <tr><td><b>3. New topic</b></td><td class="num">20–30</td><td>Warm-up problems <i>before</i> reading → textbook section → the assistant teaches Socratically</td></tr>
+      <tr><td><b>4. Practice</b></td><td class="num">10–15</td><td>Topic quiz; the assistant only checks your work</td></tr>
+      <tr><td><b>5. Exit</b></td><td class="num">~5</td><td>Log mistakes (and whether you were sure); the assistant saves notes</td></tr>
+    </tbody></table>
+    <p class="faint" style="margin:0;font-size:.82rem">Recovery day (short sleep, race, long run) or a review backlog: do blocks 1–2 only.</p></div>
+  <div class="card stack"><h3>The rules</h3>
+    <ul style="margin:0;padding-left:1.2rem;line-height:1.7">
+      <li><b>Attempt first.</b> Solutions only unlock after you try. Use the hint ladder before revealing.</li>
+      <li><b>Say "sure" or "unsure" before checking.</b> Confident misses are the most valuable to fix.</li>
+      <li><b>"Complete" is provisional.</b> A topic is <b>mastered</b> only when you get 3 different problems right with no help, one of them days later. Mastery fades if you stop reviewing.</li>
+      <li><b>Never miss twice.</b> Hit your weekly target. One missed day is fine; rest and race days are protected.</li>
+      <li><b>Every 6 weeks:</b> a cumulative block test, like a tune-up race.</li>
+      <li><b>Weekly:</b> one lab, the odd-numbered exercises, 2–3 Learning &amp; Memory lessons, and a <i>Share this week</i> note to a friend.</li>
+      <li><b>Watch the three numbers:</b> unaided recall up, hints per problem down, overconfidence near zero. XP is just for fun.</li>
+    </ul></div>
+  </div>`);
+};
+
+// ---------------------------------------------------------------- boot
+route();
+refreshChips();
+setInterval(refreshChips, 120000);
+document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal-bg").forEach(m => m.remove()); });
+</script>
+</body>
+</html>

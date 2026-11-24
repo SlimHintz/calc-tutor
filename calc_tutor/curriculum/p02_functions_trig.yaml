@@ -1,0 +1,259 @@
+unit:
+  id: P02
+  ord: -10
+  course: core
+  title: "Precalc Bootcamp II: Graphs, Trig & Systems"
+  constellation: "The Prism"
+  color: "#b0bec5"
+  blurb: |
+    Graphs and average rates of change (the doorway to derivatives), quadratics and
+    polynomial/rational functions, the unit circle and trig identities, and systems of linear
+    equations with a first taste of matrices.
+  ds_why: |
+    Average rate of change becomes the derivative; quadratics are the simplest loss
+    functions; matrices are the language of every ML model; trig shows up in cyclic features
+    and Fourier transforms.
+
+topics:
+  - id: pc-graphs
+    title: "Graphs, Rates of Change & Transformations"
+    xp: 40
+    prereqs: [pc-lines]
+    readings:
+      - {book: PRE, sec: "2.2", title: "Graphs of Functions"}
+      - {book: PRE, sec: "2.3", title: "Increasing and Decreasing Functions; Average Rate of Change"}
+      - {book: PRE, sec: "2.4", title: "Transformations of Functions"}
+      - {book: STW, sec: "Diagnostic Test C", title: "Functions (front of the book)"}
+    summary: |
+      Read graphs, find where functions increase or decrease, compute average rates of change
+      $\frac{f(b)-f(a)}{b-a}$, and shift/stretch/reflect graphs.
+    key_ideas:
+      - 'Average rate of change = slope of the secant line.'
+      - 'Even ($f(-x)=f(x)$) and odd ($f(-x)=-f(x)$) symmetry.'
+      - '$y=af(x-h)+k$: shift right $h$, up $k$, stretch by $a$ (reflect if $a<0$).'
+    ds: |
+      Average rate of change between two timestamps is exactly how you compute pace or growth
+      rate from data. Shrink the interval and you get the derivative.
+    lab: |
+      From your last run's distance stream, compute average pace over 1-mile, 0.1-mile and
+      0.01-mile windows. Plot all three -- what happens as the window shrinks?
+    questions:
+      - {type: num, d: 1, q: 'Average rate of change of $f(x)=x^3$ from $x=1$ to $x=3$?', a: '13', exp: '$\frac{27-1}{2}$.'}
+      - {type: mc, d: 1, q: '$y=-(x-1)^2+4$ is $y=x^2$...', choices: ['reflected, shifted right 1, up 4', 'shifted left 1, up 4', 'reflected, shifted left 1, down 4', 'stretched by 4'], a: 0, exp: 'Negative sign reflects; $x-1$ shifts right; $+4$ shifts up.'}
+      - {type: mc, d: 2, q: 'Which function is odd?', choices: ['$x^2+1$', '$x^3-x$', '$|x|$', '$\cos x$'], a: 1, exp: '$f(-x)=-x^3+x=-f(x)$.'}
+    cards:
+      - {f: 'Average rate of change of $f$ on $[a,b]$', b: '$\frac{f(b)-f(a)}{b-a}$ -- the secant slope.'}
+    fun:
+      - kind: fact
+        title: "Strava's grade-adjusted pace"
+        body: |
+          Grade-adjusted pace transforms your actual pace using a function of hill steepness --
+          a "transformation of functions" applied to every GPS sample, so a slow hilly mile and
+          a fast flat one can be compared fairly.
+
+  - id: pc-quadratics
+    title: "Quadratic Functions & Their Extremes"
+    xp: 40
+    prereqs: [pc-graphs]
+    readings:
+      - {book: PRE, sec: "2.5", title: "Quadratic Functions; Maxima and Minima"}
+    summary: |
+      $f(x)=ax^2+bx+c=a(x-h)^2+k$. The vertex at $x=-\frac{b}{2a}$ gives the max or min --
+      found here by completing the square, and later in one line with derivatives.
+    key_ideas:
+      - 'Vertex $x=-\frac{b}{2a}$; opens up if $a>0$ (minimum), down if $a<0$ (maximum).'
+      - 'Completing the square converts to vertex form.'
+    ds: |
+      Squared-error loss for a single parameter is a quadratic -- its minimum IS the least-squares
+      estimate. This is optimization before calculus.
+    lab: |
+      For data $\{4, 7, 10\}$, write $L(c)=\sum(y_i-c)^2$ as $ac^2+bc+d$ and find its vertex.
+      Compare with the mean.
+    questions:
+      - {type: mc, d: 1, q: 'Vertex of $y=x^2+8x+10$?', choices: ['$(-4,-6)$', '$(4,-6)$', '$(-4,10)$', '$(-8,10)$'], a: 0, exp: '$x=-4$, $y=16-32+10=-6$.'}
+      - {type: num, d: 2, q: 'A ball''s height is $h(t)=-5t^2+20t+1$ m. Maximum height?', a: '21', exp: 'Vertex $t=2$: $-20+40+1$.'}
+    cards:
+      - {f: 'Vertex of $ax^2+bx+c$', b: '$x=-\frac{b}{2a}$'}
+    fun:
+      - kind: fact
+        title: "Parabolas everywhere"
+        body: |
+          A thrown ball, a satellite dish, a suspension bridge's cables (nearly) and the
+          squared-error loss all trace parabolas. Galileo was first to show projectiles follow
+          them.
+
+  - id: pc-poly-rational
+    title: "Polynomial Division, Zeros & Rational Functions"
+    xp: 50
+    prereqs: [pc-quadratics, pc-polynomials]
+    readings:
+      - {book: PRE, sec: "3.1", title: "Polynomial Functions and Their Graphs"}
+      - {book: PRE, sec: "3.2-3.3", title: "Dividing Polynomials; Real Zeros of Polynomials"}
+      - {book: PRE, sec: "3.6", title: "Rational Functions"}
+    summary: |
+      Long and synthetic division, the Remainder and Factor Theorems, rational zeros, and
+      rational functions' vertical/horizontal asymptotes.
+    key_ideas:
+      - 'Remainder theorem: dividing $P(x)$ by $x-c$ leaves remainder $P(c)$.'
+      - 'Factor theorem: $P(c)=0\iff(x-c)$ is a factor.'
+      - 'Vertical asymptotes where the reduced denominator is 0; horizontal from degree comparison.'
+    ds: |
+      Asymptotes preview limits (Unit 1). Polynomial evaluation via Horner's method (synthetic
+      division) is how numerical libraries evaluate polynomials fast and stably.
+    lab: |
+      Implement Horner's method for evaluating a polynomial and compare its operation count with
+      naive evaluation for degree 20.
+    questions:
+      - {type: num, d: 2, q: 'Remainder when $2x^3-x+4$ is divided by $x+2$?', a: '-10', exp: '$P(-2)=-16+2+4$.'}
+      - {type: mc, d: 2, q: 'Asymptotes of $y=\frac{3x+1}{x-2}$?', choices: ['$x=2$, $y=3$', '$x=-2$, $y=3$', '$x=2$, $y=0$', '$x=3$, $y=2$'], a: 0, exp: 'Denominator zero at 2; equal degrees: ratio 3.'}
+    cards:
+      - {f: 'Remainder theorem', b: 'Remainder of $P(x)\div(x-c)$ is $P(c)$.'}
+    fun:
+      - kind: fact
+        title: "The fundamental theorem of algebra"
+        body: |
+          Every degree-$n$ polynomial has exactly $n$ complex roots (with multiplicity). Gauss
+          proved it in his 1799 doctoral thesis -- and kept publishing new proofs for 50 years.
+
+  - id: pc-unit-circle
+    title: "Radians, the Unit Circle & Trig Graphs"
+    xp: 50
+    prereqs: [pc-graphs]
+    readings:
+      - {book: PRE, sec: "6.1", title: "Angle Measure"}
+      - {book: PRE, sec: "5.1-5.3", title: "The Unit Circle; Trigonometric Functions of Real Numbers; Trigonometric Graphs"}
+      - {book: STW, sec: "App. D", title: "Trigonometry"}
+      - {book: STW, sec: "Diagnostic Test D", title: "Trigonometry (front of the book)"}
+    summary: |
+      Radian measure, the unit circle definitions $(\cos t,\sin t)$, exact values at
+      $\frac\pi6,\frac\pi4,\frac\pi3$, signs by quadrant, and graphs with amplitude and period.
+    key_ideas:
+      - '$\pi$ rad $=180°$; arc length $s=r\theta$.'
+      - 'Special values: $\sin\frac\pi6=\frac12$, $\sin\frac\pi4=\frac{\sqrt2}2$, $\sin\frac\pi3=\frac{\sqrt3}2$.'
+      - '$y=A\sin(Bx)$ has amplitude $|A|$ and period $\frac{2\pi}{B}$.'
+    ds: |
+      Seasonal and daily cycles in time-series data are modeled with $\sin(2\pi t/P)$ terms;
+      the period $P$ is 24 hours, 7 days or 365 days.
+    lab: |
+      Fit $y=A\sin(2\pi t/7)+c$ to your weekly running mileage by day-of-week with
+      `scipy.optimize.curve_fit`. Is there a weekly rhythm?
+    questions:
+      - {type: num, d: 1, q: '$\cos\frac{\pi}{3}$', a: '1/2', exp: 'Special triangle.'}
+      - {type: num, d: 2, q: '$\sin\frac{7\pi}{6}$', a: '-1/2', exp: 'Third quadrant, reference angle $\pi/6$.'}
+      - {type: num, d: 1, q: 'Period of $y=3\sin(4x)$?', a: 'pi/2', exp: '$2\pi/4$.'}
+    cards:
+      - {f: 'Unit circle definition', b: 'The point at angle $t$ is $(\cos t,\sin t)$.'}
+      - {f: 'Period of $A\sin(Bx)$', b: '$2\pi/|B|$'}
+    fun:
+      - kind: fact
+        title: "Why 360 degrees?"
+        body: |
+          The Babylonians used base 60, and 360 is close to the number of days in a year and has
+          many divisors. Radians, by contrast, are "natural": an angle of 1 radian cuts an arc
+          equal to the radius.
+
+  - id: pc-trig-identities
+    title: "Trig Identities & Inverse Trig"
+    xp: 50
+    prereqs: [pc-unit-circle]
+    readings:
+      - {book: PRE, sec: "7.1", title: "Trigonometric Identities"}
+      - {book: PRE, sec: "7.2-7.3", title: "Addition and Subtraction; Double-Angle, Half-Angle Formulas"}
+      - {book: PRE, sec: "7.4", title: "Inverse Trigonometric Functions"}
+    summary: |
+      Pythagorean, reciprocal and even/odd identities; addition and double-angle formulas;
+      inverse trig functions and their restricted ranges.
+    key_ideas:
+      - '$\sin^2x+\cos^2x=1$; $1+\tan^2x=\sec^2x$.'
+      - '$\sin2x=2\sin x\cos x$; $\cos2x=\cos^2x-\sin^2x=1-2\sin^2x$.'
+      - '$\arcsin$ returns values in $[-\frac\pi2,\frac\pi2]$; $\arctan$ in $(-\frac\pi2,\frac\pi2)$.'
+    ds: |
+      `np.arctan2(y, x)` (the quadrant-aware inverse tangent) computes headings from GPS
+      deltas -- and angles between vectors in embeddings.
+    lab: |
+      Compute your running heading from consecutive GPS points with `np.arctan2`. Why does plain
+      `arctan(dy/dx)` give wrong answers half the time?
+    questions:
+      - {type: mc, d: 1, q: '$\frac{1-\cos^2x}{\sin x}$ simplifies to...', choices: ['$\cos x$', '$\sin x$', '$\tan x$', '$1$'], a: 1, exp: '$\frac{\sin^2x}{\sin x}$.'}
+      - {type: num, d: 2, q: 'If $\cos\theta=\frac{5}{13}$ with $\theta$ in quadrant I, find $\sin 2\theta$.', a: '120/169', exp: '$\sin\theta=\frac{12}{13}$; $2\cdot\frac{12}{13}\cdot\frac5{13}$.'}
+      - {type: num, d: 1, q: '$\arcsin\left(-\frac12\right)$', a: '-pi/6', exp: 'Range is $[-\pi/2,\pi/2]$.'}
+    cards:
+      - {f: 'Double-angle formulas', b: '$\sin2x=2\sin x\cos x$; $\cos2x=\cos^2x-\sin^2x$'}
+      - {f: 'Range of $\arcsin$', b: '$[-\pi/2,\pi/2]$'}
+    fun:
+      - kind: fact
+        title: "Navigation by identity"
+        body: |
+          Before calculators, sailors used the haversine formula -- built from trig identities --
+          to compute great-circle distances. It's still how `haversine` distance between GPS
+          points is computed in your running apps.
+
+  - id: pc-systems-matrices
+    title: "Systems of Equations & First Matrices"
+    xp: 60
+    prereqs: [pc-lines]
+    readings:
+      - {book: PRE, sec: "9.1-9.3", title: "Systems of Equations; Linear Systems in Two and Several Variables"}
+      - {book: PRE, sec: "9.4-9.5", title: "Systems of Linear Equations: Matrices; The Algebra of Matrices"}
+      - {book: PRE, sec: "9.6-9.7", title: "Inverses of Matrices; Determinants (skim)"}
+    summary: |
+      Solve systems by substitution and elimination; recognize unique, no, or infinitely many
+      solutions; write systems as $A\mathbf x=\mathbf b$; multiply matrices; 2×2 inverses and
+      determinants.
+    key_ideas:
+      - 'A linear system has 0, 1 or infinitely many solutions.'
+      - 'Matrix product: row of the first · column of the second (shapes must match).'
+      - '$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc$; invertible iff $\det\ne0$.'
+    ds: |
+      Every dataset is a matrix $X$; linear regression solves $X^\top X\boldsymbol\theta=X^\top\mathbf y$
+      (Unit 7). Collinear features make $\det(X^\top X)\approx0$ -- the matrix version of "no
+      unique solution".
+    lab: |
+      Solve a 3×3 system with `np.linalg.solve`, then make two equations nearly identical and
+      watch `np.linalg.cond` blow up.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $2x+y=7$, $x-y=2$.', choices: ['$(3,1)$', '$(1,3)$', '$(2,3)$', '$(3,-1)$'], a: 0, exp: 'Add: $3x=9$.'}
+      - {type: num, d: 1, q: '$\det\begin{pmatrix}3&2\\1&4\end{pmatrix}$', a: '10', exp: '$12-2$.'}
+      - {type: mc, d: 2, q: 'If $A$ is $3\times2$ and $B$ is $2\times4$, $AB$ is...', choices: ['$3\times4$', '$2\times2$', 'undefined', '$4\times3$'], a: 0, exp: 'Inner dimensions match (2); result is outer dims.'}
+    cards:
+      - {f: 'Determinant of a 2×2 matrix', b: '$ad-bc$'}
+      - {f: 'Shape of $AB$ for $A$ ($m\times n$), $B$ ($n\times p$)', b: '$m\times p$'}
+    fun:
+      - kind: fact
+        title: "Gaussian elimination is Chinese"
+        body: |
+          The method you use for solving systems appears in the Chinese text "The Nine Chapters
+          on the Mathematical Art", compiled roughly 2,000 years ago -- around 1,800 years
+          before Gauss.
+
+  - id: pc-complex
+    title: "Complex Numbers"
+    xp: 30
+    optional: true
+    prereqs: [pc-equations]
+    readings:
+      - {book: PRE, sec: "3.4-3.5", title: "Complex Numbers; Complex Zeros and the Fundamental Theorem of Algebra"}
+      - {book: STW, sec: "App. H", title: "Complex Numbers"}
+    summary: |
+      $i^2=-1$. Arithmetic with $a+bi$, conjugates, and why every quadratic has two complex
+      roots.
+    key_ideas:
+      - '$(a+bi)(a-bi)=a^2+b^2$.'
+      - 'Negative discriminant → complex conjugate roots.'
+    ds: |
+      Fourier transforms (`np.fft`) return complex numbers; eigenvalues of non-symmetric
+      matrices can be complex (oscillating dynamics).
+    lab: |
+      Compute `np.fft.fft` of a pure sine wave sampled 64 times and inspect the complex output.
+      Where are the two spikes?
+    questions:
+      - {type: num, d: 1, q: '$i^{10}$', a: '-1', exp: '$i^4=1$, so $i^{10}=i^2$.'}
+    cards:
+      - {f: '$(a+bi)(a-bi)$', b: '$a^2+b^2$'}
+    fun:
+      - kind: fact
+        title: "Imaginary, not fake"
+        body: |
+          Descartes called them "imaginary" as an insult. Today complex numbers run quantum
+          mechanics, electrical engineering and signal processing -- your phone's radio decodes
+          them constantly.

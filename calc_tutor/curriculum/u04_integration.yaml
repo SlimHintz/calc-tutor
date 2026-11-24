@@ -1,0 +1,344 @@
+unit:
+  id: U04
+  ord: 80
+  course: core
+  title: "Integration"
+  constellation: "The River"
+  color: "#4fc3f7"
+  blurb: |
+    Integrals accumulate: area, distance, total change, probability. The Fundamental Theorem
+    reveals that integration and differentiation are two sides of one coin.
+  ds_why: |
+    Probabilities of continuous variables, expectations, AUC, cumulative distributions and
+    normalizing constants are integrals. Numerical integration is everyday data work.
+
+topics:
+  - id: int-riemann
+    title: "Riemann Sums: Approximating Area"
+    xp: 60
+    prereqs: [lim-intuition]
+    readings:
+      - {book: STW, sec: "4.1", title: "Areas and Distances"}
+      - {book: STW, sec: "App. E", title: "Sigma Notation"}
+      - {book: OS1, sec: "5.1", title: "Approximating Areas"}
+    videos:
+      - {book: 3B1B, n: 8, title: "Integration and the fundamental theorem of calculus"}
+    summary: |
+      Chop $[a,b]$ into $n$ strips of width $\Delta x$, add up $f(x_i^*)\Delta x$. More strips,
+      better approximation.
+    key_ideas:
+      - 'Left, right and midpoint sums; sigma notation $\sum_{i=1}^n f(x_i^*)\Delta x$.'
+      - '$\Delta x=\frac{b-a}{n}$.'
+      - 'For increasing $f$: left sum underestimates, right sum overestimates.'
+    ds: |
+      A Riemann sum is literally `np.sum(f(x) * dx)`. A histogram with density=True is a
+      Riemann-sum approximation of a PDF that integrates to 1.
+    lab: |
+      Approximate $\int_0^1 x^2dx$ with left, right, midpoint sums for $n=10,100,1000$ in
+      numpy. Plot error vs $n$ on log-log axes: which method converges fastest?
+    questions:
+      - {type: num, d: 1, q: 'Right Riemann sum for $f(x)=x$ on $[0,2]$ with $n=2$.', a: '3', exp: '$\Delta x=1$: $f(1)+f(2)=3$.'}
+      - {type: num, d: 1, q: 'Left Riemann sum for $f(x)=x$ on $[0,2]$ with $n=2$.', a: '1', exp: '$f(0)+f(1)=1$. True area is 2 -- right over, left under.'}
+      - {type: num, d: 2, q: 'Midpoint sum for $f(x)=x^2$ on $[0,2]$, $n=2$.', a: '2.5', exp: '$f(0.5)+f(1.5)=0.25+2.25$. (True: 8/3)'}
+    cards:
+      - {f: 'Riemann sum formula', b: '$\sum_{i=1}^n f(x_i^*)\,\Delta x$, $\Delta x=(b-a)/n$'}
+    fun:
+      - kind: fact
+        title: "Archimedes, 2000 years early"
+        body: |
+          Archimedes found the area under a parabola around 250 BC by summing infinitely many
+          triangles -- a Riemann sum two millennia before Riemann. A recovered palimpsest
+          shows he was even closer to integral calculus than historians thought.
+
+  - id: int-definite
+    title: "The Definite Integral"
+    xp: 60
+    prereqs: [int-riemann]
+    readings:
+      - {book: STW, sec: "4.2", title: "The Definite Integral"}
+      - {book: STW, sec: "5.5", title: "Average Value of a Function"}
+      - {book: OS1, sec: "5.2", title: "The Definite Integral"}
+    summary: |
+      $\int_a^b f(x)\,dx=\lim_{n\to\infty}\sum f(x_i^*)\Delta x$: *signed* area (below the
+      axis counts negative). Linear, additive over intervals.
+    key_ideas:
+      - 'Signed area: regions below the $x$-axis subtract.'
+      - '$\int_a^b (cf+g)=c\int f+\int g$; $\int_a^b+\int_b^c=\int_a^c$; $\int_a^a=0$; $\int_b^a=-\int_a^b$.'
+      - 'Average value: $\frac{1}{b-a}\int_a^b f$.'
+    ds: |
+      The average value of a function is the continuous analogue of `np.mean`; expectation
+      $E[X]=\int x f(x)dx$ generalizes it with a weighting density.
+    lab: |
+      Running lab: average heart rate over a run = $\frac{1}{T}\int_0^T HR(t)\,dt$. Compute
+      it with `np.trapz(hr, t)/T` vs `hr.mean()` -- why do they differ if samples are
+      unevenly spaced?
+    questions:
+      - {type: num, d: 1, q: '$\int_{-1}^{1} x^3\,dx$ (use symmetry).', a: '0', exp: 'Odd function over symmetric interval: areas cancel.'}
+      - {type: num, d: 1, q: 'If $\int_0^3 f=5$ and $\int_3^7 f=2$, find $\int_0^7 f$.', a: '7', exp: 'Additivity.'}
+      - {type: num, d: 2, q: 'Average value of $f(x)=x^2$ on $[0,3]$.', a: '3', exp: '$\frac13\cdot9=3$.'}
+    cards:
+      - {f: 'Average value of $f$ on $[a,b]$', b: '$\frac{1}{b-a}\int_a^b f(x)\,dx$'}
+    fun:
+      - kind: puzzle
+        title: "Why the integral sign is an S"
+        body: |
+          Leibniz chose $\int$ -- an elongated S for "summa" -- in 1675. And $dx$ is a
+          memory of the strip width $\Delta x$. Puzzle: by symmetry alone, what is
+          $\int_{-5}^{5}\sin(x^3)\,dx$?
+        answer: "0 -- $\\sin(x^3)$ is odd."
+
+  - id: int-ftc
+    title: "The Fundamental Theorem of Calculus"
+    xp: 100
+    prereqs: [int-definite, app-antideriv]
+    readings:
+      - {book: STW, sec: "4.3", title: "The Fundamental Theorem of Calculus"}
+      - {book: OS1, sec: "5.3", title: "The Fundamental Theorem of Calculus"}
+    videos:
+      - {book: 3B1B, n: 9, title: "What does area have to do with slope?"}
+    summary: |
+      Part 1: $\frac{d}{dx}\int_a^x f(t)\,dt=f(x)$. Part 2: $\int_a^b f=F(b)-F(a)$ for any
+      antiderivative $F$. Accumulation and rate are inverse operations.
+    key_ideas:
+      - 'The accumulation function $A(x)=\int_a^x f$ has derivative $f$.'
+      - 'Evaluate definite integrals by antiderivatives: $[F(x)]_a^b$.'
+      - 'With chain rule: $\frac{d}{dx}\int_a^{g(x)}f=f(g(x))g''(x)$.'
+    ds: |
+      CDF and PDF: $F(x)=\int_{-\infty}^x f(t)dt$ so $F'=f$. Every time you differentiate a CDF
+      to get a density (or integrate a density to get a probability), you use the FTC.
+    lab: |
+      With scipy: check `stats.norm.cdf(1) - stats.norm.cdf(-1)` equals
+      `quad(stats.norm.pdf, -1, 1)`. Then numerically differentiate `norm.cdf` and compare
+      to `norm.pdf`.
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $\int_1^3 2x\,dx$.', a: '8', exp: '$[x^2]_1^3=9-1$.'}
+      - {type: num, d: 2, q: 'Evaluate $\int_0^1 e^x\,dx$ (exact or decimal).', a: 'e-1', exp: '$e^1-e^0$.'}
+      - {type: expr, d: 2, var: x, q: 'Compute $\frac{d}{dx}\int_0^{x^2}\cos t\,dt$.', a: '2x*cos(x^2)', exp: 'FTC1 + chain rule.'}
+      - {type: expr, d: 1, var: x, q: '$\frac{d}{dx}\int_2^x \sqrt{1+t^3}\,dt$', a: 'sqrt(1+x^3)', exp: 'FTC part 1 directly.'}
+    cards:
+      - {f: 'FTC part 1', b: '$\frac{d}{dx}\int_a^x f(t)\,dt=f(x)$'}
+      - {f: 'FTC part 2', b: '$\int_a^b f(x)\,dx=F(b)-F(a)$, $F''=f$'}
+      - {f: 'PDF from CDF?', b: 'Differentiate: $f=F''$ (FTC).'}
+    fun:
+      - kind: fact
+        title: "The theorem that made calculus"
+        body: |
+          Before the FTC, finding areas (Archimedes) and finding tangents (Fermat) were two
+          unrelated arts. Newton's teacher Isaac Barrow glimpsed the connection; Newton and
+          Leibniz turned it into a machine. It's arguably the most useful theorem ever proved.
+
+  - id: int-netchange
+    title: "Net Change & Integration Formulas"
+    xp: 60
+    prereqs: [int-ftc]
+    readings:
+      - {book: STW, sec: "4.4", title: "Indefinite Integrals and the Net Change Theorem"}
+      - {book: OS1, sec: "5.4", title: "Integration Formulas and the Net Change Theorem"}
+    summary: |
+      $\int_a^b F'(x)\,dx=F(b)-F(a)$: integrate a rate to get total change. Distance vs.
+      displacement.
+    key_ideas:
+      - 'Integral of velocity = displacement; integral of $|v|$ = distance traveled.'
+      - 'Integral of a rate of change = net change of the quantity.'
+    ds: |
+      Cumulative sums of rates (revenue/day -> total revenue, events/sec -> counts) and the
+      area under an ROC curve are net-change integrals.
+    lab: |
+      Running lab: integrate your elevation *rate* (d elevation/dt) over a run; compare net
+      change (end minus start altitude) with total climb (integral of the positive part).
+    questions:
+      - {type: num, d: 1, q: 'Velocity $v(t)=3t^2$ m/s. Displacement from $t=0$ to $t=2$?', a: '8', exp: '$[t^3]_0^2$.'}
+      - {type: num, d: 2, q: '$v(t)=t-1$ on $[0,2]$. Total *distance* traveled?', a: '1', exp: 'Displacement is 0, but distance = $\int|t-1|=\frac12+\frac12$.'}
+    cards:
+      - {f: 'Net change theorem', b: '$\int_a^b F''(x)\,dx=F(b)-F(a)$'}
+      - {f: 'Distance vs displacement from velocity', b: 'Distance $=\int|v|$; displacement $=\int v$.'}
+    fun:
+      - kind: fact
+        title: "Training load is an integral"
+        body: |
+          TRIMP and Garmin's training load are integrals of an intensity function (based on
+          heart rate) over time. A 2-hour easy run and a 40-minute tempo can have the same
+          area under the curve.
+
+  - id: int-sub
+    title: "Substitution (u-sub)"
+    xp: 80
+    prereqs: [int-ftc, d-chain]
+    readings:
+      - {book: STW, sec: "4.5", title: "The Substitution Rule"}
+      - {book: OS1, sec: "5.5", title: "Substitution"}
+      - {book: OS1, sec: "5.6", title: "Integrals Involving Exponential and Logarithmic Functions"}
+    summary: |
+      The chain rule in reverse: $\int f(g(x))g'(x)\,dx=\int f(u)\,du$. Spot an inside
+      function whose derivative is (nearly) also present.
+    key_ideas:
+      - 'Pick $u$ = the inside; $du=u''(x)\,dx$; rewrite everything in $u$.'
+      - 'For definite integrals, change the limits too.'
+      - '$\int\frac{f''}{f}dx=\ln|f|+C$.'
+    ds: |
+      Changing variables is how you derive the density of a transformed random variable (and
+      later, normalizing flows). Standardizing $z=\frac{x-\mu}{\sigma}$ inside an integral is a
+      u-sub.
+    lab: |
+      Use sympy `integrate` on $\int x e^{x^2}dx$ and $\int\frac{2x}{1+x^2}dx$. Then do them by
+      hand with u-sub and compare.
+    questions:
+      - {type: antideriv, d: 1, var: x, q: '$\int 2x(x^2+1)^4\,dx$', a: '(x^2+1)^5/5', exp: '$u=x^2+1$.'}
+      - {type: antideriv, d: 2, var: x, q: '$\int x e^{x^2}\,dx$', a: 'e^(x^2)/2', exp: '$u=x^2$, $du=2x\,dx$.'}
+      - {type: num, d: 2, q: '$\int_0^1 \frac{2x}{1+x^2}\,dx$', a: 'ln(2)', exp: '$[\ln(1+x^2)]_0^1$.'}
+      - {type: antideriv, d: 2, var: x, q: '$\int \frac{\ln x}{x}\,dx$', a: '(ln(x))^2/2', exp: '$u=\ln x$.'}
+    cards:
+      - {f: 'u-substitution', b: '$\int f(g(x))g''(x)dx=\int f(u)du$, with $u=g(x)$.'}
+      - {f: 'u-sub on a definite integral', b: 'Change the limits to $u(a)$, $u(b)$ (or substitute back).'}
+    fun:
+      - kind: puzzle
+        title: "The Gaussian's secret"
+        body: |
+          You can't integrate $e^{-x^2}$ with u-sub ... but you CAN integrate $xe^{-x^2}$.
+          Puzzle: compute $\int_0^\infty x e^{-x^2}dx$. (This is the trick inside the polar
+          proof of the Gaussian integral you'll meet in Unit 9!)
+        answer: "$[-\\tfrac12 e^{-x^2}]_0^\\infty=\\tfrac12$."
+
+  - id: int-parts
+    title: "Integration by Parts"
+    xp: 70
+    prereqs: [int-sub]
+    readings:
+      - {book: STW, sec: "7.1", title: "Integration by Parts"}
+      - {book: OS2, sec: "3.1", title: "Integration by Parts"}
+    summary: |
+      The product rule in reverse: $\int u\,dv=uv-\int v\,du$. Choose $u$ to simplify when
+      differentiated (LIATE heuristic).
+    key_ideas:
+      - '$\int u\,dv=uv-\int v\,du$.'
+      - 'LIATE: Log, Inverse trig, Algebraic, Trig, Exponential -- pick $u$ from the left.'
+      - 'Sometimes apply twice, or "solve for the integral".'
+    ds: |
+      Computing $E[X]$ for exponential/gamma distributions and deriving moment formulas uses
+      integration by parts. So does the "score function" trick in variational inference.
+    lab: |
+      Verify $E[X]=1/\lambda$ for $X\sim\text{Exp}(\lambda)$ by hand (parts) and with
+      `scipy.integrate.quad(lambda x: x*lam*np.exp(-lam*x), 0, np.inf)`.
+    questions:
+      - {type: antideriv, d: 2, var: x, q: '$\int x e^x\,dx$', a: 'x*e^x-e^x', exp: '$u=x$, $dv=e^xdx$.'}
+      - {type: antideriv, d: 2, var: x, q: '$\int \ln x\,dx$', a: 'x*ln(x)-x', exp: '$u=\ln x$, $dv=dx$.'}
+      - {type: num, d: 3, q: 'For $\lambda=2$, compute $E[X]=\int_0^\infty x\cdot 2e^{-2x}dx$.', a: '1/2', exp: 'Parts gives $1/\lambda$.'}
+    cards:
+      - {f: 'Integration by parts', b: '$\int u\,dv=uv-\int v\,du$'}
+      - {f: 'LIATE', b: 'Order to choose $u$: Log, Inverse trig, Algebraic, Trig, Exponential.'}
+    fun:
+      - kind: fact
+        title: "The factorial of one-half"
+        body: |
+          Integration by parts shows $\Gamma(n+1)=\int_0^\infty x^ne^{-x}dx=n!$. This integral
+          makes sense for non-integers, giving $(\tfrac12)!=\frac{\sqrt\pi}{2}$. The Gamma
+          function shows up in Bayesian priors (Beta, Gamma, Dirichlet distributions).
+
+  - id: int-numeric
+    title: "Numerical Integration"
+    xp: 70
+    prereqs: [int-riemann, int-ftc]
+    readings:
+      - {book: STW, sec: "7.7", title: "Approximate Integration"}
+      - {book: OS2, sec: "3.6", title: "Numerical Integration"}
+    summary: |
+      When there's no antiderivative (or only data): trapezoidal rule, Simpson's rule, and
+      Monte Carlo. Error shrinks like $1/n^2$ (trapezoid), $1/n^4$ (Simpson), $1/\sqrt n$ (MC).
+    key_ideas:
+      - 'Trapezoid: average of left and right sums. Error $O(1/n^2)$.'
+      - 'Simpson: fit parabolas. Error $O(1/n^4)$.'
+      - 'Monte Carlo: $\int_a^b f\approx (b-a)\cdot\text{mean}(f(U_i))$. Error $O(1/\sqrt n)$ in any dimension!'
+    ds: |
+      `np.trapz`, `scipy.integrate.simpson`, and ROC-AUC (trapezoid rule on the ROC curve)
+      are everywhere. Monte Carlo integration is the backbone of Bayesian inference (MCMC).
+    lab: |
+      Estimate $\pi$ by Monte Carlo: fraction of random points in the unit square inside the
+      quarter circle, times 4. How many points to get 3 correct digits?
+    questions:
+      - {type: num, d: 2, q: 'Trapezoid rule for $\int_0^2 x^2dx$ with $n=2$.', a: '3', exp: '$\frac{1}{2}[0+2(1)+4]=3$. (True: 8/3.)'}
+      - {type: mc, d: 2, q: 'To halve Monte Carlo error, you need about how many times more samples?', choices: ['2', '4', '8', '$\sqrt2$'], a: 1, exp: 'Error $\propto 1/\sqrt n$.'}
+      - {type: mc, d: 2, q: 'scikit-learn''s `roc_auc_score` computes the area under the ROC curve with...', choices: ['Simpson''s rule', 'the trapezoidal rule', 'Monte Carlo', 'an antiderivative'], a: 1, exp: 'It connects ROC points with straight lines: trapezoids.'}
+    cards:
+      - {f: 'Error rates: trapezoid, Simpson, Monte Carlo', b: '$O(n^{-2})$, $O(n^{-4})$, $O(n^{-1/2})$ (MC is dimension-free).'}
+    fun:
+      - kind: fact
+        title: "Monte Carlo was born at Los Alamos"
+        body: |
+          Stanislaw Ulam invented the Monte Carlo method in 1946 while recovering from illness
+          and playing solitaire, wondering about the odds of winning. Named after the casino
+          where his uncle gambled, it's now how we integrate in 1000-dimensional spaces.
+
+  - id: int-improper
+    title: "Improper Integrals"
+    xp: 60
+    prereqs: [int-ftc, lim-infinity]
+    readings:
+      - {book: STW, sec: "7.8", title: "Improper Integrals"}
+      - {book: OS2, sec: "3.7", title: "Improper Integrals"}
+    summary: |
+      Integrals over infinite intervals or with infinite integrands, defined as limits:
+      $\int_a^\infty f=\lim_{b\to\infty}\int_a^b f$. They converge or diverge.
+    key_ideas:
+      - '$\int_1^\infty \frac{1}{x^p}dx$ converges iff $p>1$.'
+      - '$\int_0^1\frac{1}{x^p}dx$ converges iff $p<1$.'
+      - 'Comparison: smaller than a convergent integral => converges.'
+    ds: |
+      Densities on $[0,\infty)$ or $\mathbb{R}$ must integrate to 1 -- an improper integral.
+      Heavy-tailed distributions (Cauchy, Pareto) have divergent mean/variance integrals, so
+      sample means misbehave.
+    lab: |
+      Sample 10^6 Cauchy values with numpy and plot the running mean. Contrast with normal
+      samples. The divergent integral $\int|x|f(x)dx$ explains what you see.
+    questions:
+      - {type: num, d: 1, q: '$\int_1^\infty \frac{1}{x^2}dx$', a: '1', exp: '$[-1/x]_1^\infty=1$.'}
+      - {type: mc, d: 2, q: '$\int_1^\infty\frac{1}{x}dx$...', choices: ['converges to 1', 'converges to $\ln 2$', 'diverges', 'converges to 0'], a: 2, exp: '$\ln b\to\infty$. Borderline case $p=1$ diverges.'}
+      - {type: num, d: 2, q: 'For what $c$ is $f(x)=ce^{-3x}$ ($x\ge0$) a valid density?', a: '3', exp: '$\int_0^\infty e^{-3x}=1/3$.'}
+    cards:
+      - {f: '$\int_1^\infty x^{-p}dx$ converges when?', b: '$p>1$'}
+      - {f: 'Why does the Cauchy distribution have no mean?', b: '$\int|x|\frac{1}{\pi(1+x^2)}dx$ diverges (behaves like $\int 1/x$).'}
+    fun:
+      - kind: puzzle
+        title: "Gabriel's horn"
+        body: |
+          Rotate $y=1/x$ for $x\ge1$ around the $x$-axis. Its volume is $\pi\int_1^\infty
+          x^{-2}dx=\pi$ (finite!) but its surface area is infinite. Puzzle: you could fill it
+          with paint but never paint its inside surface. How is that possible?
+        answer: "Paint as a 3-D volume can thin out arbitrarily; 'painting a surface' assumes a fixed thickness, which would need infinite paint. Math paint has no minimum thickness."
+
+  - id: int-prob
+    title: "Integrals as Probabilities & Expectations"
+    xp: 100
+    prereqs: [int-improper, int-parts, dm-prob-axioms]
+    readings:
+      - {book: STW, sec: "8.5", title: "Probability"}
+      - {book: BH, sec: "5.1-5.2", title: "Continuous random variables; Uniform distribution"}
+      - {book: MML, sec: "6.4", title: "Summary Statistics and Independence"}
+    summary: |
+      For a density $f$: $P(a\le X\le b)=\int_a^b f$, $E[X]=\int xf(x)dx$,
+      $\text{Var}(X)=E[X^2]-E[X]^2$, $E[g(X)]=\int g(x)f(x)dx$ (LOTUS).
+    key_ideas:
+      - 'A density integrates to 1 and is non-negative; $f(x)$ itself is NOT a probability.'
+      - 'CDF $F(x)=\int_{-\infty}^x f$; $F''=f$.'
+      - 'LOTUS: $E[g(X)]=\int g(x)f(x)\,dx$.'
+    ds: |
+      Expected loss (risk) is an integral; training minimizes an empirical (Monte Carlo)
+      estimate of it. Every probabilistic model you'll build is phrased with these integrals.
+    lab: |
+      Running lab: model your easy-run pace as normal with your sample mean/std. Use the CDF
+      to compute P(pace < 8:00/mi). Compare with the empirical fraction in your data.
+    questions:
+      - {type: num, d: 1, q: '$X\sim\text{Uniform}(0,4)$. $P(1\le X\le 2)$?', a: '1/4', exp: 'Density 1/4 over width 1.'}
+      - {type: num, d: 2, q: '$X\sim\text{Uniform}(0,1)$. $E[X^2]$?', a: '1/3', exp: 'LOTUS: $\int_0^1x^2dx$.'}
+      - {type: num, d: 2, q: 'Variance of $\text{Uniform}(0,1)$?', a: '1/12', exp: '$\frac13-\frac14$.'}
+      - {type: num, d: 3, q: 'Density $f(x)=2x$ on $[0,1]$. Find $E[X]$.', a: '2/3', exp: '$\int_0^1 2x^2dx$.'}
+    cards:
+      - {f: 'LOTUS', b: '$E[g(X)]=\int g(x)f_X(x)\,dx$'}
+      - {f: 'Is a density value $f(x)$ a probability?', b: 'No -- it can exceed 1. Probabilities are integrals of $f$.'}
+      - {f: 'Variance shortcut', b: '$\text{Var}(X)=E[X^2]-(E[X])^2$'}
+    fun:
+      - kind: fact
+        title: "Densities can exceed 1"
+        body: |
+          Uniform(0, 0.1) has density 10 everywhere on its interval. Only *areas* under a
+          density are probabilities. This trips up a surprising number of data scientists --
+          and now not you.

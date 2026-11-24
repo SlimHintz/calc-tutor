@@ -1,0 +1,181 @@
+unit:
+  id: U08
+  ord: 140
+  course: core
+  title: "Optimization for Machine Learning"
+  constellation: "The Descent"
+  color: "#2ec4b6"
+  blurb: |
+    From gradients to training algorithms: gradient descent in many dimensions, momentum,
+    SGD, Adam, convexity, and maximum likelihood -- how models actually learn.
+  ds_why: |
+    Every `optimizer.step()` you've ever called. Knowing the calculus lets you diagnose
+    divergence, tune learning rates, and understand why tricks work.
+
+topics:
+  - id: opt-gd
+    title: "Gradient Descent in Many Dimensions"
+    xp: 90
+    prereqs: [mv-gradient, app-gd1d, la-eigen]
+    readings:
+      - {book: MML, sec: "7.1", title: "Optimization Using Gradient Descent"}
+      - {book: MML, sec: "7.1.1", title: "Step-size"}
+    videos:
+      - {book: 3B1B-NN, n: 2, title: "Gradient descent, how neural networks learn"}
+    summary: |
+      $\boldsymbol\theta_{k+1}=\boldsymbol\theta_k-\eta\nabla L(\boldsymbol\theta_k)$. Convergence
+      speed depends on the conditioning of the Hessian; elongated valleys cause zig-zagging.
+    key_ideas:
+      - 'Stable iff $\eta<2/\lambda_{max}(H)$; speed limited by $\lambda_{min}$.'
+      - 'Condition number $\kappa=\lambda_{max}/\lambda_{min}$: big $\kappa$ = slow zig-zag.'
+      - 'Feature standardization improves conditioning -- that''s why you scale features!'
+    ds: |
+      "Always standardize your features" finally gets a mathematical reason: it rounds the
+      loss contours so GD can take bigger, more direct steps.
+    lab: |
+      Run GD on linear regression with raw features (one in meters, one in kilometers) vs.
+      standardized. Count iterations to converge. Plot both paths on the contours.
+    questions:
+      - {type: num, d: 2, q: 'GD on $L=w_1^2+10w_2^2$ from $(1,1)$ with $\eta=0.05$. New $w_2$?', a: '0', exp: '$\partial L/\partial w_2=20$; $1-0.05(20)=0$.'}
+      - {type: num, d: 2, q: 'Same step: new $w_1$?', a: '0.9', exp: '$1-0.05(2)=0.9$. The steep direction converged instantly; the shallow one crawls.'}
+      - {type: num, d: 3, q: 'Largest stable $\eta$ for $L=w_1^2+10w_2^2$ (exclusive bound)?', a: '0.1', exp: '$\lambda_{max}=20$, so $\eta<2/20$.'}
+    cards:
+      - {f: 'GD stability bound', b: '$\eta<2/\lambda_{max}(H)$'}
+      - {f: 'Why standardize features for GD?', b: 'Improves the Hessian''s condition number -> rounder contours -> faster, less zig-zag convergence.'}
+    fun:
+      - kind: fact
+        title: "Cauchy, 1847"
+        body: |
+          Augustin-Louis Cauchy proposed gradient descent in 1847 to solve astronomical
+          equations. Today it trains models with a trillion parameters. Few algorithms age
+          this well.
+
+  - id: opt-momentum
+    title: "Momentum, RMSProp & Adam"
+    xp: 80
+    prereqs: [opt-gd, ser-geometric]
+    readings:
+      - {book: MML, sec: "7.1.2", title: "Gradient Descent With Momentum"}
+    summary: |
+      Momentum accumulates an exponentially-weighted average of past gradients (a heavy ball
+      rolling downhill). Adam adds per-parameter scaling by a running average of squared
+      gradients.
+    key_ideas:
+      - 'Momentum: $\mathbf v\leftarrow\beta\mathbf v+\nabla L$, $\boldsymbol\theta\leftarrow\boldsymbol\theta-\eta\mathbf v$.'
+      - 'EMA effective window $\approx\frac{1}{1-\beta}$ (geometric series!).'
+      - 'Adam: momentum on $\mathbf g$ and on $\mathbf g^2$, plus bias correction.'
+    ds: |
+      Adam is the default optimizer for deep learning. $\beta_1=0.9$ averages ~10 steps,
+      $\beta_2=0.999$ averages ~1000 steps -- you derived those numbers in Unit 5.
+    lab: |
+      Implement GD, momentum and Adam from scratch on the Rosenbrock function. Plot the three
+      paths. Which reaches $(1,1)$ fastest?
+    questions:
+      - {type: num, d: 2, q: 'With constant gradient $g$, momentum velocity converges to $g\cdot ?$ for $\beta=0.9$.', a: '10', exp: 'Geometric series $\frac{1}{1-0.9}$: momentum effectively multiplies the step by 10.'}
+      - {type: mc, d: 2, q: 'What does Adam''s second moment estimate $v_t$ do?', choices: ['adds noise', 'scales each parameter''s step by roughly $1/\sqrt{\text{avg } g^2}$', 'computes the Hessian', 'clips gradients'], a: 1, exp: 'Per-parameter adaptive step sizes.'}
+    cards:
+      - {f: 'Momentum update', b: '$\mathbf v\leftarrow\beta\mathbf v+\nabla L$; $\boldsymbol\theta\leftarrow\boldsymbol\theta-\eta\mathbf v$'}
+      - {f: 'Adam''s two moving averages', b: 'EMA of gradients ($\beta_1$) and of squared gradients ($\beta_2$).'}
+    fun:
+      - kind: fact
+        title: "The most cited optimizer"
+        body: |
+          The Adam paper (Kingma & Ba, 2014) is among the most cited scientific papers of the
+          21st century -- over 200,000 citations. Its core is two geometric-series moving
+          averages and a square root.
+
+  - id: opt-sgd
+    title: "Stochastic Gradient Descent"
+    xp: 80
+    prereqs: [opt-gd, int-prob]
+    readings:
+      - {book: MML, sec: "7.1.3", title: "Stochastic Gradient Descent"}
+    summary: |
+      The full gradient is an average over data; a minibatch gives a noisy but unbiased
+      estimate. Cheap steps + noise = fast and surprisingly good generalization.
+    key_ideas:
+      - '$\nabla L=\frac1N\sum\nabla\ell_i$; minibatch estimate is unbiased: $E[\hat{\mathbf g}]=\nabla L$.'
+      - 'Variance of the estimate $\propto 1/B$ (batch size).'
+      - 'Decaying learning rates tame the noise near the optimum.'
+    ds: |
+      Why minibatches, epochs, shuffling, and learning-rate schedules exist. The noise in SGD
+      is a feature: it helps escape sharp minima and saddle points.
+    lab: |
+      Train logistic regression with batch sizes 1, 32, full-batch. Plot loss vs. number of
+      *examples processed* (not steps). Which is most compute-efficient?
+    questions:
+      - {type: mc, d: 2, q: 'Why is a minibatch gradient an unbiased estimate of the full gradient?', choices: ['it uses the Hessian', 'expectation of a random sample mean equals the population mean', 'because the loss is convex', 'it isn''t'], a: 1, exp: 'Linearity of expectation + linearity of differentiation.'}
+      - {type: num, d: 2, q: 'Quadrupling batch size divides the gradient estimate''s standard deviation by...', a: '2', exp: 'Variance $\propto1/B$, so std $\propto 1/\sqrt B$.'}
+    cards:
+      - {f: 'Minibatch gradient: bias and variance', b: 'Unbiased; variance $\propto 1/B$.'}
+    fun:
+      - kind: fact
+        title: "Robbins & Monro, 1951"
+        body: |
+          SGD's ancestor is the 1951 Robbins-Monro paper on stochastic approximation -- written
+          long before neural nets, to find roots of functions you can only measure noisily.
+
+  - id: opt-convex
+    title: "Convex Optimization"
+    xp: 80
+    prereqs: [mv-extrema, app-shape]
+    readings:
+      - {book: MML, sec: "7.3", title: "Convex Optimization"}
+    summary: |
+      Convex sets + convex functions = optimization problems with no bad local minima.
+      Check convexity via the Hessian (positive semidefinite) or by composition rules.
+    key_ideas:
+      - 'Convex: $f(t\mathbf x+(1-t)\mathbf y)\le tf(\mathbf x)+(1-t)f(\mathbf y)$.'
+      - 'Twice-differentiable $f$ is convex iff $H\succeq0$ everywhere.'
+      - 'Sums of convex functions are convex; norms are convex; $\max$ of convex is convex.'
+    ds: |
+      Linear regression, logistic regression, lasso, SVMs: all convex, all reliably solved.
+      Neural nets: not convex -- which is why initialization and tricks matter.
+    lab: |
+      Use `cvxpy` to solve a lasso problem and compare with sklearn's `Lasso`. Then try to
+      express a non-convex problem in cvxpy and read the error it gives you.
+    questions:
+      - {type: mc, d: 1, q: 'Which is NOT convex on $\mathbb R$?', choices: ['$x^2$', '$e^x$', '$|x|$', '$\sin x$'], a: 3, exp: '$\sin$ curves both ways.'}
+      - {type: mc, d: 2, q: 'Logistic loss + L2 penalty is...', choices: ['convex', 'concave', 'neither', 'linear'], a: 0, exp: 'Sum of convex functions.'}
+    cards:
+      - {f: 'Hessian test for convexity', b: '$f$ convex iff Hessian positive semidefinite everywhere.'}
+      - {f: 'Why convexity matters', b: 'Every local minimum is global; GD reliably finds it.'}
+    fun:
+      - kind: puzzle
+        title: "Jensen's inequality"
+        body: |
+          For convex $f$: $f(E[X])\le E[f(X)]$. Puzzle: use it with $f(x)=x^2$ to prove
+          variance is never negative.
+        answer: "$(E[X])^2\\le E[X^2]$, so $\\text{Var}=E[X^2]-(E[X])^2\\ge0$."
+
+  - id: opt-constrained
+    title: "Constrained Optimization, KKT & Duality"
+    xp: 80
+    optional: true
+    prereqs: [mv-lagrange, opt-convex]
+    readings:
+      - {book: MML, sec: "7.2", title: "Constrained Optimization and Lagrange Multipliers"}
+      - {book: MML, sec: "12.3", title: "Dual Support Vector Machine (skim)"}
+    summary: |
+      Inequality constraints via KKT conditions: stationarity, feasibility, $\lambda\ge0$, and
+      complementary slackness. The dual problem gives bounds and sometimes easier problems.
+    key_ideas:
+      - 'Complementary slackness: $\lambda_ig_i(\mathbf x)=0$ -- inactive constraints get zero multipliers.'
+      - 'Weak duality: dual optimum $\le$ primal optimum.'
+      - 'Strong duality holds for convex problems (with mild conditions).'
+    ds: |
+      SVMs' "support vectors" are exactly the points with nonzero multipliers (active
+      constraints). Lasso's sparsity has a KKT explanation.
+    lab: |
+      Fit a linear SVM in sklearn and inspect `dual_coef_` and `support_`. Confirm
+      non-support points have zero multipliers.
+    questions:
+      - {type: mc, d: 2, q: 'In an SVM, which training points have nonzero Lagrange multipliers?', choices: ['all of them', 'misclassified only', 'the support vectors', 'none'], a: 2, exp: 'Complementary slackness.'}
+    cards:
+      - {f: 'Complementary slackness', b: '$\lambda_ig_i(\mathbf x^*)=0$: either the constraint is tight or its multiplier is zero.'}
+    fun:
+      - kind: fact
+        title: "Kuhn, Tucker ... and Karush"
+        body: |
+          The KKT conditions were published by Kuhn and Tucker in 1951, then discovered to be
+          in William Karush's unpublished 1939 master's thesis. His initial was added later.

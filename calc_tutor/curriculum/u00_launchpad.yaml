@@ -1,0 +1,221 @@
+unit:
+  id: U00
+  ord: 0
+  course: core
+  title: "Launchpad: Functions Refresher"
+  constellation: "The Lantern"
+  color: "#f5b942"
+  blurb: |
+    Shake off the rust. Functions are the nouns of calculus; this unit rebuilds fluency with
+    the families you'll meet constantly in data science: polynomials, exponentials, logs,
+    and the activation functions that power neural networks.
+  ds_why: |
+    Every model is a function. Log transforms, exponential growth, sigmoids and ReLUs are the
+    everyday vocabulary of feature engineering and deep learning.
+
+topics:
+  - id: fn-basics
+    title: "Functions, Domain & Composition"
+    xp: 40
+    prereqs: []
+    readings:
+      - {book: STW, sec: "1.1", title: "Four Ways to Represent a Function"}
+      - {book: STW, sec: "1.3", title: "New Functions from Old Functions"}
+      - {book: PRE, sec: "2.1", title: "What is a Function?"}
+      - {book: PRE, sec: "2.7", title: "Combining Functions"}
+      - {book: OS1, sec: "1.1", title: "Review of Functions"}
+    videos:
+      - {book: 3B1B, n: 1, title: "The essence of calculus"}
+    summary: |
+      A function maps each input to exactly one output. Composition $(f\circ g)(x)=f(g(x))$
+      chains functions together -- the single most important idea for later (the chain rule
+      and neural networks are both "functions of functions").
+    key_ideas:
+      - 'Domain = allowed inputs; range = possible outputs. Watch for division by zero, $\sqrt{\text{negative}}$, $\log(\le 0)$.'
+      - 'Composition $f(g(x))$: apply $g$ first, then $f$. Order matters: $f\circ g \ne g\circ f$ in general.'
+      - 'A neural network layer is a composition: $\sigma(Wx+b)$ = activation $\circ$ affine map.'
+    ds: |
+      A data pipeline is a composition: scale -> transform -> model -> link function. Thinking
+      "function of a function" now makes backpropagation feel obvious later.
+    lab: |
+      In Python, write `compose(f, g)` returning `lambda x: f(g(x))`. Build `standardize`
+      then `square` and check `compose(square, standardize)` differs from
+      `compose(standardize, square)` on `[1,2,3]`.
+    questions:
+      - {type: expr, d: 1, var: x, q: 'If $f(x)=x^2+1$ and $g(x)=3x$, find $f(g(x))$.', a: '9x^2+1', exp: 'Substitute $g(x)=3x$ into $f$: $(3x)^2+1=9x^2+1$.'}
+      - {type: expr, d: 1, var: x, q: 'Same $f, g$: find $g(f(x))$.', a: '3x^2+3', exp: '$3(x^2+1)=3x^2+3$. Different from $f(g(x))$ -- composition order matters.'}
+      - {type: mc, d: 1, q: 'What is the domain of $h(x)=\ln(x-2)$?', choices: ['$x>0$', '$x\ge 2$', '$x>2$', 'all reals'], a: 2, exp: 'log needs a strictly positive argument: $x-2>0$.'}
+    cards:
+      - {f: 'What does $f\circ g$ mean?', b: '$f(g(x))$ -- apply $g$ first, then $f$.'}
+      - {f: 'Domain restrictions to watch for?', b: 'Division by zero, even roots of negatives, logs of non-positive numbers.'}
+    fun:
+      - kind: fact
+        title: "Leibniz vs. Newton"
+        body: |
+          The word "function" was introduced by Leibniz in 1673. He and Newton invented
+          calculus independently and spent decades in a bitter priority dispute -- Newton even
+          secretly wrote the Royal Society report that "investigated" it. We still use
+          Leibniz's notation ($dy/dx$, $\int$) because it's simply better.
+
+  - id: fn-classes
+    title: "Polynomials, Power Functions & Transformations"
+    xp: 40
+    prereqs: [fn-basics]
+    readings:
+      - {book: STW, sec: "1.2", title: "Mathematical Models: A Catalog of Essential Functions"}
+      - {book: PRE, sec: "2.4", title: "Transformations of Functions"}
+      - {book: PRE, sec: "3.1", title: "Polynomial Functions and Their Graphs"}
+      - {book: OS1, sec: "1.2", title: "Basic Classes of Functions"}
+    summary: |
+      Polynomials, rational and power functions, and how shifts/stretches transform graphs.
+      $y = a\,f(b(x-h)) + k$ is the master transformation.
+    key_ideas:
+      - 'Degree of a polynomial controls end behavior and the max number of turning points (degree - 1).'
+      - '$f(x-h)$ shifts right by $h$; $f(x)+k$ shifts up; $a f(x)$ stretches vertically; $f(bx)$ squeezes horizontally.'
+      - 'Power functions $x^p$: for large $x$, higher powers dominate -- the root of "big-O" thinking.'
+    ds: |
+      Polynomial regression fits $y=\beta_0+\beta_1x+\dots+\beta_dx^d$. Higher degree = more
+      wiggles = overfitting risk. Feature scaling is a transformation $(x-\mu)/\sigma$.
+    lab: |
+      Use `numpy.polyfit` to fit degrees 1, 3, 9 to 10 noisy points from $\sin(x)$. Plot all
+      three. Which generalizes best to new points?
+    questions:
+      - {type: num, d: 1, q: 'What is the maximum number of turning points of a degree-5 polynomial?', a: '4', exp: 'At most degree minus one.'}
+      - {type: expr, d: 1, var: x, q: 'Write the function whose graph is $y=x^2$ shifted right 3 and up 2.', a: '(x-3)^2+2', exp: 'Right by 3: replace $x$ with $x-3$. Up by 2: add 2.'}
+      - {type: mc, d: 1, q: 'As $x\to\infty$, which term eventually dominates?', choices: ['$1000x^2$', '$x^3$', '$10^6x$', 'They grow equally'], a: 1, exp: 'Highest power wins eventually: $x^3/(1000x^2)=x/1000\to\infty$. Constants never beat a higher power.'}
+    cards:
+      - {f: 'Effect of $f(x-h)$ on the graph?', b: 'Shifts it RIGHT by $h$ (counter-intuitive sign).'}
+      - {f: 'Max turning points of a degree-$n$ polynomial?', b: '$n-1$'}
+    fun:
+      - kind: puzzle
+        title: "Polynomial through the dots"
+        body: |
+          Given any 10 points with different $x$-values, there's exactly one polynomial of
+          degree at most 9 passing through all of them. So "fitting" 10 points perfectly is
+          trivially easy -- which is exactly why a perfect training fit means nothing.
+          Puzzle: how many polynomials of degree $\le 2$ pass through (0,1), (1,3), (2,7)?
+        answer: "Exactly one: $x^2+x+1$."
+
+  - id: fn-explog
+    title: "Exponentials & Logarithms"
+    xp: 60
+    prereqs: [fn-classes]
+    readings:
+      - {book: STW, sec: "6.2", title: "Exponential Functions and Their Derivatives (first half)"}
+      - {book: STW, sec: "6.3", title: "Logarithmic Functions"}
+      - {book: PRE, sec: "4.1-4.3", title: "Exponential Functions; Logarithmic Functions; Laws of Logarithms"}
+      - {book: OS1, sec: "1.5", title: "Exponential and Logarithmic Functions"}
+    videos:
+      - {book: 3B1B, n: 5, title: "What's so special about Euler's number e?"}
+    summary: |
+      $e^x$ and $\ln x$ are inverses. Logs turn multiplication into addition -- the reason
+      log-likelihoods, log-scales, and log-loss are everywhere in data science.
+    key_ideas:
+      - '$\ln(ab)=\ln a+\ln b$, $\ln(a/b)=\ln a-\ln b$, $\ln(a^r)=r\ln a$.'
+      - '$e^{\ln x}=x$ for $x>0$ and $\ln(e^x)=x$ for all $x$.'
+      - 'Change of base: $\log_b x = \ln x/\ln b$.'
+      - 'Exponential growth: equal steps in $x$ multiply $y$ by a constant factor.'
+    ds: |
+      Likelihoods are products of many small probabilities; their logs are sums (stable,
+      differentiable). Log-transforming skewed features (income, page views) makes
+      relationships linear. Log-odds $\ln\frac{p}{1-p}$ is the language of logistic regression.
+    lab: |
+      Multiply 1000 random probabilities in [0,1] with numpy -- you'll underflow to 0.0.
+      Now sum their logs. Same information, no underflow. That's why we use log-likelihood.
+    questions:
+      - {type: num, d: 1, q: 'Simplify $\ln(e^5)+\ln 1$.', a: '5', exp: '$\ln e^5=5$ and $\ln 1=0$.'}
+      - {type: expr, d: 2, var: x, q: 'Solve for $x$: $e^{2x}=7$. Give $x$ exactly.', a: 'ln(7)/2', exp: 'Take $\ln$: $2x=\ln 7$.'}
+      - {type: num, d: 1, q: 'Compute $\log_2 1024$.', a: '10', exp: '$2^{10}=1024$.'}
+      - {type: num, d: 2, q: 'Log-odds: if $p=0.8$, what is $\ln\frac{p}{1-p}$? (3 decimals ok)', a: 'ln(4)', tol: 0.002, exp: '$0.8/0.2=4$; $\ln 4\approx 1.386$.'}
+    cards:
+      - {f: '$\ln(ab)$ = ?', b: '$\ln a + \ln b$'}
+      - {f: 'Why do we maximize log-likelihood instead of likelihood?', b: 'Log turns products into sums: numerically stable, easier derivatives, same maximizer (log is increasing).'}
+    fun:
+      - kind: fact
+        title: "Napier's 20-year calculation"
+        body: |
+          John Napier spent about 20 years computing log tables by hand (published 1614).
+          Astronomers said logs "doubled the life of an astronomer" by turning multiplications
+          into additions. Your GPU does the same trick every time it computes a log-loss.
+
+  - id: fn-trig-inverse
+    title: "Trig & Inverse Functions (Quick Refresh)"
+    xp: 40
+    prereqs: [fn-basics]
+    readings:
+      - {book: STW, sec: "6.1", title: "Inverse Functions"}
+      - {book: STW, sec: "App. D", title: "Trigonometry"}
+      - {book: PRE, sec: "5.1", title: "The Unit Circle"}
+      - {book: PRE, sec: "7.1", title: "Trigonometric Identities"}
+      - {book: PRE, sec: "2.8", title: "One-to-One Functions and Their Inverses"}
+      - {book: OS1, sec: "1.3", title: "Trigonometric Functions"}
+      - {book: OS1, sec: "1.4", title: "Inverse Functions"}
+    summary: |
+      Just enough trig: radians, the unit circle, $\sin^2+\cos^2=1$, and what makes a
+      function invertible (one-to-one / horizontal line test).
+    key_ideas:
+      - 'Radians: $2\pi$ rad = 360 degrees. Calculus formulas assume radians.'
+      - '$\sin^2\theta+\cos^2\theta=1$.'
+      - 'An inverse exists iff the function is one-to-one; $f^{-1}(f(x))=x$. Graph reflects across $y=x$.'
+    ds: |
+      Sines and cosines encode cyclic features (hour of day, day of year) as
+      $(\sin\frac{2\pi t}{24},\cos\frac{2\pi t}{24})$ so 23:00 is near 00:00. Fourier features
+      and transformer positional encodings use the same idea.
+    lab: |
+      Encode hours 0-23 as (sin, cos) pairs and compute Euclidean distance between hour 23
+      and hour 0, versus hour 0 and hour 12. Compare with raw |23-0|.
+    questions:
+      - {type: num, d: 1, q: 'Convert 90 degrees to radians.', a: 'pi/2', exp: '$90\cdot\pi/180=\pi/2$.'}
+      - {type: num, d: 1, q: 'Evaluate $\sin^2(1.234)+\cos^2(1.234)$.', a: '1', exp: 'Pythagorean identity -- true for any angle.'}
+      - {type: expr, d: 2, var: x, q: 'Find the inverse of $f(x)=2x+6$.', a: '(x-6)/2', exp: 'Solve $y=2x+6$ for $x$: $x=(y-6)/2$, then rename.'}
+    cards:
+      - {f: 'Horizontal line test tells you...', b: 'Whether a function is one-to-one, i.e. has an inverse.'}
+      - {f: 'How to encode hour-of-day as a feature so 23:00 is near 00:00?', b: '$(\sin(2\pi h/24),\ \cos(2\pi h/24))$'}
+    fun:
+      - kind: fact
+        title: "Why radians?"
+        body: |
+          In radians, $\frac{d}{dx}\sin x=\cos x$ exactly. In degrees you'd get
+          $\frac{\pi}{180}\cos x$ -- an ugly constant everywhere. Radians are the units in
+          which the circle "speaks calculus natively": arc length = angle on a unit circle.
+
+  - id: fn-activations
+    title: "The Activation Function Zoo"
+    xp: 50
+    prereqs: [fn-explog]
+    readings:
+      - {book: STW, sec: "6.7", title: "Hyperbolic Functions"}
+      - {book: OS1, sec: "6.9", title: "Calculus of the Hyperbolic Functions (read the definitions only)"}
+      - {book: MML, sec: "5.6", title: "skim the neural-network example for context"}
+    videos:
+      - {book: 3B1B-NN, n: 1, title: "But what is a neural network?"}
+    summary: |
+      Meet the functions neural networks are built from: sigmoid
+      $\sigma(x)=\frac{1}{1+e^{-x}}$, $\tanh$, ReLU $\max(0,x)$, and softplus $\ln(1+e^x)$.
+    key_ideas:
+      - 'Sigmoid squashes $\mathbb{R}\to(0,1)$; $\sigma(0)=\tfrac12$; $\sigma(-x)=1-\sigma(x)$.'
+      - '$\tanh(x)=2\sigma(2x)-1$ squashes to $(-1,1)$.'
+      - 'ReLU is piecewise linear and not differentiable at 0 (we just pick a subgradient).'
+      - 'Softplus $\ln(1+e^x)$ is a smooth ReLU.'
+    ds: |
+      Sigmoid turns a score into a probability (logistic regression). Its inverse is the
+      logit $\ln\frac{p}{1-p}$ from the last topic -- they're the same function family seen
+      from both sides.
+    lab: |
+      Plot sigmoid, tanh, ReLU, softplus on [-5, 5] in one figure. Verify numerically that
+      `np.tanh(x) == 2*sigmoid(2*x) - 1` (use `np.allclose`).
+    questions:
+      - {type: num, d: 1, q: 'Compute $\sigma(0)$ where $\sigma(x)=1/(1+e^{-x})$.', a: '1/2', exp: '$1/(1+1)$.'}
+      - {type: expr, d: 2, var: p, q: 'Invert the sigmoid: if $p=\sigma(x)$, express $x$ in terms of $p$.', a: 'ln(p/(1-p))', exp: '$p(1+e^{-x})=1 \Rightarrow e^{-x}=(1-p)/p \Rightarrow x=\ln\frac{p}{1-p}$ -- the logit.'}
+      - {type: num, d: 1, q: 'ReLU($-3$) + ReLU($2$) = ?', a: '2', exp: '$0+2$.'}
+    cards:
+      - {f: 'Sigmoid formula and range', b: '$\sigma(x)=1/(1+e^{-x})$, range $(0,1)$.'}
+      - {f: 'Inverse of the sigmoid?', b: 'The logit: $\ln\frac{p}{1-p}$.'}
+    fun:
+      - kind: puzzle
+        title: "Sigmoid symmetry"
+        body: |
+          Without a calculator: what is $\sigma(3)+\sigma(-3)$? (Hint: what is $\sigma(-x)$
+          in terms of $\sigma(x)$?) This symmetry is why logistic regression treats the two
+          classes evenhandedly.
+        answer: "Exactly 1, since $\\sigma(-x)=1-\\sigma(x)$."

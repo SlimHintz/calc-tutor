@@ -1,0 +1,201 @@
+unit:
+  id: N03
+  ord: 20
+  course: neuro
+  title: "Plasticity: How Synapses Learn"
+  constellation: "The Forge"
+  color: "#ff8a65"
+  blurb: |
+    Memory is stored as changes in the strength and structure of synapses. Kandel's own Nobel
+    work: from a sea slug's reflexes to the molecular switch (CREB) that turns short-term
+    memory into long-term memory, and the NMDA receptor that implements Hebb's rule.
+  ds_why: |
+    Apply it: long-term memory requires new proteins and new synapses, which require TIME and
+    REPETITION spaced over sessions -- the biological basis of spaced repetition. Bridge:
+    Hebbian learning and associative networks are learning rules without backprop.
+
+topics:
+  - id: nr-hebb
+    title: "Hebb's Rule & Associative Memory Networks"
+    xp: 70
+    prereqs: [nr-integration]
+    readings:
+      - {book: KAN, sec: "App. E", title: "Neural Networks (associative memory, Hebbian plasticity)"}
+      - {book: KAN, sec: "Ch 65", title: "Learning and Memory (introduction)"}
+    summary: |
+      Hebb (1949): when cell A repeatedly helps fire cell B, the A→B connection strengthens --
+      "cells that fire together wire together." Associative networks store patterns in
+      Hebbian weights and recall whole patterns from partial cues.
+    key_ideas:
+      - 'Hebbian update: $\Delta w_{ij}=\eta\,x_ix_j$ (correlation-based, local).'
+      - 'Pattern completion: a partial cue recalls the full memory.'
+      - 'Pure Hebbian learning is unstable (weights grow) -- the brain needs normalization and LTD.'
+    ds: |
+      Bridge: a Hopfield network stores patterns as $W=\sum_p\mathbf x_p\mathbf x_p^\top$ (outer
+      products -- matrix calculus Unit 7) and recalls by iterating $\mathbf x\leftarrow
+      \text{sign}(W\mathbf x)$. Apply it: memories are associative, so link new ideas to old
+      ones (elaboration) to give recall more entry points.
+    lab: |
+      Build a Hopfield network in numpy storing three 25-pixel letter patterns. Corrupt one
+      with 20% noise and recall it. How many patterns before recall breaks? (Theory: ~0.14 N.)
+    questions:
+      - {type: mc, d: 1, q: 'Hebb''s postulate in five words is often summarized as...', choices: ['use it or lose it', 'cells that fire together wire together', 'all or none firing', 'neurons never regenerate'], a: 1, exp: 'Correlated activity strengthens connections.'}
+      - {type: num, d: 2, q: 'Hebbian update $\Delta w=\eta\,x_{pre}\,x_{post}$ with $\eta=0.1$, $x_{pre}=1$, $x_{post}=0.8$. Find $\Delta w$.', a: '0.08', exp: '$0.1\times1\times0.8$.'}
+      - {type: mc, d: 2, q: 'Recalling a whole memory from a partial cue is called...', choices: ['pattern separation', 'pattern completion', 'habituation', 'extinction'], a: 1, exp: 'Associative recall.'}
+    cards:
+      - {f: 'Hebbian learning rule', b: '$\Delta w_{ij}=\eta\,x_ix_j$: strengthen connections between co-active neurons.'}
+      - {f: 'Why does pure Hebbian learning need help?', b: 'Weights only grow (positive feedback); needs normalization/LTD to stay stable.'}
+    fun:
+      - kind: fact
+        title: "Hopfield's Nobel"
+        body: |
+          John Hopfield's 1982 associative memory network -- Hebbian weights plus an energy
+          function -- won a share of the 2024 Nobel Prize in Physics (with Geoffrey Hinton) for
+          foundational work enabling machine learning with artificial neural networks.
+
+  - id: nr-implicit-aplysia
+    title: "Habituation, Sensitization & Conditioning in Aplysia"
+    xp: 80
+    prereqs: [nr-transmitter-release, nr-neuromodulators]
+    readings:
+      - {book: KAN, sec: "Ch 66", title: "Cellular Mechanisms of Implicit Memory Storage (first half)"}
+    summary: |
+      The sea slug Aplysia has a simple gill-withdrawal reflex built from identifiable neurons.
+      Habituation weakens sensory-motor synapses; sensitization strengthens them via serotonin
+      and cAMP/PKA. Same synapse, opposite memories.
+    key_ideas:
+      - 'Implicit memory is stored as changes in synaptic strength within the reflex circuit itself.'
+      - 'Sensitization: tail shock → serotonin → cAMP → PKA → more transmitter release.'
+      - 'One training trial → short-term memory (minutes); spaced trials → long-term memory (days).'
+    ds: |
+      Apply it: in Aplysia, FIVE spaced shocks produced long-term memory where the same five
+      massed together did not -- spacing at the molecular level. That's exactly why your review
+      queue spreads cards out.
+    lab: |
+      Make a 2-column table "Short-term sensitization" vs "Long-term sensitization": time
+      course, molecules, protein synthesis needed?, structural change? Fill from memory, then
+      check against Kandel Ch 66.
+    questions:
+      - {type: mc, d: 1, q: 'Which modulator drives sensitization in Aplysia?', choices: ['dopamine', 'serotonin', 'GABA', 'glutamate'], a: 1, exp: 'Facilitating interneurons release serotonin onto sensory neuron terminals.'}
+      - {type: mc, d: 2, q: 'Habituation of the gill-withdrawal reflex is due to...', choices: ['motor neuron death', 'decreased transmitter release at sensory-motor synapses', 'new synapse growth', 'muscle fatigue'], a: 1, exp: 'The synapse weakens with repeated harmless stimulation.'}
+      - {type: mc, d: 2, q: 'Compared with massed training, spaced training in Aplysia...', choices: ['produced weaker memory', 'produced long-term memory more effectively', 'made no difference', 'only produced habituation'], a: 1, exp: 'Spacing recruits the long-term (gene expression) pathway.'}
+    cards:
+      - {f: 'Sensitization pathway in Aplysia', b: 'Serotonin → cAMP → PKA → enhanced transmitter release.'}
+      - {f: 'Implicit memory is stored where?', b: 'In the circuits that perform the behavior (synaptic strength changes).'}
+    fun:
+      - kind: fact
+        title: "Kandel's slug"
+        body: |
+          Eric Kandel bet his career on a sea slug with about 20,000 big, identifiable neurons,
+          when colleagues thought memory could only be studied in mammals. The bet won him the
+          2000 Nobel Prize -- and wrote much of the textbook you're reading.
+
+  - id: nr-creb
+    title: "From Short-Term to Long-Term: CREB, Genes & New Synapses"
+    xp: 90
+    prereqs: [nr-implicit-aplysia]
+    readings:
+      - {book: KAN, sec: "Ch 66", title: "Long-Term Storage ... the cAMP-PKA-CREB Pathway; Learning-Induced Structural Change"}
+    summary: |
+      Short-term memory modifies existing proteins. Long-term memory requires gene expression:
+      repeated signals send PKA to the nucleus, activating CREB-1 and new protein synthesis,
+      which grows new synaptic connections. CREB-2 acts as a brake.
+    key_ideas:
+      - 'Protein-synthesis inhibitors block long-term but not short-term memory.'
+      - 'CREB-1 activates, CREB-2 represses: a threshold that filters what is worth keeping.'
+      - 'Long-term memory = structural change: more (or fewer) synapses.'
+    ds: |
+      Apply it: the CREB-2 "brake" means a single exposure is filtered out; repeated, spaced
+      exposures over days are needed to commit to structural change. Cramming builds short-term
+      performance, not long-term structure.
+    lab: |
+      Write a one-paragraph "lab report" explaining to a fellow runner why a single long run
+      doesn't build endurance but a training block does -- using CREB as the analogy for
+      adaptation thresholds. Then have your assistant grade it (record_grade kind=explain-back).
+    questions:
+      - {type: mc, d: 2, q: 'A drug that blocks protein synthesis during training would most likely...', choices: ['block short-term memory', 'block long-term memory but spare short-term memory', 'have no effect', 'enhance memory'], a: 1, exp: 'Long-term memory needs new proteins; short-term uses existing ones.'}
+      - {type: mc, d: 2, q: 'CREB-2 functions as...', choices: ['a memory activator', 'a memory suppressor (brake) that must be relieved', 'a neurotransmitter', 'an ion channel'], a: 1, exp: 'It represses CREB-1-driven transcription.'}
+      - {type: free, d: 3, q: 'Using the CREB story, explain why spaced repetition beats cramming for long-term retention.', a: 'Long-term memory needs repeated signals to relieve CREB-2 repression and drive CREB-1 gene expression, protein synthesis and new synapse growth; spaced repetitions provide repeated activation over time (with time for the cascade), whereas massed exposures mostly modify existing proteins (short-term).'}
+    cards:
+      - {f: 'What distinguishes long-term from short-term memory molecularly?', b: 'Long-term needs gene expression and new protein synthesis (CREB pathway) and grows new synapses.'}
+    fun:
+      - kind: fact
+        title: "Memory molecules are ancient"
+        body: |
+          The cAMP-PKA-CREB pathway that stores memory in a sea slug also does it in fruit flies
+          and mice (Kandel Ch 66). Evolution found a memory system that worked and kept it for
+          over 500 million years.
+
+  - id: nr-ltp
+    title: "LTP, LTD & the NMDA Receptor"
+    xp: 100
+    prereqs: [nr-hebb, nr-creb]
+    readings:
+      - {book: KAN, sec: "Ch 67", title: "Explicit Memory ... Long-Term Potentiation in the Hippocampus; Long-Term Depression"}
+    summary: |
+      Long-term potentiation: high-frequency stimulation durably strengthens hippocampal
+      synapses. The NMDA receptor opens only with glutamate AND postsynaptic depolarization
+      (Mg²⁺ block removed) -- a molecular AND gate implementing Hebb's rule. Ca²⁺ entry then
+      triggers AMPA receptor insertion. LTD is the opposite.
+    key_ideas:
+      - 'NMDA receptor = coincidence detector (pre AND post active).'
+      - 'Early LTP: more/better AMPA receptors. Late LTP: protein synthesis, structural growth.'
+      - 'Large, fast Ca²⁺ rise → LTP; modest, prolonged → LTD.'
+      - 'Blocking NMDA receptors impairs spatial learning (Morris water maze).'
+    ds: |
+      Bridge: the NMDA receptor computes $x_{pre}\wedge x_{post}$ -- logic from the discrete
+      course, in protein form. Apply it: active, effortful retrieval drives strong
+      postsynaptic activity; passive re-reading drives much less.
+    lab: |
+      Implement a toy Ca²⁺-based plasticity rule: $\Delta w=\eta\,f(\text{Ca})$ where $f$ is
+      negative for moderate Ca and positive for high Ca (the "BCM-like" curve). Plot $f$ and
+      simulate weights under low vs high stimulation frequency.
+    questions:
+      - {type: mc, d: 1, q: 'What blocks the NMDA receptor channel at resting potential?', choices: ['Na⁺', 'Mg²⁺', 'K⁺', 'GABA'], a: 1, exp: 'Depolarization expels the magnesium ion.'}
+      - {type: mc, d: 2, q: 'Why is the NMDA receptor called a coincidence detector?', choices: ['it needs presynaptic glutamate AND postsynaptic depolarization', 'it detects two transmitters', 'it fires twice', 'it measures time'], a: 0, exp: 'Exactly Hebb''s condition.'}
+      - {type: mc, d: 2, q: 'Early LTP mainly involves...', choices: ['new synapses', 'insertion/enhancement of AMPA receptors', 'cell division', 'myelin growth'], a: 1, exp: 'Late LTP adds protein synthesis and structural change.'}
+    cards:
+      - {f: 'Two conditions to open an NMDA receptor', b: 'Glutamate bound AND postsynaptic depolarization (removes Mg²⁺ block).'}
+      - {f: 'Early vs late LTP', b: 'Early: AMPA receptor changes (no new protein). Late: gene expression, protein synthesis, new synapses.'}
+    fun:
+      - kind: fact
+        title: "Discovered by accident in Oslo"
+        body: |
+          Terje Lømo noticed LTP in 1966 in rabbit hippocampus while studying something else;
+          with Tim Bliss he published the landmark paper in 1973. It took decades to link LTP
+          convincingly to actual learning.
+
+  - id: nr-critical-periods
+    title: "Experience, Critical Periods & Adult Plasticity"
+    xp: 60
+    prereqs: [nr-ltp]
+    readings:
+      - {book: KAN, sec: "Ch 56", title: "Experience and the Refinement of Synaptic Connections"}
+    summary: |
+      Early experience sculpts circuits during critical periods (e.g. binocular vision). Unused
+      connections are pruned. Critical periods close but can partly reopen; adult brains keep
+      substantial, if slower, plasticity.
+    key_ideas:
+      - 'Use-dependent competition: active inputs win, inactive ones are pruned.'
+      - 'Critical periods are gated by inhibition and molecular "brakes" that mature with age.'
+      - 'Adult learning works -- it just relies more on attention, motivation and repetition.'
+    ds: |
+      Apply it: you're relearning calculus as an adult -- the plasticity is there, but it's
+      gated by attention and modulators. Engagement (curiosity, XP, streaks) isn't fluff; it
+      opens the gate.
+    lab: |
+      Reflect: list three skills you learned as an adult (running economy, a language, code).
+      For each, note what conditions (feedback, repetition, motivation) made it stick. Bring
+      it to your assistant to connect with Ch 56.
+    questions:
+      - {type: mc, d: 2, q: 'Covering one eye of a kitten during the critical period leads to...', choices: ['no effect', 'cortex dominated by the open eye; lasting deficit in the covered eye', 'improved vision in the covered eye', 'blindness in both eyes'], a: 1, exp: 'Hubel & Wiesel''s monocular deprivation experiments.'}
+      - {type: mc, d: 1, q: 'In adults, plasticity is best described as...', choices: ['absent', 'present but more dependent on attention and neuromodulation', 'the same as in infants', 'only in the spinal cord'], a: 1, exp: 'Adult plasticity is real but gated.'}
+    cards:
+      - {f: 'Critical period', b: 'A developmental window when experience shapes circuits most strongly.'}
+    fun:
+      - kind: fact
+        title: "London cabbies"
+        body: |
+          London taxi drivers, who memorize ~25,000 streets ("The Knowledge"), showed larger
+          posterior hippocampi than controls, and in a later study the change appeared only in
+          trainees who passed. Adult brains change with intensive learning.

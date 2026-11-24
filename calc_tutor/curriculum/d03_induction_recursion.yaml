@@ -1,0 +1,187 @@
+unit:
+  id: D03
+  ord: 50
+  course: core
+  title: "Sequences, Induction & Recursion"
+  constellation: "The Staircase"
+  color: "#aed581"
+  blurb: |
+    Climb an infinite staircase one step at a time. Induction proves statements about every
+    natural number; recursion defines things in terms of smaller versions of themselves; and
+    recurrence relations describe how sequences evolve.
+  ds_why: |
+    Dynamic programming, recursive algorithms, autoregressive time-series models, RNN
+    unrolling and loop-invariant reasoning all run on these ideas.
+
+topics:
+  - id: dm-sums
+    title: "Sequences & Summation Notation"
+    xp: 50
+    prereqs: [dm-quantifiers]
+    readings:
+      - {book: EPP, sec: "4.1", title: "Sequences"}
+      - {book: PRE, sec: "11.1-11.3", title: "Sequences and Summation; Arithmetic and Geometric Sequences"}
+    summary: |
+      Sigma and pi notation, arithmetic and geometric sums, and the closed forms you'll use
+      constantly: $\sum_{i=1}^n i=\frac{n(n+1)}{2}$, $\sum_{i=0}^{n-1}r^i=\frac{r^n-1}{r-1}$.
+    key_ideas:
+      - 'Change of index variable; splitting and telescoping sums.'
+      - 'Gauss: $1+2+\cdots+n=n(n+1)/2$.'
+      - 'Finite geometric sum $\frac{r^n-1}{r-1}$ ($r\ne1$).'
+    ds: |
+      Every loss is a sum over examples; every mean is a sum divided by $n$. Nested loops cost
+      $\sum_{i=1}^n i=O(n^2)$ -- that's why pairwise-distance computations get slow.
+    lab: |
+      Time `sum(range(n))` vs the formula $n(n-1)/2$ for $n=10^7$. Then vectorize a double
+      loop over pairs with numpy broadcasting.
+    questions:
+      - {type: num, d: 1, q: '$\sum_{i=1}^{100} i$', a: '5050', exp: 'Gauss: $100\cdot101/2$.'}
+      - {type: num, d: 2, q: '$\sum_{i=0}^{9} 2^i$', a: '1023', exp: '$(2^{10}-1)/(2-1)$.'}
+      - {type: expr, d: 2, var: n, q: 'Closed form for $\sum_{i=1}^{n}(2i-1)$ (sum of the first $n$ odd numbers).', a: 'n^2', exp: '$2\cdot\frac{n(n+1)}{2}-n=n^2$.'}
+    cards:
+      - {f: '$\sum_{i=1}^n i$', b: '$\frac{n(n+1)}{2}$'}
+      - {f: 'Finite geometric sum $\sum_{i=0}^{n-1}r^i$', b: '$\frac{r^n-1}{r-1}$, $r\ne1$'}
+    fun:
+      - kind: fact
+        title: "Young Gauss"
+        body: |
+          The story goes that 9-year-old Gauss was told to add 1 to 100 as busywork and
+          answered 5050 almost instantly, pairing 1+100, 2+99, ... into 50 pairs of 101.
+          The details are legend; the trick is real.
+
+  - id: dm-induction
+    title: "Mathematical Induction"
+    xp: 80
+    prereqs: [dm-sums, dm-proof-direct]
+    readings:
+      - {book: EPP, sec: "4.2-4.3", title: "Mathematical Induction I and II"}
+      - {book: EPP, sec: "4.4", title: "Strong Mathematical Induction and the Well-Ordering Principle"}
+      - {book: KBR, sec: "2.4", title: "Mathematical Induction"}
+      - {book: PRE, sec: "11.5", title: "Mathematical Induction"}
+    summary: |
+      To prove $P(n)$ for all $n\ge a$: prove $P(a)$ (base case), then prove $P(k)\Rightarrow
+      P(k+1)$ (inductive step). Strong induction may assume $P(a),\dots,P(k)$.
+    key_ideas:
+      - 'Dominoes: the first falls, and each knocks over the next.'
+      - 'In the inductive step, USE the hypothesis $P(k)$ -- find it inside $P(k+1)$.'
+      - 'Strong induction for recursions that reach back further (e.g. Fibonacci, prime factorization).'
+    ds: |
+      Proving a recursive algorithm or a loop is correct (Epp 4.5) is induction; so is showing
+      gradient descent's error shrinks every step, hence after $k$ steps.
+    lab: |
+      Prove $\sum_{i=1}^n i^2=\frac{n(n+1)(2n+1)}{6}$ by induction on paper, then use sympy's
+      `summation` to confirm the closed form.
+    questions:
+      - {type: free, d: 2, q: 'Prove by induction: $1+2+\cdots+n=\frac{n(n+1)}{2}$ for all $n\ge1$.', a: 'Base $n=1$: $1=1$. Step: assume true for $k$; then $\sum_{i=1}^{k+1}i=\frac{k(k+1)}{2}+(k+1)=\frac{(k+1)(k+2)}{2}$.'}
+      - {type: free, d: 3, q: 'Prove by induction that $2^n>n$ for all $n\ge1$.', a: 'Base: $2>1$. Step: if $2^k>k$ then $2^{k+1}=2\cdot2^k>2k\ge k+1$ for $k\ge1$.'}
+      - {type: mc, d: 2, q: 'An inductive proof shows $P(1)$ and $P(k)\Rightarrow P(k+2)$. It proves $P(n)$ for...', choices: ['all $n\ge1$', 'odd $n$ only', 'even $n$ only', 'nothing'], a: 1, exp: 'The dominoes only hit every other one.'}
+    cards:
+      - {f: 'Two parts of an induction proof', b: 'Base case $P(a)$; inductive step $P(k)\Rightarrow P(k+1)$.'}
+      - {f: 'Strong induction', b: 'Inductive step may assume $P(a),\dots,P(k)$, not just $P(k)$.'}
+    fun:
+      - kind: puzzle
+        title: "All horses are the same color?"
+        body: |
+          "Proof": any one horse is the same color as itself. If any $k$ horses share a color,
+          take $k+1$ horses; the first $k$ match and the last $k$ match, and they overlap, so
+          all $k+1$ match. Where does this induction break?
+        answer: "Going from $k=1$ to $k=2$: the first 1 horse and the last 1 horse don't overlap, so nothing links them."
+
+  - id: dm-recursion
+    title: "Recursive Definitions"
+    xp: 60
+    prereqs: [dm-induction]
+    readings:
+      - {book: EPP, sec: "8.1", title: "Recursively Defined Sequences"}
+      - {book: EPP, sec: "8.4", title: "General Recursive Definitions"}
+    summary: |
+      Define the $n$th term (or a structure) from earlier ones plus base cases: factorials,
+      Fibonacci, Tower of Hanoi, recursively-defined sets and grammars.
+    key_ideas:
+      - 'Base case(s) + recurrence = complete definition.'
+      - 'Naive recursion can repeat work exponentially; memoization fixes it (dynamic programming).'
+    ds: |
+      Dynamic programming (edit distance, Viterbi in HMMs, sequence alignment), decision-tree
+      building, and recursive JSON/AST processing are all recursion.
+    lab: |
+      Compute Fibonacci(35) naively and with `functools.lru_cache`. Count calls in each version.
+      Then implement edit distance with memoization.
+    questions:
+      - {type: num, d: 1, q: '$a_1=3$, $a_n=2a_{n-1}+1$. Find $a_4$.', a: '31', exp: '3, 7, 15, 31.'}
+      - {type: num, d: 2, q: 'Minimum moves for Tower of Hanoi with 6 disks ($m_n=2m_{n-1}+1$, $m_1=1$)?', a: '63', exp: '$2^6-1$.'}
+    cards:
+      - {f: 'Memoization', b: 'Cache results of recursive calls so each subproblem is solved once.'}
+    fun:
+      - kind: fact
+        title: "The end of the world"
+        body: |
+          Legend: monks move 64 golden disks in a Tower of Hanoi, and the world ends when they
+          finish. That's $2^{64}-1\approx1.8\times10^{19}$ moves -- at one per second, about
+          585 billion years. We're safe.
+
+  - id: dm-recurrences
+    title: "Solving Recurrence Relations"
+    xp: 80
+    prereqs: [dm-recursion, ser-geometric]
+    readings:
+      - {book: EPP, sec: "8.2", title: "Solving Recurrence Relations by Iteration"}
+      - {book: EPP, sec: "8.3", title: "Second-Order Linear Homogeneous Recurrence Relations with Constant Coefficients"}
+      - {book: KBR, sec: "3.5", title: "Recurrence Relations"}
+    summary: |
+      Find closed forms: iterate and spot the pattern, or for $a_n=Aa_{n-1}+Ba_{n-2}$ solve the
+      characteristic equation $t^2=At+B$: $a_n=C r_1^n+D r_2^n$.
+    key_ideas:
+      - 'Iteration: $a_n=ra_{n-1}+c$ unrolls to a geometric sum.'
+      - 'Characteristic equation for second-order linear recurrences.'
+      - 'Fibonacci: $F_n=\frac{\varphi^n-\psi^n}{\sqrt5}$ with $\varphi=\frac{1+\sqrt5}{2}$.'
+    ds: |
+      AR time-series models are linear recurrences; their characteristic roots decide whether a
+      forecast explodes or decays (stationarity). The exponential moving average is
+      $a_n=\beta a_{n-1}+(1-\beta)x_n$.
+    lab: |
+      Simulate $a_n=1.1a_{n-1}-0.3a_{n-2}$ and find the characteristic roots with `np.roots`.
+      Do the roots predict decay? Then try coefficients giving a root with $|r|>1$.
+    questions:
+      - {type: expr, d: 2, var: n, q: 'Solve $a_n=3a_{n-1}$, $a_0=5$.', a: '5*3^n', exp: 'Geometric.'}
+      - {type: expr, d: 3, var: n, q: 'Solve $a_n=5a_{n-1}-6a_{n-2}$ with $a_0=2$, $a_1=5$.', a: '3^n+2^n', exp: '$t^2-5t+6=0$: roots 2, 3. $C+D=2$, $3C+2D=5$ gives $C=D=1$.'}
+      - {type: num, d: 2, q: 'Ratio $F_{n+1}/F_n$ of Fibonacci numbers tends to? (decimal ok)', a: '(1+sqrt(5))/2', tol: 0.001, exp: 'The golden ratio, the dominant characteristic root.'}
+    cards:
+      - {f: 'Characteristic equation for $a_n=Aa_{n-1}+Ba_{n-2}$', b: '$t^2-At-B=0$; distinct roots give $a_n=Cr_1^n+Dr_2^n$.'}
+    fun:
+      - kind: fact
+        title: "Fibonacci's rabbits"
+        body: |
+          Fibonacci introduced his sequence in 1202 with a (biologically absurd) rabbit
+          population puzzle. The same recurrence describes spiral counts in sunflowers and
+          pinecones -- and its closed form involves $\sqrt5$, even though every term is an integer.
+
+  - id: dm-loop-invariants
+    title: "Correctness of Algorithms (Loop Invariants)"
+    xp: 40
+    optional: true
+    prereqs: [dm-induction]
+    readings:
+      - {book: EPP, sec: "4.5", title: "Application: Correctness of Algorithms"}
+      - {book: EPP, sec: "3.8", title: "Application: Algorithms"}
+    summary: |
+      A loop invariant is a statement true before and after every iteration; combined with
+      termination it proves the loop computes what it should. Induction in disguise.
+    key_ideas:
+      - 'Initialization, maintenance, termination.'
+      - 'Euclid''s algorithm: $\gcd(a,b)=\gcd(b, a\bmod b)$ is the invariant.'
+    ds: |
+      Invariants make data pipelines testable: "row count preserved", "no nulls in key",
+      "probabilities sum to 1" -- assert them at every stage.
+    lab: |
+      Implement Euclid's gcd with an `assert` of the invariant inside the loop. Then write the
+      invariant for insertion sort ("prefix is sorted") and assert it too.
+    questions:
+      - {type: num, d: 1, q: '$\gcd(252, 105)$', a: '21', exp: '252 mod 105 = 42; 105 mod 42 = 21; 42 mod 21 = 0.'}
+    cards:
+      - {f: 'Loop invariant', b: 'A property true before the loop and preserved by each iteration; at exit it gives correctness.'}
+    fun:
+      - kind: fact
+        title: "The oldest algorithm"
+        body: |
+          Euclid's gcd algorithm (around 300 BC) is often called the oldest nontrivial
+          algorithm still in everyday use -- it runs inside RSA key generation on your devices.

@@ -1,0 +1,327 @@
+unit:
+  id: S02
+  ord: 145
+  course: core
+  title: "Statistical Inference"
+  constellation: "The Scale"
+  color: "#ffb300"
+  blurb: |
+    From data to conclusions you can defend: estimators and their bias/variance, maximum
+    likelihood, sampling distributions, confidence intervals, hypothesis tests, A/B testing,
+    the bootstrap, and regression as a statistical model rather than just a fit.
+  ds_why: |
+    This is the daily work of data science: is the lift real, how sure are we, how big a sample
+    do we need, which coefficients matter, and will the model generalize?
+
+topics:
+  - id: st-estimation
+    title: "Estimators: Bias, Variance & MSE"
+    xp: 70
+    prereqs: [st-lln-clt]
+    readings:
+      - {book: OI, sec: "5.1", title: "Point estimates and sampling variability"}
+      - {book: ISL, sec: "2.2", title: "Assessing Model Accuracy (the bias-variance trade-off)"}
+    summary: |
+      An estimator is a rule for guessing a parameter from data. Judge it by bias
+      $E[\hat\theta]-\theta$, variance, and $\text{MSE}=\text{bias}^2+\text{variance}$.
+    key_ideas:
+      - '$\text{MSE}=\text{Bias}^2+\text{Var}$: a little bias can buy a lot of variance reduction.'
+      - 'Sample variance divides by $n-1$ to be unbiased.'
+      - 'The same trade-off governs model complexity (underfitting vs overfitting).'
+    ds: |
+      Regularization (ridge, lasso, early stopping) deliberately adds bias to cut variance. The
+      bias-variance trade-off is the core idea behind model selection.
+    lab: |
+      Simulate 10,000 samples of size 5 from N(0, 4). Compare the average of the variance
+      estimates dividing by $n$ vs $n-1$ with the true value 4.
+    questions:
+      - {type: num, d: 2, q: 'An estimator has bias 2 and variance 5. Its MSE?', a: '9', exp: '$2^2+5$.'}
+      - {type: mc, d: 2, q: 'Why divide by $n-1$ in the sample variance?', choices: ['to make it larger for safety', 'because using $\bar x$ instead of $\mu$ loses one degree of freedom; $n-1$ makes it unbiased', 'convention only', 'to make it a whole number'], a: 1, exp: 'Bessel''s correction.'}
+      - {type: mc, d: 2, q: 'A very flexible model (deep tree) typically has...', choices: ['high bias, low variance', 'low bias, high variance', 'low bias, low variance', 'high bias, high variance'], a: 1, exp: 'It fits noise: overfitting.'}
+    cards:
+      - {f: 'MSE decomposition', b: '$\text{MSE}=\text{Bias}^2+\text{Variance}$'}
+    fun:
+      - kind: fact
+        title: "Stein's paradox"
+        body: |
+          In 1956 Charles Stein proved that when estimating 3 or more means at once, the obvious
+          estimator (each sample mean) is beaten by shrinking them all toward each other -- even
+          when the quantities are unrelated. A little bias wins.
+
+  - id: opt-mle
+    title: "Maximum Likelihood & Logistic Regression"
+    xp: 110
+    prereqs: [st-estimation, opt-gd, d-explog]
+    readings:
+      - {book: MML, sec: "8.3", title: "Parameter Estimation (MLE, MAP)"}
+      - {book: MML, sec: "9.2", title: "Parameter Estimation (linear regression)"}
+    summary: |
+      Choose parameters that make the observed data most probable: maximize
+      $\sum\ln p(y_i|\mathbf x_i,\boldsymbol\theta)$. For logistic regression the gradient of
+      the negative log-likelihood is $\sum(\sigma(\mathbf w^\top\mathbf x_i)-y_i)\mathbf x_i$.
+    key_ideas:
+      - 'Maximize log-likelihood = minimize negative log-likelihood (cross-entropy).'
+      - 'Gaussian noise => MLE = least squares. Bernoulli => log-loss.'
+      - 'Logistic gradient: (prediction - label) × input. Beautiful, thanks to $\sigma''=\sigma(1-\sigma)$.'
+      - 'MAP adds a log-prior = regularization (Gaussian prior => L2).'
+    ds: |
+      This connects calculus to statistics: loss functions aren't arbitrary; they're negative
+      log-likelihoods. Cross-entropy, MSE, Poisson loss all come from here.
+    lab: |
+      Derive the logistic regression gradient by hand. Implement GD with it in numpy on a
+      small dataset and match `sklearn.linear_model.LogisticRegression(penalty=None)`.
+    questions:
+      - {type: num, d: 2, q: 'Coin: 7 heads in 10 flips. MLE of $p$ (maximize $7\ln p+3\ln(1-p)$)?', a: '0.7', exp: '$\frac7p-\frac3{1-p}=0$.'}
+      - {type: mc, d: 2, q: 'For logistic regression, $\partial(-\ln L)/\partial\mathbf w$ for one example is...', choices: ['$(y-\hat y)$', '$(\hat y-y)\mathbf x$', '$\hat y(1-\hat y)\mathbf x$', '$\mathbf x/\hat y$'], a: 1, exp: 'Prediction minus label, times input.'}
+      - {type: mc, d: 2, q: 'MLE with Gaussian noise $y=\mathbf w^\top\mathbf x+\epsilon$ is equivalent to...', choices: ['minimizing absolute error', 'minimizing squared error', 'maximizing accuracy', 'minimizing log-loss'], a: 1, exp: 'Log of the Gaussian density is $-\frac{(y-\mathbf w^\top\mathbf x)^2}{2\sigma^2}+$ const.'}
+      - {type: free, d: 3, q: 'Derive $\frac{d}{dz}\left[-y\ln\sigma(z)-(1-y)\ln(1-\sigma(z))\right]$.', a: '$\sigma(z)-y$. Use $\frac{d}{dz}\ln\sigma=1-\sigma$ and $\frac{d}{dz}\ln(1-\sigma)=-\sigma$.'}
+    cards:
+      - {f: 'Logistic regression gradient (one example)', b: '$(\sigma(\mathbf w^\top\mathbf x)-y)\,\mathbf x$'}
+      - {f: 'MSE corresponds to which noise model?', b: 'Gaussian (MLE under Gaussian noise).'}
+      - {f: 'MAP with Gaussian prior on weights adds...', b: 'An L2 (ridge) penalty.'}
+    fun:
+      - kind: fact
+        title: "Fisher's big idea"
+        body: |
+          R.A. Fisher developed maximum likelihood in the 1910s-20s, partly while working at an
+          agricultural research station analyzing crop yields. A huge share of modern ML
+          is "Fisher + gradient descent + a lot of GPUs."
+
+
+  - id: st-sampling-dist
+    title: "Sampling Distributions & Standard Errors"
+    xp: 60
+    prereqs: [st-estimation]
+    readings:
+      - {book: OI, sec: "5.1", title: "Point estimates and sampling variability"}
+      - {book: BH, sec: "10.4", title: "Chi-Square and Student-t"}
+    summary: |
+      A statistic computed from a random sample is itself random; its distribution is the
+      sampling distribution, and its standard deviation is the standard error (SE).
+    key_ideas:
+      - 'SE of a mean: $s/\sqrt n$. SE of a proportion: $\sqrt{\hat p(1-\hat p)/n}$.'
+      - 'Use the $t$ distribution with $n-1$ df when $\sigma$ is estimated from small samples.'
+      - 'SE shrinks like $1/\sqrt n$: 4× the data for 2× the precision.'
+    ds: |
+      Every error bar, every "±" in a dashboard, and every sample-size question is about
+      standard errors.
+    lab: |
+      Bootstrap-free version first: compute the SE of your mean easy-run pace from the formula,
+      then by simulating resamples (you'll formalize the bootstrap later).
+    questions:
+      - {type: num, d: 1, q: 'Sample of 100, sample std dev 15. SE of the mean?', a: '1.5', exp: '$15/10$.'}
+      - {type: num, d: 2, q: 'SE of a proportion with $\hat p=0.2$, $n=400$?', a: '0.02', exp: '$\sqrt{0.16/400}$.'}
+    cards:
+      - {f: 'Standard error of a proportion', b: '$\sqrt{\hat p(1-\hat p)/n}$'}
+    fun:
+      - kind: fact
+        title: "The most dangerous equation"
+        body: |
+          Howard Wainer called $\sigma/\sqrt n$ "the most dangerous equation": ignoring it led to
+          the 2000s push for small schools, because small schools showed up at BOTH extremes of
+          test-score rankings -- pure small-sample variance.
+
+  - id: st-confidence
+    title: "Confidence Intervals"
+    xp: 80
+    prereqs: [st-sampling-dist]
+    readings:
+      - {book: OI, sec: "5.2", title: "Confidence intervals for a proportion"}
+      - {book: OI, sec: "7.1", title: "One-sample means with the t-distribution"}
+    summary: |
+      estimate ± (critical value) × SE. A 95% CI procedure captures the true parameter in 95%
+      of repeated samples -- a statement about the method, not this one interval.
+    key_ideas:
+      - '95% CI for a mean ≈ $\bar x\pm1.96\,SE$ (large $n$), or $t_{n-1}$ for small $n$.'
+      - 'Wider for more confidence, narrower with more data.'
+      - 'Not "95% probability the parameter is in this interval" (that is a Bayesian credible interval).'
+    ds: |
+      Report metrics with intervals, not bare numbers; overlapping intervals are a quick (if
+      conservative) sanity check before claiming a difference.
+    lab: |
+      Compute a 95% CI for your mean long-run pace with `scipy.stats.t.interval`, then simulate
+      1,000 samples from a known distribution to verify ~95% of the intervals cover the truth.
+    questions:
+      - {type: num, d: 2, q: 'Mean 50, SE 2, large sample: upper end of the 95% CI (use 1.96)?', a: '53.92', exp: '$50+1.96\cdot2$.'}
+      - {type: mc, d: 2, q: 'Which interpretation of a 95% CI is correct?', choices: ['95% probability the true mean is in this interval', '95% of the data lie in it', 'the procedure captures the true mean in 95% of repeated samples', 'the true mean is the center'], a: 2, exp: 'Frequentist coverage.'}
+      - {type: mc, d: 1, q: 'Quadrupling the sample size makes a CI about...', choices: ['4× narrower', '2× narrower', 'the same', '2× wider'], a: 1, exp: 'Width $\propto1/\sqrt n$.'}
+    cards:
+      - {f: '95% CI for a mean (large $n$)', b: '$\bar x\pm1.96\cdot s/\sqrt n$'}
+    fun:
+      - kind: fact
+        title: "Neyman's intervals"
+        body: |
+          Jerzy Neyman introduced confidence intervals in 1937. Fisher hated them and preferred
+          his own "fiducial" intervals; the feud between them shaped statistics for decades.
+
+  - id: st-hypothesis
+    title: "Hypothesis Testing & p-values"
+    xp: 80
+    prereqs: [st-confidence]
+    readings:
+      - {book: OI, sec: "5.3", title: "Hypothesis testing for a proportion"}
+      - {book: OI, sec: "Ch 6-7", title: "Inference for categorical and numerical data (skim, pick examples)"}
+    summary: |
+      Assume a null hypothesis, compute how surprising the data would be under it (p-value),
+      reject if below $\alpha$. Type I error = false alarm ($\alpha$); Type II = miss
+      ($\beta$); power = $1-\beta$.
+    key_ideas:
+      - 'p-value = P(data at least this extreme | $H_0$) -- NOT P($H_0$ | data).'
+      - 'Statistical significance ≠ practical significance; report effect sizes and CIs.'
+      - 'Test statistic $z=\frac{\text{estimate}-\text{null}}{SE}$.'
+    ds: |
+      Every A/B test, feature-importance claim and "is this metric change real?" question.
+      Misreading p-values is the most common statistical error in industry.
+    lab: |
+      Test whether your average pace on runs after 8+ hours of sleep differs from runs after
+      less sleep (two-sample t-test with scipy). Report the effect size and CI, not just p.
+    questions:
+      - {type: num, d: 2, q: 'Estimate 0.56, null value 0.50, SE 0.02. The $z$ statistic?', a: '3', exp: '$0.06/0.02$.'}
+      - {type: mc, d: 2, q: 'A p-value of 0.03 means...', choices: ['3% chance $H_0$ is true', 'data this extreme would occur 3% of the time if $H_0$ were true', '97% chance the effect is real', 'the effect is large'], a: 1, exp: 'It is computed assuming $H_0$.'}
+      - {type: mc, d: 2, q: 'Power of a test is...', choices: ['$\alpha$', 'P(reject $H_0$ | $H_0$ false)', 'P($H_0$ true)', '1 - p-value'], a: 1, exp: '$1-\beta$.'}
+    cards:
+      - {f: 'p-value (correct definition)', b: 'P(results at least as extreme as observed | $H_0$ true).'}
+      - {f: 'Type I vs Type II error', b: 'Type I: false positive (rate $\alpha$). Type II: false negative (rate $\beta$).'}
+    fun:
+      - kind: fact
+        title: "The lady tasting tea"
+        body: |
+          Fisher designed the first randomized test for a colleague who claimed she could tell
+          whether milk or tea was poured first. With 8 cups she had a 1-in-70 chance of getting
+          all right by guessing. She reportedly got them all.
+
+  - id: st-ab-testing
+    title: "A/B Testing, Power & Multiple Comparisons"
+    xp: 90
+    prereqs: [st-hypothesis]
+    readings:
+      - {book: OI, sec: "6.2", title: "Difference of two proportions"}
+      - {book: OI, sec: "7.3-7.4", title: "Difference of two means; Power calculations for a difference of means"}
+    summary: |
+      Randomize, pick ONE primary metric and sample size in advance (power analysis), test the
+      difference, and correct for peeking and multiple comparisons.
+    key_ideas:
+      - 'Required $n$ grows with $1/(\text{effect size})^2$.'
+      - 'Peeking repeatedly and stopping at significance inflates false positives.'
+      - '20 independent tests at $\alpha=0.05$: expect ~1 false positive. Bonferroni: use $\alpha/m$.'
+    ds: |
+      Product experimentation is A/B testing; most mistakes are design mistakes (underpowered
+      tests, peeking, many metrics), not math mistakes.
+    lab: |
+      Simulate A/B tests with no true effect, peeking after every 100 users and stopping at
+      p<0.05. What fraction "win"? Compare with a fixed-horizon test.
+    questions:
+      - {type: num, d: 2, q: 'To detect an effect half as large with the same power, multiply the sample size by...', a: '4', exp: '$n\propto1/\delta^2$.'}
+      - {type: num, d: 2, q: 'Bonferroni threshold for 10 tests at overall $\alpha=0.05$?', a: '0.005', exp: '$0.05/10$.'}
+      - {type: num, d: 3, q: 'Expected false positives among 40 tests of true nulls at $\alpha=0.05$?', a: '2', exp: '$40\times0.05$.'}
+    cards:
+      - {f: 'Sample size vs effect size', b: '$n\propto1/\delta^2$: half the effect needs 4× the users.'}
+      - {f: 'Why not peek at A/B tests?', b: 'Stopping when p<0.05 inflates the false-positive rate well above 5%.'}
+    fun:
+      - kind: fact
+        title: "41 shades of blue"
+        body: |
+          Google famously A/B tested 41 shades of blue for links (around 2009); one designer quit
+          over it. With that many comparisons, multiple-testing corrections matter -- or some
+          shade "wins" by chance.
+
+  - id: st-bootstrap
+    title: "The Bootstrap & Permutation Tests"
+    xp: 70
+    prereqs: [st-confidence, st-simulation]
+    readings:
+      - {book: ISL, sec: "5.2", title: "The Bootstrap"}
+    summary: |
+      Resample your data with replacement many times, recompute the statistic, and use the
+      spread as its sampling distribution. Permutation tests shuffle labels to simulate the null.
+    key_ideas:
+      - 'Works for medians, ratios, model metrics -- anything without a neat SE formula.'
+      - 'Percentile CI: middle 95% of bootstrap estimates.'
+      - 'Permutation test: shuffle group labels; p = fraction of shuffles at least as extreme.'
+    ds: |
+      CIs for AUC, median revenue, or a model's accuracy; significance for any custom metric.
+      Computation replaces formulas.
+    lab: |
+      Bootstrap a 95% CI for the median of your marathon-pace runs (10,000 resamples). Then do
+      a permutation test for "morning vs evening runs differ in pace".
+    questions:
+      - {type: mc, d: 1, q: 'Bootstrap samples are drawn...', choices: ['without replacement, size $n/2$', 'with replacement, size $n$', 'from a normal distribution', 'from new data'], a: 1, exp: 'Same size, with replacement.'}
+      - {type: mc, d: 2, q: 'A permutation test simulates the null by...', choices: ['adding noise', 'shuffling group labels', 'dropping outliers', 'bootstrapping each group'], a: 1, exp: 'Under $H_0$, labels are exchangeable.'}
+    cards:
+      - {f: 'Bootstrap in one line', b: 'Resample with replacement, recompute, use the spread as the sampling distribution.'}
+    fun:
+      - kind: fact
+        title: "Pulling yourself up"
+        body: |
+          Bradley Efron named it in 1979 after "pulling yourself up by your bootstraps" -- getting
+          uncertainty estimates from the data alone. He received the 2019 International Prize in
+          Statistics for it.
+
+  - id: st-regression-inference
+    title: "Regression as a Statistical Model"
+    xp: 90
+    prereqs: [st-hypothesis, la-least-squares]
+    readings:
+      - {book: OI, sec: "Ch 8-9", title: "Introduction to linear regression; Multiple and logistic regression"}
+      - {book: ISL, sec: "Ch 3", title: "Linear Regression"}
+    summary: |
+      $y=X\boldsymbol\beta+\varepsilon$: coefficient SEs, t-tests and CIs, $R^2$, residual
+      diagnostics, and the assumptions (linearity, independence, constant variance, normal-ish
+      errors) behind the p-values.
+    key_ideas:
+      - 'Coefficient = expected change in $y$ per unit $x_j$, holding others fixed.'
+      - '$R^2$ = fraction of variance explained (Eve''s law!).'
+      - 'Check residual plots; correlation ≠ causation; watch collinearity (L01 rank).'
+    ds: |
+      The workhorse model -- and the reference point for every fancier model. Knowing its
+      inference lets you say which features matter and how sure you are.
+    lab: |
+      Running lab: regress pace on distance, elevation gain, temperature and HR with
+      `statsmodels.OLS`. Read the summary table: which coefficients are significant? Plot
+      residuals vs fitted.
+    questions:
+      - {type: num, d: 2, q: 'Coefficient 0.8, SE 0.2. $t$ statistic?', a: '4', exp: '$0.8/0.2$.'}
+      - {type: mc, d: 2, q: '$R^2=0.64$ means...', choices: ['correlation 0.64', 'the model explains 64% of the variance in $y$', '64% of predictions are right', 'the slope is 0.64'], a: 1, exp: 'Variance explained.'}
+      - {type: mc, d: 2, q: 'A funnel-shaped residual plot suggests...', choices: ['perfect fit', 'non-constant variance (heteroscedasticity)', 'too few features', 'collinearity'], a: 1, exp: 'Spread grows with fitted values.'}
+    cards:
+      - {f: 'Interpretation of a regression coefficient', b: 'Expected change in $y$ per unit change in $x_j$, other features held fixed.'}
+    fun:
+      - kind: fact
+        title: "Regression to the mean"
+        body: |
+          Galton coined "regression" studying heights: tall parents had tall children, but less
+          extreme -- "regressing" toward the mean. The name stuck to the whole method.
+
+  - id: st-cross-validation
+    title: "Cross-Validation & Overfitting"
+    xp: 80
+    prereqs: [st-estimation, st-regression-inference]
+    readings:
+      - {book: ISL, sec: "5.1", title: "Cross-Validation"}
+      - {book: SR, sec: "Ch 7", title: "Ulysses' Compass (overfitting, regularization, information criteria)"}
+    summary: |
+      Estimate out-of-sample error by training on part of the data and testing on the rest,
+      rotating folds. Use it to choose model complexity and hyperparameters; keep a final test
+      set untouched.
+    key_ideas:
+      - 'Training error is optimistic; validation error estimates generalization.'
+      - 'k-fold CV (k=5 or 10); leakage (preprocessing on all data) silently breaks it.'
+      - 'Time series: validate forward in time, never shuffle.'
+    ds: |
+      The single most important habit in applied ML. Most "great models" that fail in
+      production failed at validation design.
+    lab: |
+      Fit polynomials of degree 1-12 to pace vs distance; plot training vs 5-fold CV error.
+      Pick the degree at the CV minimum.
+    questions:
+      - {type: mc, d: 2, q: 'As model complexity increases, training error typically...', choices: ['increases', 'decreases (while validation error eventually rises)', 'stays flat', 'equals validation error'], a: 1, exp: 'The U-shaped validation curve.'}
+      - {type: mc, d: 2, q: 'Standardizing using the mean/std of ALL data before CV is...', choices: ['best practice', 'data leakage', 'required', 'irrelevant'], a: 1, exp: 'Fit preprocessing inside each training fold.'}
+    cards:
+      - {f: 'k-fold cross-validation', b: 'Split into k folds; train on k-1, validate on 1, rotate, average.'}
+    fun:
+      - kind: fact
+        title: "Kaggle's public leaderboard trap"
+        body: |
+          Kaggle competitors who tune obsessively to the public leaderboard often plunge on the
+          private one ("leaderboard shake-up") -- overfitting to a validation set is still
+          overfitting.

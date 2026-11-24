@@ -1,0 +1,200 @@
+# Interactive lessons (explorables). Each step: text, optional widget {type, ...config},
+# optional goal (widget-state condition that unlocks Continue: key, key__gte, key__lte),
+# optional ask {type: mc|num|expr, prompt, answer (mc: 0-based index), predict: true = asked
+# BEFORE the widget unlocks, explain}. Answers are graded by the server's symbolic grader.
+lessons:
+  - id: ix-complete-square
+    topic: al-quadratic-equations
+    title: "Completing the Square, with Tiles"
+    minutes: 8
+    blurb: "See why you add (b/2)²: it's literally the missing corner of a square."
+    steps:
+      - text: |
+          Here's $x^2+6x$ drawn as **area**: a square with side $x$, plus a strip that's $x$
+          tall and $6$ wide.
+        widget: {type: tiles, b: 6}
+        ask:
+          predict: true
+          type: mc
+          prompt: "Cut the strip in half lengthwise and move one half under the square. What shape do you get?"
+          choices: ["A bigger square, missing one corner", "A long rectangle", "A triangle", "Exactly a square"]
+          answer: 0
+          explain: "Try it: press **Split the strip**."
+        goal: {split: true}
+        goal_hint: "Press **✂️ Split the strip**."
+        goal_done: "Two $3x$ strips wrap around the square, and there's a gap in the corner."
+      - text: |
+          The gap in the corner is a little square. Its sides are each half the strip: $\frac62=3$.
+        widget: {type: tiles, b: 6, split: true}
+        ask:
+          type: num
+          prompt: "What is the area of the missing corner?"
+          answer: "9"
+          explain: "$3\\times3=9$. That's the $(b/2)^2$ you've been told to add, and now you can see why."
+      - text: "Fill the corner and read off the big square."
+        widget: {type: tiles, b: 6, split: true}
+        goal: {filled: true}
+        goal_hint: "Press **➕ Fill the corner**."
+        goal_done: "$x^2+6x+9$ is now a perfect square."
+        ask:
+          type: expr
+          var: x
+          prompt: "The completed square has side length... (type an expression in $x$)"
+          answer: "x+3"
+          explain: "So $x^2+6x+9=(x+3)^2$."
+      - text: "Now change $b$ with the slider. Watch the corner grow."
+        widget: {type: tiles, b: 6, slider: true}
+        goal: {b: 10, filled: true}
+        goal_hint: "Set $b=10$, then split and fill."
+        goal_done: "Corner $=5\\times5$."
+        ask:
+          type: num
+          prompt: "To complete $x^2+10x$, what number do you add?"
+          answer: "25"
+          explain: "$(10/2)^2=25$, giving $(x+5)^2$."
+      - text: "Time to turn the picture into a rule."
+        ask:
+          type: mc
+          prompt: "To complete the square on $x^2+bx$, add..."
+          choices: ["$b^2$", "$\\left(\\frac b2\\right)^2$", "$2b$", "$\\frac b2$"]
+          answer: 1
+          explain: "Half the strip on each side, so the corner is $\\frac b2$ by $\\frac b2$."
+      - text: |
+          **Use it.** Solve $x^2+6x=7$: add the corner (9) to both sides to get $(x+3)^2=16$, so
+          $x+3=\pm4$.
+        ask:
+          type: num
+          prompt: "What is the positive solution?"
+          answer: "1"
+          explain: "$x=-3+4=1$ (the other one is $-3-4=-7$). The quadratic formula is just this move done once for every $a, b, c$."
+
+  - id: ix-i-rotates
+    topic: al-imaginary
+    title: "Multiplying by i Is a Quarter Turn"
+    minutes: 8
+    blurb: "Why i² = −1 stops being weird the moment you see it as rotation."
+    steps:
+      - text: |
+          Start on the ordinary number line. Multiplying by $-1$ sends $3$ to $-3$: a **half
+          turn** (180°) around zero.
+        widget: {type: complex, z: [3, 0], ops: ["-1"], fixed: true}
+        goal: {times_neg1__gte: 1}
+        goal_hint: "Press **× (−1)**."
+        goal_done: "A 180° flip."
+      - text: "Here's the puzzle: we want a number $i$ with $i\\cdot i=-1$."
+        widget: {type: complex, z: [3, 0], ops: ["-1"], fixed: true}
+        ask:
+          predict: true
+          type: mc
+          prompt: "Multiplying by $-1$ is a 180° turn. What turn, done TWICE, makes a 180° turn?"
+          choices: ["90°", "45°", "180°", "360°"]
+          answer: 0
+          explain: "A quarter turn, twice, is a half turn. **That's** what $i$ is: a 90° rotation."
+      - text: "Multiply $3$ by $i$ and watch where it goes."
+        widget: {type: complex, z: [3, 0], ops: ["i"], fixed: true}
+        goal: {times_i__gte: 1}
+        goal_hint: "Press **× i** once."
+        goal_done: "Straight up: onto the imaginary axis."
+        ask:
+          type: num
+          prompt: "Where did $3$ land? (type it like 3i)"
+          answer: "3*I"
+          explain: "$3\\cdot i=3i$, three units up the imaginary axis."
+      - text: "Keep pressing **× i**."
+        widget: {type: complex, z: [3, 0], ops: ["i"], fixed: true}
+        goal: {times_i__gte: 4}
+        goal_hint: "Multiply by $i$ four times."
+        goal_done: "$3 \\to 3i \\to -3 \\to -3i \\to 3$: four quarter turns make a full circle."
+        ask:
+          type: mc
+          prompt: "So what is $i^4$?"
+          choices: ["$1$", "$-1$", "$i$", "$-i$"]
+          answer: 0
+          explain: "Four quarter turns = home. That's why powers of $i$ repeat every 4."
+      - text: "Now drag the point to $2+i$ (it snaps to the grid)."
+        widget: {type: complex, z: [1, 1], ops: ["i"]}
+        goal: {a: 2, b: 1}
+        goal_hint: "Drag the dot to $2+i$."
+        goal_done: "Got it. Now predict before you press anything."
+      - text: "With $z=2+i$, predict $i\\cdot z$ before pressing the button."
+        widget: {type: complex, z: [2, 1], ops: ["i"], fixed: true}
+        ask:
+          predict: true
+          type: num
+          prompt: "Predict $i(2+i)$ (form a+bi). Hint: rotate the arrow 90° counter-clockwise."
+          answer: "-1+2*I"
+          explain: "Algebra agrees: $2i+i^2=-1+2i$. Now press **× i** to see it."
+        goal: {times_i__gte: 1}
+        goal_hint: "Press **× i** to check your prediction."
+      - text: |
+          Other complex numbers rotate **and** stretch. $w=1+i$ has length $\sqrt2$ and angle
+          45°. Multiply $1$ by $w$ twice and read the result.
+        widget: {type: complex, z: [1, 0], ops: ["w"], w: [1, 1], fixed: true}
+        goal: {times_w__gte: 2}
+        goal_hint: "Press **× (1 + i)** twice."
+        goal_done: "Length $\\sqrt2\\cdot\\sqrt2=2$, angle $45°+45°=90°$."
+        ask:
+          type: num
+          prompt: "So $(1+i)^2=$ ? (form a+bi)"
+          answer: "2*I"
+          explain: "**Lengths multiply, angles add.** That one sentence is complex multiplication, and it's why $e^{i\\theta}$ and Fourier transforms work."
+
+  - id: ix-derivative-zoom
+    topic: d-definition
+    title: "Zoom In Until the Curve Is a Line"
+    minutes: 8
+    blurb: "The derivative is the slope you see when you zoom in far enough."
+    steps:
+      - text: "Here's $f(x)=x^2$ around the point $x=1$."
+        widget: {type: zoom, f: "x^2", a: 1}
+        ask:
+          predict: true
+          type: mc
+          prompt: "If you zoom in a LOT at that point, what will the curve look like?"
+          choices: ["A straight line", "A tighter and tighter U", "A single dot", "A circle"]
+          answer: 0
+          explain: "Smooth curves are \"locally linear\". Try it: drag the zoom slider."
+        goal: {zoom__gte: 50}
+        goal_hint: "Zoom in to at least ×50."
+        goal_done: "Up close, $x^2$ looks just like a line through $(1,1)$."
+      - text: |
+          A line has a slope. To measure it, draw a **secant** through $(1,1)$ and a second point
+          a distance $h$ away, then slide $h$ toward 0.
+        widget: {type: zoom, f: "x^2", a: 1, secant: true}
+        ask:
+          predict: true
+          type: num
+          prompt: "Guess: as $h\\to0$, what does the secant slope approach?"
+          answer: "2"
+          explain: "Watch the readout as you shrink $h$."
+        goal: {h__lte: 0.01}
+        goal_hint: "Drag $h$ below $0.01$."
+        goal_done: "The secant slope is pinned near $2$: that limit is the derivative $f'(1)$."
+      - text: |
+          Algebra confirms it: $\dfrac{(1+h)^2-1}{h}=\dfrac{2h+h^2}{h}=2+h\to2$. The same move at
+          a general point $a$ gives the derivative everywhere.
+        ask:
+          type: expr
+          var: a
+          prompt: "The slope of $x^2$ at $x=a$ is... (expression in $a$)"
+          answer: "2a"
+          explain: "$\\frac{(a+h)^2-a^2}{h}=2a+h\\to2a$. You just derived $\\frac{d}{dx}x^2=2x$."
+      - text: "Different curve: $\\sin x$ at $x=0$."
+        widget: {type: zoom, f: "sin", a: 0, secant: true}
+        goal: {h__lte: 0.01}
+        goal_hint: "Shrink $h$ below $0.01$ (zoom in too, if you like)."
+        ask:
+          type: num
+          prompt: "What is the slope of $\\sin x$ at $0$?"
+          answer: "1"
+          explain: "Up close, $\\sin x\\approx x$, which is why $\\lim\\frac{\\sin x}{x}=1$ and why $\\frac{d}{dx}\\sin x=\\cos x$."
+      - text: "Last one: $|x|$ at $x=0$. Zoom in as far as you like."
+        widget: {type: zoom, f: "abs", a: 0}
+        goal: {zoom__gte: 100}
+        goal_hint: "Zoom to ×100 or more."
+        ask:
+          type: mc
+          prompt: "Does $|x|$ ever look like a single straight line at $0$?"
+          choices: ["Yes, eventually", "No: it stays a sharp corner at every zoom"]
+          answer: 1
+          explain: "A corner never straightens out, so $|x|$ has **no derivative at 0**. Zooming in is the derivative test you can see."

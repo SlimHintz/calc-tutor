@@ -1,0 +1,233 @@
+unit:
+  id: D04
+  ord: 70
+  course: core
+  title: "Counting & Discrete Probability"
+  constellation: "The Dice"
+  color: "#ffb74d"
+  blurb: |
+    How many ways? Then: how likely? Counting rules, combinations, the binomial theorem, and
+    discrete probability from axioms to Bayes and expectation -- the foundation that the
+    continuous probability of Units 4 and 9 builds on.
+  ds_why: |
+    A/B tests, naive Bayes, confusion matrices, sampling, bootstrapping, binomial and Poisson
+    models, and expected value calculations are daily data-science work.
+
+topics:
+  - id: dm-counting-rules
+    title: "Multiplication & Addition Rules"
+    xp: 50
+    prereqs: [dm-sets]
+    readings:
+      - {book: EPP, sec: "6.1-6.3", title: "Introduction; Possibility Trees and the Multiplication Rule; Addition Rule"}
+      - {book: BH, sec: "1.4", title: "How to count"}
+      - {book: ROSS, sec: "Ch 1", title: "Combinatorial Analysis (1.1-1.3)"}
+    summary: |
+      Sequential choices multiply; disjoint alternatives add. Inclusion-exclusion corrects
+      overlaps. Possibility trees organize everything.
+    key_ideas:
+      - 'Multiplication rule: $k$ steps with $n_1,\dots,n_k$ options gives $n_1\cdots n_k$ outcomes.'
+      - 'Addition rule for disjoint sets; inclusion-exclusion otherwise.'
+      - 'Permutations of $n$ items: $n!$; ordered selections of $r$: $\frac{n!}{(n-r)!}$.'
+    ds: |
+      Hyperparameter grid size, the number of possible feature crosses, and the size of a
+      search space are multiplication-rule counts. They explode fast -- hence random search.
+    lab: |
+      Count the configurations of a grid search (5 learning rates × 4 depths × 3 batch sizes ×
+      2 optimizers) by hand, then with `itertools.product`. How long at 3 minutes each?
+    questions:
+      - {type: num, d: 1, q: 'Grid search: 5 learning rates × 4 depths × 3 batch sizes. How many runs?', a: '60', exp: 'Multiplication rule.'}
+      - {type: num, d: 1, q: 'In how many orders can 6 runners finish (no ties)?', a: '720', exp: '$6!$.'}
+      - {type: num, d: 2, q: 'How many 4-character PINs from digits 0-9 have no repeated digit?', a: '5040', exp: '$10\cdot9\cdot8\cdot7$.'}
+    cards:
+      - {f: 'Ordered selections of $r$ from $n$ (no repeats)', b: '$P(n,r)=\frac{n!}{(n-r)!}$'}
+    fun:
+      - kind: fact
+        title: "Shuffle uniqueness"
+        body: |
+          $52!\approx8\times10^{67}$. If every person who ever lived had shuffled a deck once a
+          second since the Big Bang, the chance of any two shuffles ever matching would still be
+          negligible.
+
+  - id: dm-combinations
+    title: "Combinations & Selections with Repetition"
+    xp: 60
+    prereqs: [dm-counting-rules]
+    readings:
+      - {book: EPP, sec: "6.4", title: "Counting Subsets of a Set: Combinations"}
+      - {book: EPP, sec: "6.5", title: "r-Combinations with Repetition Allowed"}
+      - {book: KBR, sec: "3.1-3.2", title: "Permutations; Combinations"}
+    summary: |
+      $\binom nr=\frac{n!}{r!(n-r)!}$ counts unordered subsets. With repetition (stars and
+      bars): $\binom{n+r-1}{r}$.
+    key_ideas:
+      - 'Order matters -> permutations; order doesn''t -> combinations.'
+      - '$\binom nr=\binom n{n-r}$.'
+      - 'Stars and bars: $r$ identical items into $n$ bins: $\binom{n+r-1}{r}$.'
+    ds: |
+      Choosing $k$ features from $n$: $\binom nk$. Number of pairs for pairwise similarity:
+      $\binom n2$. Combinations of bootstrap samples use stars and bars.
+    lab: |
+      Compute $\binom{50}{5}$ with `math.comb` and estimate how long exhaustive feature
+      selection of 5 of 50 features would take at 1 second per model.
+    questions:
+      - {type: num, d: 1, q: '$\binom{10}{3}$', a: '120', exp: '$\frac{10\cdot9\cdot8}{6}$.'}
+      - {type: num, d: 2, q: 'How many pairwise distances among 1000 points?', a: '499500', exp: '$\binom{1000}{2}$.'}
+      - {type: num, d: 3, q: 'Ways to distribute 10 identical energy gels among 4 aid stations?', a: '286', exp: 'Stars and bars: $\binom{13}{3}$.'}
+    cards:
+      - {f: '$\binom nr$', b: '$\frac{n!}{r!(n-r)!}$ -- unordered subsets of size $r$.'}
+      - {f: 'Stars and bars', b: '$r$ identical items into $n$ bins: $\binom{n+r-1}{r}$.'}
+    fun:
+      - kind: puzzle
+        title: "Lottery odds"
+        body: |
+          A lottery picks 6 numbers from 1 to 49. How many tickets cover every possibility?
+          (Use $\binom{49}{6}$.) At 2 dollars a ticket, what would guaranteeing the jackpot cost?
+        answer: "$\\binom{49}{6}=13{,}983{,}816$ tickets, about 28 million dollars."
+
+  - id: dm-binomial
+    title: "The Binomial Theorem & Pascal's Triangle"
+    xp: 50
+    prereqs: [dm-combinations]
+    readings:
+      - {book: EPP, sec: "6.6", title: "The Algebra of Combinations"}
+      - {book: EPP, sec: "6.7", title: "The Binomial Theorem"}
+      - {book: PRE, sec: "11.6", title: "The Binomial Theorem"}
+    summary: |
+      $(a+b)^n=\sum_{k=0}^n\binom nk a^{n-k}b^k$. Pascal's rule:
+      $\binom{n+1}{k}=\binom nk+\binom n{k-1}$.
+    key_ideas:
+      - 'Coefficients are row $n$ of Pascal''s triangle.'
+      - '$\sum_k\binom nk=2^n$ (set $a=b=1$).'
+      - 'Pascal''s rule has a story proof: include or exclude one special element.'
+    ds: |
+      The binomial distribution $\binom nk p^k(1-p)^{n-k}$ is literally one term of
+      $(p+(1-p))^n=1$. That's why the probabilities sum to 1.
+    lab: |
+      Generate Pascal's triangle to row 20 with a recursive function; check row sums are $2^n$
+      and compare row 20 (normalized) to a normal curve.
+    questions:
+      - {type: num, d: 1, q: 'Coefficient of $x^2$ in $(1+x)^5$.', a: '10', exp: '$\binom52$.'}
+      - {type: num, d: 2, q: 'Coefficient of $x^3$ in $(2+x)^5$.', a: '40', exp: '$\binom53 2^2=40$.'}
+    cards:
+      - {f: 'Binomial theorem', b: '$(a+b)^n=\sum_{k=0}^n\binom nk a^{n-k}b^k$'}
+      - {f: 'Pascal''s rule', b: '$\binom{n+1}{k}=\binom nk+\binom n{k-1}$'}
+    fun:
+      - kind: fact
+        title: "Not Pascal's triangle"
+        body: |
+          "Pascal's" triangle was known centuries earlier: to Pingala in India (around 200 BC),
+          to Omar Khayyam in Persia, and to Yang Hui in China (1261), after whom it's named
+          in Chinese.
+
+  - id: dm-prob-axioms
+    title: "Probability Axioms & Expected Value"
+    xp: 70
+    prereqs: [dm-combinations]
+    readings:
+      - {book: EPP, sec: "6.8", title: "Probability Axioms and Expected Value"}
+      - {book: BH, sec: "1.3, 1.6", title: "Naive definition of probability; Non-naive definition"}
+      - {book: ROSS, sec: "Ch 2", title: "Axioms of Probability"}
+    summary: |
+      $P(S)=1$, $P(A)\ge0$, additivity for disjoint events. Complements, inclusion-exclusion,
+      equally likely outcomes, and expected value $E[X]=\sum x\,P(X=x)$.
+    key_ideas:
+      - '$P(A^c)=1-P(A)$ -- often the easy route ("at least one").'
+      - 'Naive definition (count/count) only works for equally likely outcomes.'
+      - 'Expected value is a probability-weighted average.'
+    ds: |
+      Expected value drives every decision rule: expected revenue of a campaign, expected loss
+      of a classifier at a threshold, expected cost of a false alarm.
+    lab: |
+      Simulate the birthday problem with numpy for $n=23$ people and compare with
+      $1-\prod_{i=0}^{22}\frac{365-i}{365}$.
+    questions:
+      - {type: num, d: 2, q: 'Probability that at least one of 3 dice shows a 6? (fraction or decimal)', a: '1-(5/6)^3', tol: 0.001, exp: 'Complement: $1-(5/6)^3=91/216$.'}
+      - {type: num, d: 1, q: 'Expected value of one fair die roll.', a: '3.5', exp: '$(1+\dots+6)/6$.'}
+      - {type: num, d: 2, q: 'A bet pays 10 dollars with probability 0.2 and costs 3 otherwise. Expected value (dollars)?', a: '-0.4', exp: '$0.2(10)+0.8(-3)=-0.4$.'}
+    cards:
+      - {f: 'Complement rule', b: '$P(A^c)=1-P(A)$'}
+      - {f: 'Expected value (discrete)', b: '$E[X]=\sum_x x\,P(X=x)$'}
+    fun:
+      - kind: puzzle
+        title: "The birthday paradox"
+        body: |
+          How many people do you need in a room for a better-than-even chance that two share a
+          birthday? Most guess around 180.
+        answer: "Just 23. With 70 people it's 99.9%. The number of pairs grows like $n^2$."
+
+  - id: dm-conditional-bayes
+    title: "Conditional Probability, Independence & Bayes"
+    xp: 90
+    prereqs: [dm-prob-axioms]
+    readings:
+      - {book: EPP, sec: "6.9", title: "Conditional Probability, Bayes' Formula, and Independent Events"}
+      - {book: BH, sec: "2.1-2.5", title: "Conditional probability; Bayes' rule and LOTP; Independence"}
+      - {book: ROSS, sec: "Ch 3", title: "Conditional Probability and Independence"}
+    summary: |
+      $P(A|B)=\frac{P(A\cap B)}{P(B)}$. Law of total probability and Bayes' rule:
+      $P(A|B)=\frac{P(B|A)P(A)}{P(B)}$. Independence: $P(A\cap B)=P(A)P(B)$.
+    key_ideas:
+      - '$P(A|B)\ne P(B|A)$ -- the prosecutor''s fallacy.'
+      - 'Total probability: $P(B)=\sum_i P(B|A_i)P(A_i)$.'
+      - 'Base rates dominate when the condition is rare.'
+    ds: |
+      Precision is $P(\text{fraud}|\text{flagged})$; recall is $P(\text{flagged}|\text{fraud})$.
+      Bayes connects them via the base rate. Naive Bayes classifiers multiply conditional
+      probabilities assuming independence.
+    lab: |
+      A fraud model has 99% recall and 2% false-positive rate; fraud rate is 0.5%. Compute the
+      precision with Bayes, then confirm by simulating 1,000,000 transactions.
+    questions:
+      - {type: num, d: 3, q: 'Disease prevalence 1%; test sensitivity 95%, false-positive rate 5%. $P(\text{disease}|\text{positive})$? (decimal, 3 places)', a: '0.0095/(0.0095+0.0495)', tol: 0.002, exp: '$\frac{0.95\cdot0.01}{0.95\cdot0.01+0.05\cdot0.99}\approx0.161$.'}
+      - {type: num, d: 2, q: 'Two fair coins; at least one is heads. Probability both are heads?', a: '1/3', exp: 'Outcomes HH, HT, TH equally likely.'}
+      - {type: mc, d: 1, q: 'Events $A$, $B$ are independent iff...', choices: ['$P(A\cap B)=0$', '$P(A\cap B)=P(A)P(B)$', '$P(A|B)=P(B|A)$', '$P(A)+P(B)=1$'], a: 1, exp: 'Disjoint events with positive probability are actually dependent!'}
+    cards:
+      - {f: 'Bayes'' rule', b: '$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$'}
+      - {f: 'Law of total probability', b: '$P(B)=\sum_i P(B|A_i)P(A_i)$ over a partition $\{A_i\}$.'}
+    fun:
+      - kind: puzzle
+        title: "Monty Hall"
+        body: |
+          Three doors; a car behind one. You pick door 1. The host, who knows where the car
+          is, opens door 3 to reveal a goat and offers a switch to door 2. Should you?
+        answer: "Switch: you win with probability 2/3. Your first pick is right only 1/3 of the time, and the host's choice never changes that."
+
+  - id: dm-random-variables
+    title: "Discrete Random Variables: Binomial, Geometric, Poisson"
+    xp: 80
+    prereqs: [dm-conditional-bayes, dm-binomial]
+    readings:
+      - {book: BH, sec: "3.1-3.3", title: "Random variables; PMFs; Bernoulli and Binomial"}
+      - {book: BH, sec: "4.1-4.7", title: "Expectation; Linearity; Geometric; Indicators; LOTUS; Variance; Poisson"}
+      - {book: ROSS, sec: "Ch 4", title: "Random Variables"}
+    summary: |
+      A random variable maps outcomes to numbers. Key families: Bernoulli, Binomial($n,p$),
+      Geometric($p$), Poisson($\lambda$). Linearity of expectation works even without
+      independence.
+    key_ideas:
+      - 'Binomial: $P(X=k)=\binom nk p^k(1-p)^{n-k}$, $E=np$, $\text{Var}=np(1-p)$.'
+      - 'Linearity: $E[X+Y]=E[X]+E[Y]$ always. Indicator variables make counting easy.'
+      - 'Poisson($\lambda$): rare events, $E=\text{Var}=\lambda$.'
+    ds: |
+      Conversion counts (binomial), time-to-first-event (geometric), and arrivals per hour
+      (Poisson) are the bread and butter of product analytics and A/B testing.
+    lab: |
+      Running lab: model "runs per week" as Poisson. Estimate $\lambda$ from your Strava data,
+      then compare the observed histogram to `scipy.stats.poisson.pmf`.
+    questions:
+      - {type: num, d: 2, q: '$X\sim\text{Bin}(10, 0.3)$. $E[X]$?', a: '3', exp: '$np$.'}
+      - {type: num, d: 2, q: 'Same $X$: $\text{Var}(X)$?', a: '2.1', exp: '$np(1-p)=10(0.3)(0.7)$.'}
+      - {type: num, d: 3, q: '100 people check coats; coats are returned at random. Expected number who get their own coat?', a: '1', exp: 'Indicators: 100 × (1/100). Linearity needs no independence.'}
+      - {type: num, d: 2, q: 'Geometric: each run has a 0.1 chance of a PR. Expected number of runs until the first PR (including it)?', a: '10', exp: '$1/p$.'}
+    cards:
+      - {f: 'Binomial mean and variance', b: '$np$ and $np(1-p)$'}
+      - {f: 'Linearity of expectation', b: '$E[X+Y]=E[X]+E[Y]$ -- no independence needed.'}
+      - {f: 'Poisson mean and variance', b: 'Both equal $\lambda$.'}
+    fun:
+      - kind: fact
+        title: "Prussian horse kicks"
+        body: |
+          In 1898 Ladislaus Bortkiewicz showed that deaths from horse kicks in the Prussian
+          cavalry (over 20 years, 14 corps) followed a Poisson distribution almost perfectly --
+          the classic demonstration that rare independent events are Poisson.

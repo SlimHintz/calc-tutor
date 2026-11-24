@@ -1,0 +1,124 @@
+# Placement diagnostic. Each section maps to the topics a strong score can place you out of.
+# Questions here are diagnostic-only (never shown in normal quizzes). Same format as topic
+# questions. Use mc where a free-form answer could be "the question itself" (e.g. factoring).
+title: "Precalculus Placement Test"
+blurb: |
+  About 60 questions across 13 skill areas, from fractions to trig and matrices. No
+  calculator needed except where noted. If you don't know, press "I don't know" instead of
+  guessing -- an honest map beats a lucky score. You can stop and resume any time.
+sections:
+  - id: arith
+    title: "Arithmetic & Fractions"
+    topics: [pc-numbers, al-integers, al-fractions, al-real-numbers]
+    questions:
+      - {type: num, d: 1, q: 'Compute $\frac23+\frac34$.', a: '17/12', exp: '$\frac{8+9}{12}$.'}
+      - {type: num, d: 1, q: 'Compute $\frac35\div\frac{9}{10}$.', a: '2/3', exp: '$\frac35\cdot\frac{10}9=\frac{30}{45}$.'}
+      - {type: num, d: 1, q: 'Compute $-3^2+(-3)^2$.', a: '0', exp: '$-9+9$: the exponent binds before the minus sign.'}
+      - {type: num, d: 2, q: 'Compute $10-3(2-5)^2\div9$.', a: '7', exp: '$(2-5)^2=9$; $3\cdot9\div9=3$; $10-3$.'}
+      - {type: num, d: 1, q: 'Write $0.375$ as a fraction in lowest terms (or confirm its value).', a: '3/8', exp: '$375/1000=3/8$.'}
+  - id: exponents
+    title: "Exponents & Radicals"
+    topics: [pc-exponents, al-exponents, al-rational-exponents]
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $8^{2/3}$.', a: '4', exp: '$(\sqrt[3]8)^2$.'}
+      - {type: expr, d: 1, var: x, q: 'Simplify $(x^3)^2\cdot x^{-4}$.', a: 'x^2', exp: '$x^{6-4}$.'}
+      - {type: num, d: 1, q: 'Evaluate $16^{-1/2}$.', a: '1/4', exp: '$1/\sqrt{16}$.'}
+      - {type: num, d: 2, q: 'Simplify $\sqrt{50}$ (exact, e.g. 5*sqrt(2)).', a: '5*sqrt(2)', exp: '$\sqrt{25\cdot2}$.'}
+      - {type: expr, d: 2, var: 'x,y', q: 'Simplify $(2x^2y)^3$.', a: '8x^6*y^3', exp: 'Cube every factor.'}
+  - id: polynomials
+    title: "Polynomials & Factoring"
+    topics: [pc-polynomials, al-polynomials, al-factoring, al-special-factoring]
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Expand $(2x-3)^2$.', a: '4x^2-12x+9', exp: '$(a-b)^2=a^2-2ab+b^2$.'}
+      - {type: mc, d: 1, q: 'Factor $x^2-5x+6$.', choices: ['$(x-1)(x-6)$', '$(x-2)(x-3)$', '$(x+2)(x+3)$', '$(x+1)(x-6)$'], a: 1, exp: 'Multiply to 6, add to $-5$.'}
+      - {type: mc, d: 2, q: 'Factor $4x^2-9$.', choices: ['$(2x-3)^2$', '$(4x-3)(x+3)$', '$(2x-3)(2x+3)$', 'does not factor'], a: 2, exp: 'Difference of squares.'}
+      - {type: mc, d: 3, q: 'Factor $x^3-8$.', choices: ['$(x-2)^3$', '$(x-2)(x^2+2x+4)$', '$(x-2)(x^2-2x+4)$', '$(x+2)(x^2-2x+4)$'], a: 1, exp: 'Difference of cubes.'}
+      - {type: expr, d: 2, var: x, q: 'Expand $(x+1)(x^2-x+1)$.', a: 'x^3+1', exp: 'Sum of cubes in reverse.'}
+  - id: rational
+    title: "Rational Expressions"
+    topics: [pc-rational-expr, al-rational-simplify, al-rational-addsub]
+    questions:
+      - {type: mc, d: 1, q: 'For $x\ne1$, $\frac{x^2-1}{x-1}$ equals...', choices: ['$x-1$', '$x+1$', '$x^2$', '$\frac1{x+1}$'], a: 1, exp: 'Factor the numerator.'}
+      - {type: mc, d: 2, q: '$\frac1x+\frac1{x+1}$ as a single fraction is...', choices: ['$\frac{2}{2x+1}$', '$\frac{2x+1}{x(x+1)}$', '$\frac{1}{x(x+1)}$', '$\frac{2}{x(x+1)}$'], a: 1, exp: 'Common denominator $x(x+1)$.'}
+      - {type: num, d: 1, q: 'Compute $\dfrac{\frac12+\frac13}{\frac16}$.', a: '5', exp: '$\frac56\div\frac16$.'}
+      - {type: mc, d: 3, q: 'Simplify $\dfrac{\frac1x-\frac1a}{x-a}$ (for $x\ne a$).', choices: ['$\frac{1}{ax}$', '$-\frac{1}{ax}$', '$\frac{a-x}{ax}$', '$0$'], a: 1, exp: 'Numerator $\frac{a-x}{ax}=-\frac{x-a}{ax}$; divide by $x-a$.'}
+  - id: equations
+    title: "Solving Equations"
+    topics: [pc-equations, al-linear-equations, al-quadratic-equations, al-radical-equations]
+    questions:
+      - {type: num, d: 1, q: 'Solve $3(x-2)=2x+5$.', a: '11', exp: '$3x-6=2x+5$.'}
+      - {type: mc, d: 1, q: 'Solutions of $x^2-x-6=0$?', choices: ['$\{2,-3\}$', '$\{-2,3\}$', '$\{1,6\}$', '$\{-1,6\}$'], a: 1, exp: '$(x-3)(x+2)=0$.'}
+      - {type: num, d: 2, q: 'Solve $x^2+4x+1=0$; give the LARGER solution (exact or decimal).', a: '-2+sqrt(3)', exp: '$x=-2\pm\sqrt3$.'}
+      - {type: num, d: 3, q: 'Solve $\sqrt{x+3}=x-3$.', a: '6', exp: '$x+3=x^2-6x+9$ gives $x=1$ or $6$; $x=1$ is extraneous.'}
+      - {type: num, d: 2, q: 'Solve $\frac{2}{x-1}=\frac{3}{x+1}$.', a: '5', exp: '$2(x+1)=3(x-1)$.'}
+  - id: inequalities
+    title: "Inequalities & Absolute Value"
+    topics: [pc-inequalities, al-inequalities, al-abs-compound]
+    questions:
+      - {type: mc, d: 1, q: 'Solve $-2x+3>7$.', choices: ['$x>-2$', '$x<-2$', '$x>2$', '$x<2$'], a: 1, exp: 'Divide by $-2$ and flip.'}
+      - {type: mc, d: 1, q: 'Solve $|x-3|<2$.', choices: ['$1<x<5$', '$x<1$ or $x>5$', '$-5<x<-1$', '$x<5$'], a: 0, exp: 'Within 2 of 3.'}
+      - {type: mc, d: 2, q: 'Solve $x^2-4\ge0$.', choices: ['$-2\le x\le2$', '$x\le-2$ or $x\ge2$', '$x\ge2$', 'all real $x$'], a: 1, exp: 'Outside the roots.'}
+      - {type: mc, d: 2, q: 'Solutions of $|2x+1|=5$?', choices: ['$\{2\}$', '$\{2,-3\}$', '$\{-2,3\}$', '$\{3\}$'], a: 1, exp: '$2x+1=\pm5$.'}
+  - id: lines
+    title: "Lines & Coordinate Geometry"
+    topics: [pc-lines, al-graphing-lines, al-slope]
+    questions:
+      - {type: num, d: 1, q: 'Slope of the line through $(1,2)$ and $(4,11)$?', a: '3', exp: '$9/3$.'}
+      - {type: expr, d: 1, var: x, q: 'Line through $(1,2)$ with slope 3, as $y=\dots$', a: '3x-1', exp: '$y-2=3(x-1)$.'}
+      - {type: num, d: 1, q: 'Distance between $(-1,2)$ and $(2,6)$?', a: '5', exp: '$\sqrt{9+16}$.'}
+      - {type: mc, d: 1, q: 'Slope of a line perpendicular to $y=2x+1$?', choices: ['$2$', '$-2$', '$\frac12$', '$-\frac12$'], a: 3, exp: 'Negative reciprocal.'}
+      - {type: mc, d: 2, q: 'Center and radius of $x^2+y^2-6x+4y=3$?', choices: ['$(3,-2)$, $4$', '$(-3,2)$, $4$', '$(3,-2)$, $16$', '$(6,-4)$, $3$'], a: 0, exp: '$(x-3)^2+(y+2)^2=16$.'}
+  - id: functions
+    title: "Functions & Graphs"
+    topics: [pc-graphs, fn-basics, fn-classes, al-functions, al-inverse-functions, al-domain-range]
+    questions:
+      - {type: num, d: 1, q: 'If $f(x)=x^2-2x$, find $f(-3)$.', a: '15', exp: '$9+6$.'}
+      - {type: expr, d: 1, var: x, q: 'If $f(x)=2x+1$ and $g(x)=x^2$, find $f(g(x))$.', a: '2x^2+1', exp: 'Apply $g$ first.'}
+      - {type: expr, d: 2, var: x, q: 'Find the inverse of $f(x)=\frac{x-1}{3}$.', a: '3x+1', exp: 'Solve $y=\frac{x-1}3$ for $x$.'}
+      - {type: mc, d: 2, q: 'Domain of $f(x)=\frac{\sqrt{x-2}}{x-5}$?', choices: ['$x\ge2$', '$x\ge2$, $x\ne5$', '$x>5$', '$x\ne5$'], a: 1, exp: 'Root needs $x\ge2$; denominator can''t be 0.'}
+      - {type: num, d: 1, q: 'Average rate of change of $f(x)=x^2$ from $x=1$ to $x=4$?', a: '5', exp: '$\frac{16-1}{3}$.'}
+      - {type: mc, d: 1, q: '$y=(x+2)^2-3$ is $y=x^2$ shifted...', choices: ['right 2, down 3', 'left 2, down 3', 'left 2, up 3', 'right 2, up 3'], a: 1, exp: '$x+2$ means left.'}
+  - id: polyfuncs
+    title: "Quadratic, Polynomial & Rational Functions"
+    topics: [pc-quadratics, pc-poly-rational, al-quadratic-graphs, al-polynomial-functions, al-polynomial-zeros, al-rational-functions]
+    questions:
+      - {type: mc, d: 1, q: 'Vertex of $y=x^2-6x+5$?', choices: ['$(3,-4)$', '$(-3,32)$', '$(3,5)$', '$(6,5)$'], a: 0, exp: '$x=3$, $y=9-18+5$.'}
+      - {type: num, d: 2, q: 'Maximum value of $-2x^2+8x-1$?', a: '7', exp: 'Vertex at $x=2$.'}
+      - {type: mc, d: 2, q: 'Vertical asymptotes of $y=\frac{x+1}{x^2-4}$?', choices: ['$x=2$ only', '$x=\pm2$', '$x=-1$', '$x=4$'], a: 1, exp: 'Denominator zero at $\pm2$, numerator nonzero there.'}
+      - {type: num, d: 2, q: 'Remainder when $x^3-2x+5$ is divided by $x-2$?', a: '9', exp: 'Remainder theorem: $P(2)=8-4+5$.'}
+  - id: explog
+    title: "Exponentials & Logarithms"
+    topics: [fn-explog, al-exponentials, al-logarithms]
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $\log_3 81$.', a: '4', exp: '$3^4=81$.'}
+      - {type: num, d: 2, q: 'Solve $2^x=10$ (exact like ln(10)/ln(2), or decimal).', a: 'ln(10)/ln(2)', exp: '$x=\log_2 10\approx3.32$.'}
+      - {type: mc, d: 2, q: '$\ln a+2\ln b-\ln c$ equals...', choices: ['$\ln(a+b^2-c)$', '$\ln\frac{ab^2}{c}$', '$\ln\frac{2ab}{c}$', '$2\ln\frac{ab}{c}$'], a: 1, exp: 'Log laws.'}
+      - {type: num, d: 3, q: 'Solve $\log_2 x+\log_2(x-2)=3$.', a: '4', exp: '$x(x-2)=8$ gives $4$ or $-2$; reject $-2$.'}
+      - {type: num, d: 1, q: 'Evaluate $e^{\ln 5}$.', a: '5', exp: 'Inverse functions.'}
+      - {type: num, d: 2, q: '200 mg of a drug decays to 50 mg in 10 hours (exponential decay). Half-life in hours?', a: '5', exp: 'Two halvings in 10 hours.'}
+  - id: trig
+    title: "Trigonometry"
+    topics: [pc-unit-circle, pc-trig-identities, fn-trig-inverse]
+    questions:
+      - {type: num, d: 1, q: '$\sin\frac\pi6$', a: '1/2', exp: 'Special triangle.'}
+      - {type: num, d: 2, q: '$\cos\frac{2\pi}{3}$', a: '-1/2', exp: 'Second quadrant, reference angle $\pi/3$.'}
+      - {type: num, d: 1, q: 'Convert $135°$ to radians (exact, e.g. 3pi/4).', a: '3*pi/4', exp: '$135\cdot\pi/180$.'}
+      - {type: mc, d: 2, q: '$\frac{\sin^2x}{1-\cos x}$ simplifies to...', choices: ['$1-\cos x$', '$1+\cos x$', '$\sin x$', '$\cos x$'], a: 1, exp: '$\sin^2x=(1-\cos x)(1+\cos x)$.'}
+      - {type: num, d: 2, q: 'If $\sin\theta=\frac35$ and $\theta$ is in quadrant I, find $\cos\theta$.', a: '4/5', exp: '3-4-5 triangle.'}
+      - {type: mc, d: 1, q: '$\sin2x=$', choices: ['$2\sin x$', '$2\sin x\cos x$', '$\sin^2x-\cos^2x$', '$\sin x+\cos x$'], a: 1, exp: 'Double-angle formula.'}
+      - {type: num, d: 1, q: '$\arctan 1$', a: 'pi/4', exp: '$\tan\frac\pi4=1$.'}
+  - id: systems
+    title: "Systems & Matrices"
+    topics: [pc-systems-matrices, al-systems, al-three-variable-systems, al-matrices]
+    questions:
+      - {type: mc, d: 1, q: 'Solve $x+y=5$, $x-y=1$.', choices: ['$(3,2)$', '$(2,3)$', '$(4,1)$', '$(1,4)$'], a: 0, exp: 'Add: $2x=6$.'}
+      - {type: num, d: 1, q: '$\det\begin{pmatrix}2&1\\3&4\end{pmatrix}$', a: '5', exp: '$8-3$.'}
+      - {type: mc, d: 2, q: '$\begin{pmatrix}1&2\\3&4\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix}=$', choices: ['$\begin{pmatrix}3\\7\end{pmatrix}$', '$\begin{pmatrix}4\\6\end{pmatrix}$', '$\begin{pmatrix}2\\4\end{pmatrix}$', '$\begin{pmatrix}1&2\\3&4\end{pmatrix}$'], a: 0, exp: 'Row-times-column.'}
+      - {type: mc, d: 2, q: 'The system $x+2y=4$, $2x+4y=9$ has...', choices: ['one solution', 'no solution', 'infinitely many solutions', 'two solutions'], a: 1, exp: 'Parallel lines: same left side doubled, inconsistent right side.'}
+  - id: sequences
+    title: "Sequences & Sums"
+    topics: [dm-sums, al-sequences-series]
+    questions:
+      - {type: num, d: 1, q: '5th term of the arithmetic sequence $3, 7, 11, \dots$?', a: '19', exp: '$3+4\cdot4$.'}
+      - {type: num, d: 1, q: '$1+2+4+\cdots+64$', a: '127', exp: '$2^7-1$.'}
+      - {type: num, d: 2, q: '$\sum_{k=1}^{4}k^2$', a: '30', exp: '$1+4+9+16$.'}

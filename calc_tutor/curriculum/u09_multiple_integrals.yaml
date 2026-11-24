@@ -1,0 +1,234 @@
+unit:
+  id: U09
+  ord: 150
+  course: core
+  title: "Multiple Integrals & Probability"
+  constellation: "The Bell"
+  color: "#f78c6b"
+  blurb: |
+    Integrate over regions in 2-D and beyond. The payoff: joint distributions, marginals,
+    the famous Gaussian integral, and the change-of-variables formula that powers
+    generative models.
+  ds_why: |
+    Multivariate probability is multiple integration. Marginalizing, computing expectations
+    over joint distributions, and transforming random variables all live here.
+
+topics:
+  - id: mi-double
+    title: "Double Integrals"
+    xp: 80
+    prereqs: [int-ftc, mv-functions]
+    readings:
+      - {book: STW, sec: "15.1-15.3", title: "Double Integrals over Rectangles; Iterated Integrals; General Regions"}
+      - {book: OS3, sec: "5.1", title: "Double Integrals over Rectangular Regions"}
+      - {book: OS3, sec: "5.2", title: "Double Integrals over General Regions"}
+    summary: |
+      $\iint_R f(x,y)\,dA$ = volume under a surface. Compute as iterated integrals (Fubini):
+      integrate in one variable, then the other.
+    key_ideas:
+      - 'Fubini: $\iint_R f\,dA=\int_a^b\int_c^d f\,dy\,dx$ on rectangles (either order).'
+      - 'General regions: inner limits can depend on the outer variable.'
+      - 'Switching order of integration can turn impossible into easy.'
+    ds: |
+      $P((X,Y)\in R)=\iint_R f_{X,Y}\,dA$. Every probability involving two continuous
+      variables is a double integral.
+    lab: |
+      With `scipy.integrate.dblquad`, compute $\iint_{[0,1]^2}xy\,dA$ and $P(X+Y<1)$ for
+      independent Uniform(0,1) $X, Y$. Check both with Monte Carlo.
+    questions:
+      - {type: num, d: 1, q: '$\int_0^1\int_0^2 xy\,dy\,dx$', a: '1', exp: 'Inner: $2x$; outer: $\int_0^1 2x\,dx=1$.'}
+      - {type: num, d: 2, q: '$X,Y$ independent Uniform(0,1). $P(X+Y<1)$?', a: '1/2', exp: 'Area of the triangle below $y=1-x$.'}
+      - {type: num, d: 2, q: '$\int_0^1\int_0^x 6y\,dy\,dx$', a: '1', exp: 'Inner: $3x^2$; outer: 1.'}
+    cards:
+      - {f: 'Fubini''s theorem', b: 'A double integral over a rectangle equals the iterated integral in either order (for nice $f$).'}
+    fun:
+      - kind: puzzle
+        title: "Broken stick"
+        body: |
+          Break a stick at two uniformly random points. What's the probability the three
+          pieces can form a triangle? (It's a double integral over a region of the unit
+          square!)
+        answer: "1/4 -- each piece must be shorter than 1/2; that region is a quarter of the square."
+
+  - id: mi-polar
+    title: "Polar Coordinates & the Gaussian Integral"
+    xp: 100
+    prereqs: [mi-double, int-sub]
+    readings:
+      - {book: STW, sec: "15.4", title: "Double Integrals in Polar Coordinates"}
+      - {book: STW, sec: "10.3", title: "Polar Coordinates"}
+      - {book: OS3, sec: "5.3", title: "Double Integrals in Polar Coordinates"}
+      - {book: OS3, sec: "1.3", title: "Polar Coordinates (if you need the refresher)"}
+    summary: |
+      $dA=r\,dr\,d\theta$. The legendary trick: square $I=\int e^{-x^2}dx$, switch to polar,
+      and get $I^2=\pi$, so $I=\sqrt\pi$.
+    key_ideas:
+      - '$x=r\cos\theta$, $y=r\sin\theta$, $dA=r\,dr\,d\theta$ (the extra $r$ matters!).'
+      - '$\int_{-\infty}^\infty e^{-x^2}dx=\sqrt\pi$.'
+      - 'Hence the normal density $\frac{1}{\sqrt{2\pi}}e^{-x^2/2}$ integrates to 1.'
+    ds: |
+      This is where the $\frac{1}{\sqrt{2\pi}}$ in the normal distribution comes from. You'll
+      never wonder about that constant again.
+    lab: |
+      Verify $\int e^{-x^2}=\sqrt\pi$ numerically with `quad`. Then verify the 2-D integral of
+      $e^{-(x^2+y^2)}$ over the plane equals $\pi$, both in Cartesian and polar form.
+    questions:
+      - {type: num, d: 2, q: '$\int_0^{2\pi}\int_0^\infty e^{-r^2}r\,dr\,d\theta$', a: 'pi', exp: 'Inner: $\frac12$; outer: $2\pi\cdot\frac12$.'}
+      - {type: num, d: 2, q: '$\int_{-\infty}^\infty e^{-x^2}dx$', a: 'sqrt(pi)', exp: 'Square root of the previous answer.'}
+      - {type: num, d: 3, q: 'For what $c$ does $c\,e^{-x^2/2}$ integrate to 1 over $\mathbb R$?', a: '1/sqrt(2*pi)', exp: 'Substituting $x=\sqrt2u$ gives $\sqrt{2\pi}$.'}
+      - {type: num, d: 2, q: 'Area of the unit disk via $\int_0^{2\pi}\int_0^1 r\,dr\,d\theta$.', a: 'pi', exp: '$2\pi\cdot\frac12$.'}
+    cards:
+      - {f: 'Area element in polar coordinates', b: '$dA=r\,dr\,d\theta$'}
+      - {f: 'Gaussian integral', b: '$\int_{-\infty}^\infty e^{-x^2}dx=\sqrt\pi$'}
+    fun:
+      - kind: fact
+        title: "Kelvin's definition of a mathematician"
+        body: |
+          Lord Kelvin once wrote $\int_{-\infty}^\infty e^{-x^2}dx=\sqrt\pi$ on the board and
+          said: "A mathematician is one to whom that is as obvious as that twice two makes
+          four is to you." After today's polar trick, maybe it is.
+
+  - id: mi-change
+    title: "Change of Variables & the Jacobian Determinant"
+    xp: 100
+    prereqs: [mi-polar, mc-jacobian]
+    readings:
+      - {book: STW, sec: "15.10", title: "Change of Variables in Multiple Integrals"}
+      - {book: OS3, sec: "5.7", title: "Change of Variables in Multiple Integrals"}
+      - {book: MML, sec: "6.7", title: "Change of Variables/Inverse Transform"}
+      - {book: BH, sec: "8.1", title: "Change of variables"}
+    summary: |
+      Under a transformation, volumes scale by $|\det J|$. For densities:
+      $f_Y(\mathbf y)=f_X(\mathbf x)\left|\det\frac{\partial\mathbf x}{\partial\mathbf y}\right|$.
+    key_ideas:
+      - '$\iint f(x,y)\,dx\,dy=\iint f(x(u,v),y(u,v))\,|\det J|\,du\,dv$.'
+      - 'Polar''s $r$ is $|\det J|$ for $(r,\theta)\mapsto(x,y)$.'
+      - '1-D density transform: $f_Y(y)=f_X(g^{-1}(y))\left|\frac{d}{dy}g^{-1}(y)\right|$.'
+    ds: |
+      Normalizing flows (generative models) are built entirely on this formula. It also
+      gives the lognormal density, Box-Muller sampling, and reparameterization in VAEs.
+    lab: |
+      Sample $X\sim N(0,1)$, set $Y=e^X$. Derive $f_Y$ with change of variables (lognormal),
+      then overlay it on a histogram of samples.
+    questions:
+      - {type: expr, d: 2, var: r, q: 'Jacobian determinant of $(r,\theta)\mapsto(r\cos\theta,r\sin\theta)$?', a: 'r', exp: '$\cos\theta\cdot r\cos\theta-(-r\sin\theta)\sin\theta=r$.'}
+      - {type: num, d: 2, q: 'Linear map $(u,v)\mapsto(2u, 3v)$ scales areas by...', a: '6', exp: '$\det\begin{pmatrix}2&0\\0&3\end{pmatrix}=6$.'}
+      - {type: expr, d: 3, var: y, q: '$X\sim\text{Uniform}(0,1)$, $Y=X^2$. Density $f_Y(y)$ on $(0,1)$?', a: '1/(2*sqrt(y))', exp: '$x=\sqrt y$, $\frac{dx}{dy}=\frac{1}{2\sqrt y}$.'}
+    cards:
+      - {f: 'Change of variables for densities (1-D)', b: '$f_Y(y)=f_X(x)\,|dx/dy|$ with $x=g^{-1}(y)$'}
+      - {f: 'What does $|\det J|$ measure?', b: 'Local volume scaling factor of the transformation.'}
+    fun:
+      - kind: fact
+        title: "Box-Muller magic"
+        body: |
+          Take two uniform random numbers $U_1,U_2$. Then $\sqrt{-2\ln U_1}\cos(2\pi U_2)$ is
+          exactly standard normal. The proof is a change of variables to polar coordinates --
+          the same Jacobian you just computed.
+
+  - id: mi-joint
+    title: "Joint, Marginal & Conditional Densities"
+    xp: 90
+    prereqs: [mi-double, int-prob]
+    readings:
+      - {book: STW, sec: "15.5", title: "Applications of Double Integrals (joint densities, expected values)"}
+      - {book: BH, sec: "7.1", title: "Joint, marginal, and conditional"}
+      - {book: BH, sec: "7.2", title: "2D LOTUS"}
+      - {book: MML, sec: "6.3", title: "Sum Rule, Product Rule, and Bayes' Theorem"}
+    summary: |
+      Marginalize by integrating out: $f_X(x)=\int f_{X,Y}(x,y)\,dy$. Conditional
+      $f_{Y|X}=f_{X,Y}/f_X$. Expectation of $g(X,Y)$ is a double integral.
+    key_ideas:
+      - 'Sum rule (continuous): $f_X(x)=\int f_{X,Y}(x,y)\,dy$.'
+      - 'Product rule: $f_{X,Y}=f_{Y|X}f_X$; Bayes: $f_{X|Y}\propto f_{Y|X}f_X$.'
+      - 'Independence: $f_{X,Y}=f_Xf_Y$.'
+      - '$\text{Cov}(X,Y)=E[XY]-E[X]E[Y]$, with $E[XY]=\iint xy\,f\,dA$.'
+    ds: |
+      Bayesian inference = integrating out unknowns (marginal likelihood, posterior
+      predictive). Latent-variable models (GMMs, VAEs) are joint densities you marginalize.
+    lab: |
+      For joint density $f(x,y)=x+y$ on $[0,1]^2$: compute the marginal $f_X$, $E[XY]$, and
+      $\text{Cov}(X,Y)$ symbolically in sympy.
+    questions:
+      - {type: expr, d: 2, var: x, q: '$f(x,y)=x+y$ on $[0,1]^2$. Marginal $f_X(x)$?', a: 'x+1/2', exp: '$\int_0^1(x+y)dy$.'}
+      - {type: num, d: 2, q: 'Same density: $E[X]$?', a: '7/12', exp: '$\int_0^1x(x+\frac12)dx=\frac13+\frac14$.'}
+      - {type: num, d: 3, q: 'Same density: $E[XY]$?', a: '1/3', exp: '$\iint xy(x+y)=\frac16+\frac16$.'}
+      - {type: num, d: 3, q: 'Same density: $\text{Cov}(X,Y)$? (fraction)', a: '-1/144', exp: '$\frac13-\left(\frac7{12}\right)^2=\frac{48-49}{144}$.'}
+    cards:
+      - {f: 'Marginalization (continuous sum rule)', b: '$f_X(x)=\int f_{X,Y}(x,y)\,dy$'}
+      - {f: 'Independence test with densities', b: '$f_{X,Y}(x,y)=f_X(x)f_Y(y)$ for all $x,y$.'}
+    fun:
+      - kind: fact
+        title: "Bayes' posthumous fame"
+        body: |
+          Thomas Bayes never published his theorem; his friend Richard Price found it in his
+          papers after his death (1761). Laplace independently developed and actually used it
+          extensively. In Bayesian ML, most of the hard work is the marginalization integral.
+
+  - id: mi-gaussian-mv
+    title: "The Multivariate Gaussian"
+    xp: 90
+    prereqs: [mi-change, mi-joint, mc-matrix, la-spectral]
+    readings:
+      - {book: MML, sec: "6.5", title: "Gaussian Distribution"}
+    summary: |
+      $\mathcal N(\boldsymbol\mu,\Sigma)$: density $\propto\exp(-\frac12(\mathbf x-\boldsymbol\mu)
+      ^\top\Sigma^{-1}(\mathbf x-\boldsymbol\mu))$. Level sets are ellipses; marginals and
+      conditionals are Gaussian too.
+    key_ideas:
+      - 'Normalizer $(2\pi)^{-d/2}|\Sigma|^{-1/2}$ comes from change of variables.'
+      - 'Marginals: just drop rows/cols of $\boldsymbol\mu,\Sigma$.'
+      - 'Log-density is a quadratic form -- gradients via Unit 7 identities.'
+    ds: |
+      Gaussian processes, Kalman filters, LDA/QDA, GMMs, and the "reparameterization trick"
+      all rely on the multivariate normal.
+    lab: |
+      Sample from $\mathcal N(\mathbf 0,\Sigma)$ with $\Sigma=\begin{pmatrix}1&0.8\\0.8&1\end{pmatrix}$
+      via Cholesky, scatter-plot, overlay density contours. Then compute the gradient of the
+      log-density in $\mathbf x$ by hand: $-\Sigma^{-1}(\mathbf x-\boldsymbol\mu)$.
+    questions:
+      - {type: mc, d: 2, q: '$\nabla_{\mathbf x}\ln\mathcal N(\mathbf x;\boldsymbol\mu,\Sigma)$ = ?', choices: ['$\Sigma(\mathbf x-\boldsymbol\mu)$', '$-\Sigma^{-1}(\mathbf x-\boldsymbol\mu)$', '$\Sigma^{-1}\mathbf x$', '$-(\mathbf x-\boldsymbol\mu)$'], a: 1, exp: 'Gradient of $-\frac12\mathbf z^\top\Sigma^{-1}\mathbf z$.'}
+      - {type: num, d: 2, q: '2-D Gaussian with $\Sigma=\text{diag}(4,9)$. What is $|\Sigma|^{1/2}$?', a: '6', exp: '$\sqrt{36}$.'}
+    cards:
+      - {f: 'Multivariate normal log-density gradient', b: '$-\Sigma^{-1}(\mathbf x-\boldsymbol\mu)$'}
+      - {f: 'Marginal of a multivariate Gaussian', b: 'Gaussian with the corresponding sub-vector of $\boldsymbol\mu$ and sub-matrix of $\Sigma$.'}
+    fun:
+      - kind: fact
+        title: "Why everything is Gaussian"
+        body: |
+          The Central Limit Theorem says sums of many independent effects look Gaussian. Your
+          marathon finish time is a sum of 26.2 noisy miles -- which is why race results
+          histograms look like bells.
+
+  - id: mi-triple
+    title: "Triple Integrals"
+    xp: 50
+    optional: true
+    prereqs: [mi-double]
+    readings:
+      - {book: STW, sec: "15.7-15.9", title: "Triple Integrals; Cylindrical and Spherical Coordinates"}
+      - {book: OS3, sec: "5.4", title: "Triple Integrals"}
+      - {book: OS3, sec: "5.5", title: "Triple Integrals in Cylindrical and Spherical Coordinates"}
+    summary: |
+      Same idea, one more dimension: $\iiint_E f\,dV$. Cylindrical and spherical coordinates
+      handle round regions ($dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta$).
+    key_ideas:
+      - 'Iterated integration in three variables.'
+      - 'Spherical volume element $\rho^2\sin\phi$.'
+    ds: |
+      Three-variable joint densities; and the intuition that volume concentrates in a thin
+      shell in high dimensions (the "curse of dimensionality").
+    lab: |
+      Monte Carlo estimate the fraction of the unit cube's volume inside the inscribed
+      ball, for dimensions 2..20. Watch it vanish. (Curse of dimensionality!)
+    questions:
+      - {type: num, d: 1, q: '$\int_0^1\int_0^1\int_0^1 xyz\,dz\,dy\,dx$', a: '1/8', exp: '$(\frac12)^3$.'}
+      - {type: num, d: 2, q: 'Volume of a ball of radius 1 via spherical coordinates.', a: '4*pi/3', exp: '$\int_0^{2\pi}\int_0^\pi\int_0^1\rho^2\sin\phi$.'}
+    cards:
+      - {f: 'Spherical volume element', b: '$dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta$'}
+    fun:
+      - kind: fact
+        title: "High-dimensional oranges are all peel"
+        body: |
+          In 100 dimensions, over 99.99% of a ball's volume lies within 10% of its surface.
+          High-dimensional data lives "on the shell," which is why nearest-neighbour methods
+          struggle and why Gaussian samples in high-D have nearly identical norms.

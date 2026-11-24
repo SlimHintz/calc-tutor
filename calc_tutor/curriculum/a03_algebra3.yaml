@@ -1,0 +1,539 @@
+unit:
+  id: A03
+  ord: 20
+  course: algebra
+  title: "Algebra 3 (College Algebra): Functions, Models, Matrices & the Complex Plane"
+  constellation: "The Compass Rose"
+  color: "#558b2f"
+  blurb: |
+    College-level algebra: reading functions like a data scientist (domain, rates of change,
+    transformations), polynomial and rational functions and their zeros -- real AND complex --
+    exponential and logarithmic models fitted to data, systems and matrices, and the complex
+    plane where $e^{i\pi}=-1$ lives. Finishing this unit means you're ready for calculus.
+  ds_why: |
+    Function behavior is what you read off every plot; linear and exponential models are your
+    first models; matrices are the data structure of ML; and polar form of complex numbers is
+    how signals and rotations are computed.
+
+topics:
+  - id: al-domain-range
+    title: "Domain, Range & Reading Graphs"
+    xp: 40
+    prereqs: [al-functions]
+    readings:
+      - {book: CA, sec: "3.1, 3.2", title: "Functions and Function Notation; Domain and Range"}
+    summary: |
+      Find the domain algebraically (exclude zero denominators, negative even-root arguments,
+      non-positive log arguments) and read domain and range from graphs, in interval notation.
+    key_ideas:
+      - 'Combine restrictions: $\frac{\sqrt{x+2}}{x-3}$ needs $x\ge-2$ AND $x\ne3$.'
+      - 'Range: look at the $y$-values the graph actually reaches.'
+    ds: |
+      Model inputs outside the training domain are extrapolation -- the domain idea, applied.
+      Feature transforms like $\log x$ and $\sqrt x$ restrict domains.
+    lab: |
+      Find the domain of $\log(x-1)+\sqrt{5-x}$ by hand, then plot it to confirm.
+    questions:
+      - {type: mc, d: 1, q: 'Domain of $f(x)=\frac{\sqrt{x+2}}{x-3}$?', choices: ['$[-2,\infty)$', '$[-2,3)\cup(3,\infty)$', '$(3,\infty)$', 'all reals'], a: 1, exp: 'Root needs $x\ge-2$; denominator needs $x\ne3$.'}
+      - {type: mc, d: 2, q: 'Range of $f(x)=x^2+4$?', choices: ['all reals', '$[4,\infty)$', '$(4,\infty)$', '$[0,\infty)$'], a: 1, exp: 'Smallest value 4 at $x=0$.'}
+    cards:
+      - {f: 'Three common domain restrictions', b: 'Denominator ≠ 0; even-root argument ≥ 0; log argument > 0.'}
+    fun:
+      - kind: fact
+        title: "Out of domain"
+        body: |
+          Famously, a 1990s model predicted from a few decades of data that the women's marathon
+          world record would soon beat the men's. Extrapolating a line far outside its data's
+          domain is the classic modeling sin.
+
+  - id: al-rates-behavior
+    title: "Rates of Change & Behavior of Graphs"
+    xp: 50
+    prereqs: [al-domain-range]
+    readings:
+      - {book: CA, sec: "3.3", title: "Rates of Change and Behavior of Graphs"}
+    summary: |
+      Average rate of change $\frac{f(b)-f(a)}{b-a}$ is the slope of a secant line. Identify
+      where a function increases, decreases, and has local maxima or minima.
+    key_ideas:
+      - 'Average rate of change = secant slope (units: output per input).'
+      - 'Local max: higher than nearby points; local min: lower.'
+      - 'Shrink the interval and the secant becomes a tangent -- the derivative.'
+    ds: |
+      Week-over-week growth, pace between mile markers, and loss improvement per epoch are
+      average rates of change.
+    lab: |
+      Running lab: compute average pace for each mile of a race from cumulative split times.
+    questions:
+      - {type: num, d: 1, q: 'Average rate of change of $f(x)=x^2+1$ from $x=1$ to $x=3$?', a: '4', exp: '$\frac{10-2}{2}$.'}
+      - {type: num, d: 2, q: 'A runner is at mile 6 at 45 min and mile 10 at 77 min. Average pace (min per mile)?', a: '8', exp: '$\frac{77-45}{10-6}$.'}
+    cards:
+      - {f: 'Average rate of change on $[a,b]$', b: '$\frac{f(b)-f(a)}{b-a}$'}
+    fun:
+      - kind: fact
+        title: "The derivative is coming"
+        body: |
+          Newton called the instantaneous rate of change a "fluxion". You're one limit away from it:
+          take the average rate of change and let the interval shrink to zero.
+
+  - id: al-transformations
+    title: "Transformations & Absolute Value Functions"
+    xp: 50
+    prereqs: [al-domain-range, al-quadratic-graphs]
+    readings:
+      - {book: CA, sec: "3.5, 3.6", title: "Transformation of Functions; Absolute Value Functions"}
+    summary: |
+      $g(x)=a\,f(b(x-h))+k$: $h$ shifts right, $k$ shifts up, $a$ stretches vertically (and
+      reflects if negative), $b$ compresses horizontally. Even and odd symmetry.
+    key_ideas:
+      - '$f(x-h)$ shifts RIGHT by $h$ (opposite of the sign you see).'
+      - '$-f(x)$ reflects over the $x$-axis; $f(-x)$ over the $y$-axis.'
+      - 'Even: $f(-x)=f(x)$. Odd: $f(-x)=-f(x)$.'
+    ds: |
+      Standardizing a feature ($\frac{x-\mu}{\sigma}$) is a shift and a scale; transforming a
+      target ($\log y$) changes the model's shape.
+    lab: |
+      Plot $|x|$, $|x-2|+1$, $-2|x|$ and $|2x|$ on one figure. Describe each change in words.
+    questions:
+      - {type: mc, d: 1, q: '$g(x)=f(x-2)+3$ is the graph of $f$ shifted...', choices: ['left 2, up 3', 'right 2, up 3', 'right 2, down 3', 'left 3, up 2'], a: 1, exp: '$x-2$ means right.'}
+      - {type: mc, d: 2, q: 'Vertex of $y=-|x+1|+2$?', choices: ['$(1,2)$', '$(-1,2)$', '$(-1,-2)$', '$(2,-1)$'], a: 1, exp: 'Shift left 1, up 2; the minus flips it to open down.'}
+      - {type: mc, d: 2, q: 'Which is odd?', choices: ['$x^4-x^2$', '$|x|$', '$x^3+x$', '$x^2+1$'], a: 2, exp: '$f(-x)=-x^3-x=-f(x)$.'}
+    cards:
+      - {f: '$f(x-h)+k$', b: 'Shift right $h$, up $k$.'}
+    fun:
+      - kind: fact
+        title: "Photoshop is function transformations"
+        body: |
+          Brightness, contrast and gamma sliders apply shifts, stretches and power functions to
+          every pixel's value -- transformations of the identity function $f(x)=x$.
+
+  - id: al-linear-models
+    title: "Linear Models & Fitting Lines to Data"
+    xp: 60
+    prereqs: [al-slope, al-rates-behavior]
+    readings:
+      - {book: CA, sec: "4.2, 4.3", title: "Modeling with Linear Functions; Fitting Linear Models to Data"}
+    summary: |
+      Build linear models from a rate and a starting value, interpret slope and intercept in
+      context, and fit a line of best fit to scattered data (least squares); judge fit with the
+      correlation coefficient $r$.
+    key_ideas:
+      - 'Slope = rate of change (with units); intercept = value at input 0 (check it makes sense).'
+      - 'Line of best fit minimizes squared vertical errors (least squares).'
+      - '$r$ near ±1: strong linear relationship; near 0: weak. Correlation ≠ causation.'
+    ds: |
+      This IS linear regression, your first ML model. Everything later (multiple regression,
+      regularization, gradient descent) builds on it.
+    lab: |
+      Running lab: fit finish time vs. race distance for your races with `np.polyfit(x, y, 1)`.
+      Interpret the slope as minutes per mile, and compute $r$ with `np.corrcoef`.
+    questions:
+      - {type: num, d: 1, q: 'A line through $(1,3)$ and $(3,7)$ predicts what at $x=5$?', a: '11', exp: 'Slope 2: $y=2x+1$.'}
+      - {type: mc, d: 2, q: 'A model $T=7.6d+2$ predicts marathon time in minutes from distance $d$ (miles). The 7.6 means...', choices: ['total minutes', '7.6 minutes per mile', '7.6 miles per hour', 'the starting time'], a: 1, exp: 'Slope = rate.'}
+      - {type: mc, d: 2, q: 'A correlation of $r=-0.9$ indicates...', choices: ['a weak relationship', 'a strong negative linear relationship', 'no relationship', 'causation'], a: 1, exp: 'Close to −1.'}
+    cards:
+      - {f: 'Line of best fit minimizes...', b: 'The sum of squared vertical distances (residuals).'}
+    fun:
+      - kind: fact
+        title: "Correlation is not causation"
+        body: |
+          Across countries, chocolate consumption correlates strongly with Nobel prizes per capita
+          (a real 2012 paper). Wealth drives both. Lines fit; stories need evidence.
+
+  - id: al-polynomial-functions
+    title: "Polynomial Functions: Graphs, End Behavior & Multiplicity"
+    xp: 50
+    prereqs: [al-transformations, al-special-factoring]
+    readings:
+      - {book: CA, sec: "5.2, 5.3", title: "Power Functions and Polynomial Functions; Graphs of Polynomial Functions"}
+    summary: |
+      End behavior is set by the leading term. Zeros come from factors; a zero's multiplicity
+      tells you whether the graph crosses (odd) or touches and turns (even). Degree $n$ allows at
+      most $n-1$ turning points.
+    key_ideas:
+      - 'Leading term $ax^n$ decides what happens as $x\to\pm\infty$.'
+      - 'Odd multiplicity: crosses the axis. Even: touches and bounces.'
+      - 'At most $n$ real zeros and $n-1$ turning points.'
+    ds: |
+      Polynomial features let linear models curve; too high a degree wiggles wildly at the ends
+      (overfitting and extrapolation risk).
+    lab: |
+      Plot $x(x-2)^2(x+1)$ and identify each zero's crossing behavior; compare with the factored
+      form.
+    questions:
+      - {type: mc, d: 1, q: 'As $x\to\infty$, $f(x)=-2x^5+3x^2$ goes to...', choices: ['$+\infty$', '$-\infty$', '0', '3'], a: 1, exp: 'Leading term $-2x^5$.'}
+      - {type: num, d: 1, q: 'Maximum number of turning points of a degree-4 polynomial?', a: '3', exp: '$n-1$.'}
+      - {type: mc, d: 2, q: 'At $x=2$, the graph of $x(x-2)^2$...', choices: ['crosses the axis', 'touches and turns around', 'has an asymptote', 'is undefined'], a: 1, exp: 'Even multiplicity.'}
+    cards:
+      - {f: 'Multiplicity and graph behavior', b: 'Odd: crosses the x-axis. Even: touches and turns.'}
+    fun:
+      - kind: fact
+        title: "Runge's wiggles"
+        body: |
+          In 1901 Carl Runge showed that fitting higher and higher degree polynomials through
+          evenly spaced points can make the fit WORSE, with wild oscillations at the edges -- an
+          early warning about overfitting.
+
+  - id: al-polynomial-zeros
+    title: "Dividing Polynomials & Finding Zeros (Real and Complex)"
+    xp: 70
+    prereqs: [al-polynomial-functions, al-complex-roots]
+    readings:
+      - {book: CA, sec: "5.4, 5.5", title: "Dividing Polynomials; Zeros of Polynomial Functions"}
+      - {book: IA, sec: "5.4", title: "Dividing Polynomials"}
+    summary: |
+      Long and synthetic division; the Remainder Theorem ($P(c)$ is the remainder on dividing by
+      $x-c$) and Factor Theorem; the Rational Zero Theorem for candidates; and the Fundamental
+      Theorem of Algebra: degree $n$ ⇒ exactly $n$ complex zeros, with complex zeros of real
+      polynomials in conjugate pairs.
+    key_ideas:
+      - 'Remainder theorem: remainder of $P(x)\div(x-c)$ is $P(c)$.'
+      - 'Rational zero candidates: $\pm\frac{\text{factors of constant}}{\text{factors of leading coeff}}$.'
+      - 'If $a+bi$ is a zero of a real polynomial, so is $a-bi$.'
+    ds: |
+      Polynomial root-finding underlies eigenvalue computations (characteristic polynomials) and
+      the stability analysis of time-series models.
+    lab: |
+      Find all zeros of $x^3-6x^2+11x-6$ by testing rational candidates, then verify with
+      `numpy.roots`. Then try $x^3-x^2+x-1$ and spot the complex pair.
+    questions:
+      - {type: num, d: 1, q: 'Remainder when $x^3+2x-5$ is divided by $x-1$?', a: '-2', exp: '$P(1)=1+2-5$.'}
+      - {type: mc, d: 2, q: 'Zeros of $x^3-6x^2+11x-6$?', choices: ['$1,2,3$', '$-1,-2,-3$', '$1,3,6$', '$2,3,6$'], a: 0, exp: '$(x-1)(x-2)(x-3)$.'}
+      - {type: mc, d: 2, q: 'A real polynomial has zero $2+3i$. Which must also be a zero?', choices: ['$-2+3i$', '$2-3i$', '$3+2i$', '$-2-3i$'], a: 1, exp: 'Complex conjugate pairs.'}
+      - {type: num, d: 1, q: 'How many complex zeros (counting multiplicity) does a degree-5 polynomial have?', a: '5', exp: 'Fundamental Theorem of Algebra.'}
+    cards:
+      - {f: 'Fundamental Theorem of Algebra', b: 'A degree-$n$ polynomial has exactly $n$ complex zeros (with multiplicity).'}
+      - {f: 'Conjugate pairs theorem', b: 'Real-coefficient polynomials have complex zeros in pairs $a\pm bi$.'}
+    fun:
+      - kind: fact
+        title: "No quintic formula"
+        body: |
+          There are formulas for roots of degree 2, 3 and 4 polynomials, but Abel (1824) and Galois
+          proved none can exist for degree 5 in general. Galois worked out his theory as a teenager
+          and died in a duel at 20.
+
+  - id: al-rational-functions
+    title: "Rational Functions & Asymptotes"
+    xp: 50
+    prereqs: [al-polynomial-zeros, al-rational-simplify]
+    readings:
+      - {book: CA, sec: "5.6", title: "Rational Functions"}
+    summary: |
+      Vertical asymptotes at zeros of the reduced denominator; holes where factors cancel;
+      horizontal asymptote from comparing degrees (bottom bigger: $y=0$; equal: ratio of leading
+      coefficients; top bigger: none).
+    key_ideas:
+      - 'Cancel common factors first: cancelled factor ⇒ hole, not asymptote.'
+      - 'Horizontal asymptote describes behavior as $x\to\pm\infty$.'
+    ds: |
+      Saturating curves like $\frac{x}{x+k}$ (Michaelis–Menten, diminishing returns on ad spend)
+      are rational functions with horizontal asymptotes.
+    lab: |
+      Plot $\frac{2x+1}{x-3}$ and mark its asymptotes; then plot $\frac{x}{x+5}$ for $x\ge0$ as a
+      "diminishing returns" curve.
+    questions:
+      - {type: mc, d: 1, q: 'Asymptotes of $f(x)=\frac{2x+1}{x-3}$?', choices: ['$x=3$, $y=2$', '$x=-3$, $y=2$', '$x=3$, $y=0$', '$x=2$, $y=3$'], a: 0, exp: 'Denominator zero at 3; equal degrees: $2/1$.'}
+      - {type: mc, d: 2, q: '$\frac{x^2-1}{x-1}$ has, at $x=1$...', choices: ['a vertical asymptote', 'a hole', 'a zero', 'nothing unusual'], a: 1, exp: 'It cancels to $x+1$.'}
+      - {type: num, d: 2, q: 'Horizontal asymptote of $\frac{3x}{x^2+1}$ ($y=$)?', a: '0', exp: 'Bottom degree bigger.'}
+    cards:
+      - {f: 'Hole vs vertical asymptote', b: 'Factor that cancels: hole. Zero of the reduced denominator: vertical asymptote.'}
+    fun:
+      - kind: fact
+        title: "Speed limits of nature"
+        body: |
+          Enzyme reaction rates follow $v=\frac{V_{max}S}{K+S}$: double the fuel and you never
+          double the speed past a point. The horizontal asymptote is the biochemical speed limit.
+
+  - id: al-exp-log-graphs
+    title: "Graphs of Exponential & Logarithmic Functions"
+    xp: 50
+    prereqs: [al-logarithms, al-transformations]
+    readings:
+      - {book: CA, sec: "6.1, 6.2, 6.3, 6.4", title: "Exponential Functions and Their Graphs; Logarithmic Functions and Their Graphs"}
+    summary: |
+      $y=b^x$ passes through $(0,1)$ with horizontal asymptote $y=0$. $y=\log_bx$ is its mirror
+      image: through $(1,0)$, vertical asymptote $x=0$, domain $x>0$. Transformations move them.
+    key_ideas:
+      - '$\ln$ and $e^x$ are inverses: $\ln(e^x)=x$, $e^{\ln x}=x$.'
+      - 'Log graphs grow without bound, but very slowly.'
+    ds: |
+      Log-scale axes turn exponential growth into straight lines -- the first check for
+      "is this growing exponentially?".
+    lab: |
+      Plot $e^x$ and $\ln x$ together with the line $y=x$ to see the mirror symmetry.
+    questions:
+      - {type: mc, d: 1, q: 'Domain of $f(x)=\log(x-2)$?', choices: ['$x>0$', '$x>2$', '$x\ge2$', 'all reals'], a: 1, exp: 'Argument must be positive.'}
+      - {type: mc, d: 1, q: 'Horizontal asymptote of $y=3\cdot2^x$?', choices: ['$y=3$', '$y=0$', '$y=2$', 'none'], a: 1, exp: '$2^x\to0$ as $x\to-\infty$.'}
+    cards:
+      - {f: 'Key points of $y=b^x$ and $y=\log_bx$', b: '$(0,1)$ and $(1,0)$; asymptotes $y=0$ and $x=0$.'}
+    fun:
+      - kind: fact
+        title: "Earthquakes and decibels"
+        body: |
+          The Richter scale and decibels are logarithmic: a magnitude 7 quake shakes 10 times
+          harder than a 6, and 90 dB is 10 times the sound intensity of 80 dB.
+
+  - id: al-exp-log-models
+    title: "Exponential & Logarithmic Models"
+    xp: 60
+    prereqs: [al-exp-log-graphs]
+    readings:
+      - {book: CA, sec: "6.7, 6.8", title: "Exponential and Logarithmic Models; Fitting Exponential Models to Data"}
+    summary: |
+      Model growth and decay with $A=A_0e^{kt}$: doubling time $\frac{\ln2}{k}$, half-life
+      $\frac{\ln2}{|k|}$. Fit exponential models to data by taking logs (a straight line in
+      $\ln y$).
+    key_ideas:
+      - 'Doubling time: $\frac{\ln 2}{k}$; rule of 70: about $70/(\text{percent rate})$.'
+      - 'Log-transform: $\ln y=\ln A_0+kt$ is linear in $t$.'
+    ds: |
+      Fitting exponentials by log-linearization is a standard data-science trick (user growth,
+      compounding, decay of model accuracy over time).
+    lab: |
+      Fit $y=Ae^{kt}$ to cumulative yearly mileage (or any growth data) by regressing $\ln y$ on
+      $t$ with `np.polyfit`.
+    questions:
+      - {type: num, d: 2, q: 'Doubling time (years) at continuous growth rate 7% per year (exact or decimal)?', a: 'ln(2)/0.07', tol: 0.005, exp: '$\ln2/0.07\approx9.9$.'}
+      - {type: num, d: 1, q: 'A population of 500 doubles every 3 years. Population after 9 years?', a: '4000', exp: 'Three doublings: $500\cdot2^3$.'}
+      - {type: num, d: 2, q: 'A drug has half-life 4 hours. Fraction remaining after 12 hours?', a: '1/8', exp: 'Three half-lives.'}
+    cards:
+      - {f: 'Doubling time for $A=A_0e^{kt}$', b: '$\frac{\ln2}{k}$ (rule of 70 with percent rates)'}
+    fun:
+      - kind: fact
+        title: "Carbon dating"
+        body: |
+          Carbon-14 decays with a half-life of about 5,730 years. Measure what fraction remains and
+          a logarithm tells you the age: $t=\frac{5730}{\ln 2}\ln\frac{N_0}{N}$.
+
+  - id: al-three-variable-systems
+    title: "Systems in Three Variables"
+    xp: 50
+    prereqs: [al-systems]
+    readings:
+      - {book: CA, sec: "7.2", title: "Systems of Linear Equations: Three Variables"}
+      - {book: IA, sec: "4.4", title: "Solve Systems of Equations with Three Variables"}
+    summary: |
+      Eliminate one variable from two pairs of equations to get a 2×2 system, solve it, then
+      back-substitute. Geometrically: three planes meeting in a point, a line, or not at all.
+    key_ideas:
+      - 'Systematic elimination: same variable eliminated twice.'
+      - 'Inconsistent (0 = nonzero) means no solution; 0 = 0 means infinitely many.'
+    ds: |
+      Fitting a quadratic through three points or solving for three model parameters is a 3×3
+      system -- and the step up to matrices.
+    lab: |
+      Find the parabola $y=ax^2+bx+c$ through $(1,2)$, $(2,3)$, $(3,6)$ by setting up and solving
+      the 3×3 system.
+    questions:
+      - {type: mc, d: 2, q: 'Solve $x+y+z=6$, $x-y+z=2$, $2x+y-z=1$.', choices: ['$(1,2,3)$', '$(3,2,1)$', '$(2,2,2)$', '$(1,3,2)$'], a: 0, exp: 'Subtract the first two: $2y=4$. Then $x+z=4$ and $2x-z=-1$.'}
+      - {type: mc, d: 2, q: 'Parabola through $(1,2),(2,3),(3,6)$?', choices: ['$y=x^2-2x+3$', '$y=x^2+1$', '$y=2x^2-5x+5$', '$y=x+1$'], a: 0, exp: 'Check: 2, 3, 6.'}
+    cards:
+      - {f: 'Strategy for a 3×3 linear system', b: 'Eliminate the same variable from two pairs → 2×2 system → back-substitute.'}
+    fun:
+      - kind: fact
+        title: "Three points make a parabola"
+        body: |
+          Just as two points determine a line, three (non-collinear) points determine a parabola:
+          three unknowns, three equations. In general, $n+1$ points pin down a degree-$n$
+          polynomial.
+
+  - id: al-matrices
+    title: "Matrices, Matrix Operations & Gaussian Elimination"
+    xp: 70
+    prereqs: [al-three-variable-systems]
+    readings:
+      - {book: CA, sec: "7.5, 7.6", title: "Matrices and Matrix Operations; Solving Systems with Gaussian Elimination"}
+      - {book: IA, sec: "4.5", title: "Solve Systems of Equations Using Matrices"}
+    summary: |
+      A matrix is a rectangular array. Add entrywise; multiply row-by-column (inner dimensions
+      must match). Write a system as an augmented matrix and row-reduce to solve it.
+    key_ideas:
+      - '$(m\times n)(n\times p)=m\times p$; $AB\ne BA$ in general.'
+      - 'Row operations: swap rows, scale a row, add a multiple of one row to another.'
+      - 'Row-echelon form → back-substitution.'
+    ds: |
+      Datasets are matrices (rows = examples, columns = features); a linear model's predictions
+      are a matrix-vector product $X\boldsymbol\beta$. This is the on-ramp to linear algebra.
+    lab: |
+      Solve the 3×3 system from the previous topic with an augmented matrix by hand, then with
+      `np.linalg.solve`.
+    questions:
+      - {type: mc, d: 1, q: '$\begin{pmatrix}1&2\\3&4\end{pmatrix}+\begin{pmatrix}0&1\\1&0\end{pmatrix}=$', choices: ['$\begin{pmatrix}1&3\\4&4\end{pmatrix}$', '$\begin{pmatrix}0&2\\3&0\end{pmatrix}$', '$\begin{pmatrix}1&2\\3&4\end{pmatrix}$', '$\begin{pmatrix}2&1\\4&3\end{pmatrix}$'], a: 0, exp: 'Add entrywise.'}
+      - {type: mc, d: 2, q: '$\begin{pmatrix}1&2\\0&1\end{pmatrix}\begin{pmatrix}3\\4\end{pmatrix}=$', choices: ['$\begin{pmatrix}11\\4\end{pmatrix}$', '$\begin{pmatrix}3\\8\end{pmatrix}$', '$\begin{pmatrix}7\\4\end{pmatrix}$', '$\begin{pmatrix}3\\4\end{pmatrix}$'], a: 0, exp: 'Row 1: $3+8$; row 2: $0+4$.'}
+      - {type: mc, d: 1, q: 'If $A$ is $2\times3$ and $B$ is $3\times4$, $AB$ is...', choices: ['$2\times4$', '$3\times3$', '$4\times2$', 'undefined'], a: 0, exp: 'Outer dimensions.'}
+    cards:
+      - {f: 'When is $AB$ defined, and what shape is it?', b: 'When $A$''s columns = $B$''s rows; shape is ($A$ rows) × ($B$ columns).'}
+    fun:
+      - kind: fact
+        title: "Matrices were named in 1850"
+        body: |
+          James Sylvester coined "matrix" (Latin for womb -- a place where determinants are born)
+          in 1850. Arthur Cayley then defined matrix multiplication in 1858 by thinking of
+          matrices as composed transformations.
+
+  - id: al-matrix-inverses
+    title: "Inverses, Determinants & Cramer's Rule"
+    xp: 50
+    prereqs: [al-matrices]
+    readings:
+      - {book: CA, sec: "7.7, 7.8", title: "Solving Systems with Inverses; Solving Systems with Cramer's Rule"}
+      - {book: IA, sec: "4.6", title: "Solve Systems of Equations Using Determinants"}
+    summary: |
+      $A^{-1}$ undoes $A$: $AA^{-1}=I$. For $2\times2$: $\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$.
+      A matrix is invertible iff its determinant is nonzero; then $A\mathbf x=\mathbf b$ has the
+      unique solution $\mathbf x=A^{-1}\mathbf b$.
+    key_ideas:
+      - '$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc$.'
+      - '$\det=0$ ⇒ no inverse ⇒ no unique solution.'
+      - 'In code, solve systems directly; don''t form $A^{-1}$.'
+    ds: |
+      Ordinary least squares involves $(X^\top X)^{-1}$; a zero determinant there means collinear
+      features. You'll meet this again in Linear Algebra I.
+    lab: |
+      Compute the inverse of $\begin{pmatrix}4&7\\2&6\end{pmatrix}$ by hand and check with
+      `np.linalg.inv`; verify $AA^{-1}=I$.
+    questions:
+      - {type: num, d: 1, q: '$\det\begin{pmatrix}4&7\\2&6\end{pmatrix}$', a: '10', exp: '$24-14$.'}
+      - {type: mc, d: 2, q: 'Inverse of $\begin{pmatrix}4&7\\2&6\end{pmatrix}$?', choices: ['$\frac1{10}\begin{pmatrix}6&-7\\-2&4\end{pmatrix}$', '$\frac1{10}\begin{pmatrix}4&-7\\-2&6\end{pmatrix}$', '$\begin{pmatrix}6&-7\\-2&4\end{pmatrix}$', 'not invertible'], a: 0, exp: 'Swap diagonal, negate off-diagonal, divide by det.'}
+      - {type: num, d: 1, q: '$\det\begin{pmatrix}2&0&0\\0&3&0\\0&0&4\end{pmatrix}$', a: '24', exp: 'Diagonal matrix: product of the diagonal.'}
+    cards:
+      - {f: '2×2 inverse', b: '$\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$'}
+    fun:
+      - kind: fact
+        title: "Cramer's rule is slow"
+        body: |
+          Cramer's rule (1750) is elegant but needs roughly $n!$ operations if done naively; for a
+          20×20 system that's more than $10^{18}$. Gaussian elimination needs about $n^3$: 8,000.
+
+  - id: al-complex-plane
+    title: "The Complex Plane, Polar Form & Euler's Formula"
+    xp: 80
+    prereqs: [al-complex-arithmetic, al-polynomial-zeros]
+    readings:
+      - {book: CA, sec: "2.4", title: "Complex Numbers (plotting in the complex plane)"}
+      - {book: PRE, sec: "8.3", title: "Polar Form of Complex Numbers; DeMoivre's Theorem"}
+    summary: |
+      Plot $a+bi$ as the point $(a,b)$. Its modulus $r=|z|$ is the distance from 0 and its
+      argument $\theta$ the angle, so $z=r(\cos\theta+i\sin\theta)=re^{i\theta}$. Multiplying
+      complex numbers multiplies moduli and ADDS angles; De Moivre:
+      $(re^{i\theta})^n=r^ne^{in\theta}$.
+    key_ideas:
+      - 'Euler''s formula: $e^{i\theta}=\cos\theta+i\sin\theta$; so $e^{i\pi}=-1$.'
+      - 'Multiplying by $i$ rotates a point 90° counterclockwise.'
+      - 'The $n$th roots of 1 are evenly spaced around the unit circle.'
+    ds: |
+      The Fourier transform writes any signal as a sum of $e^{i\omega t}$ rotations; `np.fft`
+      returns complex numbers whose modulus is amplitude and argument is phase. Rotations in 2-D
+      graphics and transformer positional encodings use the same idea.
+    lab: |
+      Plot $1, i, -1, -i$ and the powers $(1+i)^n$ for $n=0..8$ in the complex plane with
+      matplotlib. Watch them spiral outward as moduli multiply and angles add.
+    questions:
+      - {type: num, d: 1, q: 'Modulus of $-3+4i$?', a: '5', exp: '$\sqrt{9+16}$.'}
+      - {type: num, d: 1, q: 'Argument (angle) of $i$, in radians?', a: 'pi/2', exp: '$i$ points straight up.'}
+      - {type: mc, d: 2, q: 'Polar form of $1+i$?', choices: ['$\sqrt2\,e^{i\pi/4}$', '$2e^{i\pi/4}$', '$\sqrt2\,e^{i\pi/2}$', '$e^{i\pi/4}$'], a: 0, exp: '$r=\sqrt2$, $\theta=45°$.'}
+      - {type: num, d: 3, q: 'Use De Moivre to compute $(1+i)^8$.', a: '16', exp: '$(\sqrt2)^8e^{i\cdot8\pi/4}=16e^{2\pi i}=16$.'}
+      - {type: num, d: 2, q: 'Evaluate $e^{i\pi}+1$.', a: '0', exp: 'Euler''s identity.'}
+    cards:
+      - {f: 'Euler''s formula', b: '$e^{i\theta}=\cos\theta+i\sin\theta$'}
+      - {f: 'Multiplying complex numbers in polar form', b: 'Multiply the moduli, add the angles.'}
+      - {f: 'Geometric effect of multiplying by $i$', b: 'Rotate 90° counterclockwise about 0.'}
+    fun:
+      - kind: fact
+        title: "The most beautiful equation"
+        body: |
+          $e^{i\pi}+1=0$ links five fundamental constants: $e$, $i$, $\pi$, 1 and 0. Polled readers
+          of Physics World voted it "the greatest equation ever". You can now prove why it's true:
+          rotate 1 by $\pi$ radians around the circle and you land on $-1$.
+
+  - id: al-sequences-series
+    title: "Sequences & Series"
+    xp: 50
+    prereqs: [al-exponentials]
+    readings:
+      - {book: CA, sec: "9.1, 9.2, 9.3, 9.4", title: "Sequences and Their Notations; Arithmetic and Geometric Sequences; Series"}
+      - {book: IA, sec: "12.1, 12.2, 12.3", title: "Sequences; Arithmetic Sequences; Geometric Sequences and Series"}
+    summary: |
+      Arithmetic: add $d$ each step, $a_n=a_1+(n-1)d$, sum $\frac n2(a_1+a_n)$. Geometric: multiply
+      by $r$, $a_n=a_1r^{n-1}$, sum $a_1\frac{1-r^n}{1-r}$; infinite sum $\frac{a_1}{1-r}$ when
+      $|r|<1$.
+    key_ideas:
+      - 'Sigma notation $\sum_{k=1}^n a_k$.'
+      - 'Infinite geometric series converge only if $|r|<1$.'
+    ds: |
+      Discounting future rewards (RL), exponential moving averages (Adam optimizer), and
+      amortized loan payments are geometric series.
+    lab: |
+      Running lab: a training plan adds 2 miles to the long run each week from 10 miles. Total
+      long-run miles over 8 weeks? Check by summing in Python.
+    questions:
+      - {type: num, d: 1, q: 'Arithmetic: $a_1=3$, $d=4$. Find $a_{10}$.', a: '39', exp: '$3+9\cdot4$.'}
+      - {type: num, d: 2, q: 'Sum of the first 10 terms of that sequence?', a: '210', exp: '$\frac{10}{2}(3+39)$.'}
+      - {type: num, d: 1, q: 'Geometric: $2, 6, 18, \dots$. Find $a_6$.', a: '486', exp: '$2\cdot3^5$.'}
+      - {type: num, d: 2, q: '$8+4+2+1+\cdots$', a: '16', exp: '$\frac{8}{1-1/2}$.'}
+    cards:
+      - {f: 'Infinite geometric series sum', b: '$\frac{a_1}{1-r}$ for $|r|<1$.'}
+    fun:
+      - kind: fact
+        title: "Gauss's classroom trick"
+        body: |
+          The story goes that young Gauss summed 1 to 100 instantly by pairing terms: 50 pairs of
+          101 = 5,050 -- the arithmetic series formula, invented on the spot.
+
+  - id: al-conics
+    title: "Conic Sections: Circles, Parabolas, Ellipses, Hyperbolas"
+    xp: 40
+    optional: true
+    prereqs: [al-quadratic-graphs]
+    readings:
+      - {book: CA, sec: "8.1, 8.2, 8.3", title: "The Ellipse; The Hyperbola; The Parabola"}
+      - {book: IA, sec: "11.1", title: "Distance and Midpoint Formulas; Circles"}
+    summary: |
+      Slicing a cone gives circles, ellipses, parabolas and hyperbolas. Standard forms reveal
+      centers, vertices, foci and asymptotes; complete the square to get there.
+    key_ideas:
+      - 'Circle: $(x-h)^2+(y-k)^2=r^2$.'
+      - 'Ellipse: $\frac{x^2}{a^2}+\frac{y^2}{b^2}=1$, vertices $(\pm a,0)$ when $a>b$.'
+    ds: |
+      Contours of a Gaussian distribution are ellipses; the decision boundary of quadratic
+      discriminant analysis is a conic.
+    lab: |
+      Plot the ellipse $\frac{x^2}{25}+\frac{y^2}{9}=1$ parametrically ($x=5\cos t$, $y=3\sin t$).
+    questions:
+      - {type: mc, d: 1, q: 'Vertices of $\frac{x^2}{25}+\frac{y^2}{9}=1$ on the major axis?', choices: ['$(\pm5,0)$', '$(0,\pm5)$', '$(\pm3,0)$', '$(\pm25,0)$'], a: 0, exp: '$a=5$ along $x$.'}
+    cards:
+      - {f: 'Standard form of a circle', b: '$(x-h)^2+(y-k)^2=r^2$'}
+    fun:
+      - kind: fact
+        title: "Orbits are conics"
+        body: |
+          Kepler discovered (1609) that planets move in ellipses with the Sun at a focus; Newton
+          later showed every orbit under gravity is a conic -- ellipse, parabola or hyperbola.
+
+  - id: al-partial-fractions
+    title: "Partial Fractions"
+    xp: 30
+    optional: true
+    prereqs: [al-rational-addsub, al-three-variable-systems]
+    readings:
+      - {book: CA, sec: "7.4", title: "Partial Fractions"}
+    summary: |
+      Reverse adding fractions: split $\frac{P(x)}{(x-a)(x-b)}$ into $\frac{A}{x-a}+\frac{B}{x-b}$
+      and solve for $A$ and $B$.
+    key_ideas:
+      - 'Cover-up method: $A=\frac{P(a)}{a-b}$ for distinct linear factors.'
+    ds: |
+      Mostly a calculus integration tool (optional in the data-science track).
+    lab: |
+      Decompose $\frac{1}{x(x+1)}$ and check with `sympy.apart`.
+    questions:
+      - {type: mc, d: 2, q: '$\frac{1}{x(x+1)}=$', choices: ['$\frac1x-\frac{1}{x+1}$', '$\frac1x+\frac{1}{x+1}$', '$\frac{1}{x+1}-\frac1x$', '$\frac{2}{x(x+1)}$'], a: 0, exp: 'Combine to check: $\frac{(x+1)-x}{x(x+1)}$.'}
+    cards:
+      - {f: 'Partial fraction form for $\frac{P}{(x-a)(x-b)}$', b: '$\frac{A}{x-a}+\frac{B}{x-b}$'}
+    fun:
+      - kind: puzzle
+        title: "The telescoping sum"
+        body: |
+          Use $\frac{1}{k(k+1)}=\frac1k-\frac{1}{k+1}$ to find $\frac{1}{1\cdot2}+\frac{1}{2\cdot3}+
+          \cdots+\frac{1}{99\cdot100}$.
+        answer: "Everything cancels except $1-\\frac{1}{100}=\\frac{99}{100}$."

@@ -1,0 +1,262 @@
+unit:
+  id: P01
+  ord: -20
+  course: core
+  title: "Precalc Bootcamp I: Algebra Toolkit"
+  constellation: "The Anvil"
+  color: "#a1887f"
+  blurb: |
+    Rebuild the algebra reflexes everything else depends on: fractions, exponents, factoring,
+    rational expressions, equations, inequalities and lines. Most "calculus mistakes" are
+    really algebra mistakes -- this unit removes them at the source.
+  ds_why: |
+    Rearranging formulas, simplifying gradients, solving for parameters, and reading model
+    equations all assume fluent algebra. It's the arithmetic of data science.
+
+topics:
+  - id: pc-numbers
+    title: "Real Numbers, Fractions & Order of Operations"
+    xp: 30
+    prereqs: []
+    readings:
+      - {book: PRE, sec: "1.1", title: "Real Numbers"}
+      - {book: STW, sec: "App. A", title: "Numbers, Inequalities, and Absolute Values"}
+      - {book: STW, sec: "Diagnostic Test A", title: "Algebra (front of the book)"}
+    summary: |
+      Number sets, fraction arithmetic, order of operations, absolute value. The goal is speed
+      and zero sign errors.
+    key_ideas:
+      - '$\frac ab+\frac cd=\frac{ad+bc}{bd}$; dividing by a fraction = multiplying by its reciprocal.'
+      - 'Exponents bind tighter than the minus sign: $-3^2=-9$ but $(-3)^2=9$.'
+      - '$|a|$ is distance from 0; $|a-b|$ is the distance between $a$ and $b$.'
+    ds: |
+      Python follows the same precedence: `-3**2` is `-9`. Unit conversions (pace in min/mile ↔
+      km/h) are fraction arithmetic -- and a classic source of silent bugs.
+    lab: |
+      Convert a 3:20 marathon (26.2 mi) into average pace in min/mile and min/km by hand, then
+      check in Python. Watch the fraction steps.
+    questions:
+      - {type: num, d: 1, q: 'Compute $\frac{5}{6}-\frac{3}{8}$.', a: '11/24', exp: 'Common denominator 24: $\frac{20-9}{24}$.'}
+      - {type: num, d: 1, q: 'Compute $-2^4+(-2)^4$.', a: '0', exp: '$-16+16$.'}
+      - {type: num, d: 2, q: 'A 3:20 marathon (200 minutes for 26.2 miles). Average pace in minutes per mile (2 decimals ok)?', a: '200/26.2', tol: 0.002, exp: '$200/26.2\approx7.63$ min/mile (about 7:38).'}
+    cards:
+      - {f: 'Is $-3^2$ equal to $9$?', b: 'No: $-3^2=-9$. The exponent applies before the negation; $(-3)^2=9$.'}
+      - {f: 'Dividing by a fraction', b: 'Multiply by its reciprocal: $\frac ab\div\frac cd=\frac{ad}{bc}$.'}
+    fun:
+      - kind: fact
+        title: "The fraction bar is a grouping symbol"
+        body: |
+          Viral "order of operations" puzzles like $8\div2(2+2)$ split the internet because the
+          notation is genuinely ambiguous. Mathematicians avoid the ÷ sign entirely and write
+          fractions -- the bar shows the grouping.
+
+  - id: pc-exponents
+    title: "Exponents, Radicals & Scientific Notation"
+    xp: 40
+    prereqs: [pc-numbers]
+    readings:
+      - {book: PRE, sec: "1.2", title: "Exponents and Radicals"}
+    summary: |
+      Integer, negative and rational exponents; radicals as fractional powers; simplifying
+      and rationalizing; scientific notation.
+    key_ideas:
+      - '$a^ma^n=a^{m+n}$, $(a^m)^n=a^{mn}$, $a^{-n}=\frac1{a^n}$, $a^0=1$.'
+      - '$a^{m/n}=\sqrt[n]{a^m}=(\sqrt[n]a)^m$.'
+      - '$\sqrt{ab}=\sqrt a\sqrt b$ but $\sqrt{a+b}\ne\sqrt a+\sqrt b$.'
+    ds: |
+      Learning-rate grids ($10^{-4}$ to $10^{-1}$), floating-point magnitudes, and power laws
+      ($y=ax^k$) all use exponent rules. Rewriting $\sqrt x$ as $x^{1/2}$ makes differentiation
+      a one-liner later.
+    lab: |
+      Generate a log-spaced learning-rate grid with `np.logspace(-4, -1, 7)` and write each
+      value in scientific notation. Why is log spacing better than linear spacing here?
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $27^{2/3}$.', a: '9', exp: '$(\sqrt[3]{27})^2=3^2$.'}
+      - {type: expr, d: 2, var: x, q: 'Simplify $\frac{x^5\cdot x^{-2}}{x^{1/2}}$ to a single power of $x$.', a: 'x^(5/2)', exp: '$5-2-\frac12=\frac52$.'}
+      - {type: num, d: 1, q: 'Simplify $\sqrt{72}$ (exact form like 6*sqrt(2) or a decimal).', a: '6*sqrt(2)', exp: '$\sqrt{36\cdot2}$.'}
+      - {type: num, d: 2, q: 'Compute $(3\times10^{4})(4\times10^{-7})$ as a decimal.', a: '0.012', exp: '$12\times10^{-3}$.'}
+    cards:
+      - {f: '$a^{m/n}$ as a radical', b: '$\sqrt[n]{a^m}$'}
+      - {f: 'Is $\sqrt{a+b}=\sqrt a+\sqrt b$?', b: 'No! Only products split: $\sqrt{ab}=\sqrt a\sqrt b$.'}
+    fun:
+      - kind: puzzle
+        title: "A googol"
+        body: |
+          A googol is $10^{100}$; Google's name is a misspelling of it. Puzzle: roughly how many
+          digits does $2^{100}$ have? (Hint: $2^{10}\approx10^3$.)
+        answer: "$2^{100}=(2^{10})^{10}\\approx10^{30}$, so 31 digits (it's 1,267,650,600,228,229,401,496,703,205,376)."
+
+  - id: pc-polynomials
+    title: "Polynomials: Expanding & Factoring"
+    xp: 50
+    prereqs: [pc-exponents]
+    readings:
+      - {book: PRE, sec: "1.3", title: "Algebraic Expressions"}
+    summary: |
+      Add, multiply and expand polynomials; special products; factor by common factors,
+      grouping, trinomials, difference of squares, sums/differences of cubes.
+    key_ideas:
+      - '$(a\pm b)^2=a^2\pm2ab+b^2$; $(a+b)(a-b)=a^2-b^2$.'
+      - '$a^3\pm b^3=(a\pm b)(a^2\mp ab+b^2)$.'
+      - 'Factor out the GCF first, then look for patterns.'
+    ds: |
+      Factoring is how you find zeros, simplify likelihoods, and cancel terms in limits (the
+      $\frac{x^2-9}{x-3}$ trick in Unit 1 is just factoring).
+    lab: |
+      Use `sympy.expand` and `sympy.factor` to check five of your hand expansions/factorings.
+      Then find a polynomial sympy factors but you found hard.
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Expand $(3x+2)(x-5)$.', a: '3x^2-13x-10', exp: 'FOIL: $3x^2-15x+2x-10$.'}
+      - {type: mc, d: 1, q: 'Factor $x^2+x-12$.', choices: ['$(x+4)(x-3)$', '$(x-4)(x+3)$', '$(x+6)(x-2)$', '$(x-6)(x+2)$'], a: 0, exp: 'Numbers multiplying to $-12$ and adding to $+1$: $4$ and $-3$.'}
+      - {type: mc, d: 2, q: 'Factor $9x^2-25$.', choices: ['$(9x-5)(x+5)$', '$(3x-5)^2$', '$(3x-5)(3x+5)$', 'does not factor'], a: 2, exp: 'Difference of squares.'}
+      - {type: mc, d: 3, q: 'Factor $x^3+27$.', choices: ['$(x+3)^3$', '$(x+3)(x^2-3x+9)$', '$(x+3)(x^2+3x+9)$', '$(x-3)(x^2+3x+9)$'], a: 1, exp: 'Sum of cubes: $(a+b)(a^2-ab+b^2)$.'}
+    cards:
+      - {f: 'Difference of squares', b: '$a^2-b^2=(a-b)(a+b)$'}
+      - {f: 'Sum / difference of cubes', b: '$a^3\pm b^3=(a\pm b)(a^2\mp ab+b^2)$'}
+    fun:
+      - kind: fact
+        title: "Al-Khwarizmi's restoring"
+        body: |
+          "Algebra" comes from al-jabr ("restoring/reuniting broken parts") in al-Khwarizmi's
+          9th-century book on solving equations. His name gives us "algorithm".
+
+  - id: pc-rational-expr
+    title: "Rational Expressions & Compound Fractions"
+    xp: 50
+    prereqs: [pc-polynomials]
+    readings:
+      - {book: PRE, sec: "1.4", title: "Rational Expressions"}
+    summary: |
+      Simplify, multiply, divide, add and subtract algebraic fractions; simplify compound
+      fractions; rationalize denominators and numerators.
+    key_ideas:
+      - 'Cancel FACTORS, never terms: $\frac{x+2}{x}\ne2$.'
+      - 'Add with a least common denominator.'
+      - 'Compound fractions: multiply top and bottom by the LCD of the little fractions.'
+      - 'Rationalize with conjugates: $(\sqrt a-\sqrt b)(\sqrt a+\sqrt b)=a-b$.'
+    ds: |
+      The difference quotient $\frac{f(x+h)-f(x)}{h}$ for $f(x)=\frac1x$ is a compound fraction --
+      this skill IS the first week of derivatives. Also: simplifying softmax ratios.
+    lab: |
+      Simplify $\frac{\frac{1}{x+h}-\frac1x}{h}$ by hand (answer: $\frac{-1}{x(x+h)}$), then
+      confirm with `sympy.simplify`. Congratulations: you just computed a derivative's skeleton.
+    questions:
+      - {type: mc, d: 1, q: 'For $x\ne-3$, $\frac{x^2-9}{x+3}$ equals...', choices: ['$x-3$', '$x+3$', '$x^2-3$', '$-3$'], a: 0, exp: '$\frac{(x-3)(x+3)}{x+3}$.'}
+      - {type: mc, d: 2, q: '$\frac{2}{x}-\frac{3}{x+1}$ combined into one fraction is...', choices: ['$\frac{-1}{2x+1}$', '$\frac{2-x}{x(x+1)}$', '$\frac{-x+2}{x+1}$', '$\frac{5x+2}{x(x+1)}$'], a: 1, exp: '$\frac{2(x+1)-3x}{x(x+1)}=\frac{2-x}{x(x+1)}$.'}
+      - {type: mc, d: 3, q: 'Simplify $\frac{\frac{1}{x+h}-\frac{1}{x}}{h}$ (for $h\ne0$).', choices: ['$\frac{1}{x(x+h)}$', '$\frac{-1}{x(x+h)}$', '$\frac{-h}{x}$', '$0$'], a: 1, exp: 'Numerator $\frac{x-(x+h)}{x(x+h)}=\frac{-h}{x(x+h)}$, then divide by $h$.'}
+    cards:
+      - {f: 'Cancel terms or factors?', b: 'Only common FACTORS of the whole numerator and denominator.'}
+      - {f: 'Simplifying a compound fraction', b: 'Multiply numerator and denominator by the LCD of all the inner fractions.'}
+    fun:
+      - kind: fact
+        title: "The most common calculus error"
+        body: |
+          Ask calculus instructors for the top source of lost points and many will say algebra,
+          not calculus: illegal cancellations, sign slips, and botched fractions. Thirty minutes
+          here saves hours later.
+
+  - id: pc-equations
+    title: "Solving Equations: Linear, Quadratic, Radical, Rational"
+    xp: 60
+    prereqs: [pc-rational-expr]
+    readings:
+      - {book: PRE, sec: "1.5", title: "Equations"}
+      - {book: PRE, sec: "1.6", title: "Modeling with Equations (skim)"}
+    summary: |
+      Isolate the unknown with inverse operations. Quadratics: factor, complete the square, or
+      use $x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$. Radical and rational equations can create
+      extraneous solutions -- always check.
+    key_ideas:
+      - 'Discriminant $b^2-4ac$: positive (2 real roots), zero (1), negative (none real).'
+      - 'Squaring both sides can introduce false solutions; multiplying by an expression can too.'
+      - 'Solve formulas for a variable (e.g. $d=rt$ for $t$).'
+    ds: |
+      Setting a derivative to zero (optimization!) means solving an equation. Closed-form
+      estimators are solutions of equations; when no closed form exists we use Newton's method.
+    lab: |
+      Write `solve_quadratic(a, b, c)` in Python handling all three discriminant cases; test on
+      $x^2-x-6$, $x^2+2x+1$, $x^2+1$. Compare with `numpy.roots`.
+    questions:
+      - {type: num, d: 1, q: 'Solve $5x-7=2(x+4)$.', a: '5', exp: '$3x=15$.'}
+      - {type: num, d: 2, q: 'Solve $x^2-6x+4=0$ and give the LARGER root (exact or decimal).', a: '3+sqrt(5)', exp: '$x=3\pm\sqrt5$.'}
+      - {type: num, d: 3, q: 'Solve $\sqrt{2x+7}=x+2$.', a: '1', exp: 'Square: $2x+7=x^2+4x+4$, so $x^2+2x-3=0$, $x=1$ or $-3$. Check: $x=-3$ gives $1=-1$, extraneous.'}
+      - {type: num, d: 2, q: 'How many real solutions does $2x^2+3x+5=0$ have?', a: '0', exp: 'Discriminant $9-40<0$.'}
+    cards:
+      - {f: 'Quadratic formula', b: '$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$'}
+      - {f: 'When must you check for extraneous solutions?', b: 'After squaring both sides or multiplying by an expression containing the variable.'}
+    fun:
+      - kind: fact
+        title: "Formulas run out"
+        body: |
+          There are formulas for degree 2, 3 and 4 polynomials, but Abel (1824) and Galois
+          proved there's no general formula in radicals for degree 5 or higher. Galois worked it
+          out as a teenager and died in a duel at 20.
+
+  - id: pc-inequalities
+    title: "Inequalities & Absolute Value"
+    xp: 40
+    prereqs: [pc-equations]
+    readings:
+      - {book: PRE, sec: "1.7", title: "Inequalities"}
+      - {book: STW, sec: "App. A", title: "Numbers, Inequalities, and Absolute Values"}
+    summary: |
+      Solve linear, quadratic and absolute-value inequalities; express answers in interval
+      notation. Multiplying by a negative flips the inequality.
+    key_ideas:
+      - 'Flip the sign when multiplying/dividing by a negative.'
+      - 'Quadratic/rational inequalities: find critical points, then test intervals (sign chart).'
+      - '$|x-a|<r\iff a-r<x<a+r$; $|x-a|>r\iff x<a-r$ or $x>a+r$.'
+    ds: |
+      $|x-a|<\varepsilon$ is the language of tolerances, confidence intervals and the
+      epsilon-delta limit definition. Feature clipping and thresholds are inequalities.
+    lab: |
+      Plot $y=x^2-3x-4$ and shade where it's negative. Compare with your sign-chart answer.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $4-3x\le10$.', choices: ['$x\le-2$', '$x\ge-2$', '$x\ge2$', '$x\le2$'], a: 1, exp: '$-3x\le6$; dividing by $-3$ flips: $x\ge-2$.'}
+      - {type: mc, d: 2, q: 'Solve $|2x-1|\le5$.', choices: ['$-2\le x\le3$', '$x\le-2$ or $x\ge3$', '$-3\le x\le2$', '$x\le3$'], a: 0, exp: '$-5\le2x-1\le5$.'}
+      - {type: mc, d: 2, q: 'Solve $x^2-3x-4<0$.', choices: ['$x<-1$ or $x>4$', '$-1<x<4$', '$-4<x<1$', '$x>4$'], a: 1, exp: '$(x-4)(x+1)<0$ between the roots.'}
+    cards:
+      - {f: 'Rule when multiplying an inequality by a negative', b: 'Reverse the inequality sign.'}
+      - {f: '$|x-a|<r$ means', b: '$a-r<x<a+r$ ($x$ within distance $r$ of $a$).'}
+    fun:
+      - kind: fact
+        title: "The triangle inequality"
+        body: |
+          $|a+b|\le|a|+|b|$ -- the straight line is never longer than the detour. This humble
+          inequality underlies distance metrics, error bounds, and half of all analysis proofs.
+
+  - id: pc-lines
+    title: "Coordinate Geometry, Lines & Circles"
+    xp: 40
+    prereqs: [pc-equations]
+    readings:
+      - {book: PRE, sec: "1.8", title: "Coordinate Geometry"}
+      - {book: PRE, sec: "1.10", title: "Lines"}
+      - {book: STW, sec: "App. B", title: "Coordinate Geometry and Lines"}
+    summary: |
+      Distance and midpoint formulas, circles $(x-h)^2+(y-k)^2=r^2$, slope, point-slope and
+      slope-intercept forms, parallel and perpendicular lines.
+    key_ideas:
+      - 'Slope $m=\frac{y_2-y_1}{x_2-x_1}$; point-slope $y-y_1=m(x-x_1)$.'
+      - 'Parallel: equal slopes. Perpendicular: slopes multiply to $-1$.'
+      - 'Complete the square to find a circle''s center and radius.'
+    ds: |
+      Linear regression fits a line; the slope is the effect size. The tangent line (Unit 2)
+      is point-slope form with $m=f''(a)$. Distance formula = Euclidean distance in kNN.
+    lab: |
+      Fit a line to (distance, finish time) for your races with `np.polyfit(x, y, 1)`. Interpret
+      the slope in minutes per mile.
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Line through $(2,-1)$ and $(4,5)$, as $y=\dots$', a: '3x-7', exp: 'Slope 3; $y+1=3(x-2)$.'}
+      - {type: mc, d: 1, q: 'Slope of a line perpendicular to $3x+4y=12$?', choices: ['$-\frac34$', '$\frac34$', '$\frac43$', '$-\frac43$'], a: 2, exp: 'Given slope $-\frac34$; negative reciprocal $\frac43$.'}
+      - {type: num, d: 2, q: 'Radius of the circle $x^2+y^2+4x-10y=7$?', a: '6', exp: '$(x+2)^2+(y-5)^2=7+4+25=36$.'}
+    cards:
+      - {f: 'Point-slope form', b: '$y-y_1=m(x-x_1)$'}
+      - {f: 'Perpendicular slopes', b: 'Negative reciprocals: $m_1m_2=-1$.'}
+    fun:
+      - kind: fact
+        title: "Descartes in bed"
+        body: |
+          Legend says Descartes invented coordinates while lying in bed watching a fly crawl
+          across the ceiling, realizing its position could be described by two numbers. Algebra
+          and geometry became one subject overnight.

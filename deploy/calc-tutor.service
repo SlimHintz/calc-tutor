@@ -1,0 +1,14 @@
+[Unit]
+Description=Calculus Tutor (MCP + web app)
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/calc-tutor
+EnvironmentFile=/home/pi/calc-tutor/.env
+ExecStart=/home/pi/calc-tutor/.venv/bin/python -m calc_tutor
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

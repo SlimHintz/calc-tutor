@@ -1,0 +1,255 @@
+unit:
+  id: L02
+  ord: 67
+  course: core
+  title: "Linear Algebra II: Projections, Least Squares & Eigenvectors"
+  constellation: "The Mirror"
+  color: "#00acc1"
+  blurb: |
+    The two most useful ideas in applied linear algebra: projecting onto a subspace (which is
+    what least squares does) and eigenvectors (the directions a matrix only stretches).
+  ds_why: |
+    Linear regression IS an orthogonal projection. Eigenvalues govern PCA, Markov chain
+    long-run behavior, the stability of gradient descent, and whether a Hessian is a minimum.
+
+topics:
+  - id: la-orthogonality
+    title: "Orthogonality & Orthonormal Bases"
+    xp: 60
+    prereqs: [la-dot, la-independence]
+    readings:
+      - {book: MML, sec: "3.4-3.6", title: "Angles and Orthogonality; Orthonormal Basis; Orthogonal Complement"}
+      - {book: VMLS, sec: "5.3-5.4", title: "Orthonormal vectors; Gram-Schmidt algorithm"}
+      - {book: MIT1806, sec: "Lec 14, 17", title: "Orthogonal vectors and subspaces; Orthogonal matrices and Gram-Schmidt"}
+    summary: |
+      Orthonormal vectors are mutually perpendicular unit vectors. In an orthonormal basis,
+      coordinates are just dot products. Orthogonal matrices ($Q^\top Q=I$) preserve lengths.
+      Gram–Schmidt (QR) turns any basis into an orthonormal one.
+    key_ideas:
+      - 'Orthonormal basis: coordinate $c_i=\mathbf q_i\cdot\mathbf x$.'
+      - '$Q^\top Q=I$, so $Q^{-1}=Q^\top$; $\|Q\mathbf x\|=\|\mathbf x\|$.'
+      - 'Null space of $A$ is orthogonal to its row space.'
+    ds: |
+      Orthogonal features don't "fight" in regression (coefficients don't depend on each other);
+      PCA produces orthogonal components; QR is how least squares is solved stably.
+    lab: |
+      Run `np.linalg.qr` on a random 5×3 matrix; check $Q^\top Q=I$ and $QR=A$.
+    questions:
+      - {type: mc, d: 1, q: 'If $Q$ is orthogonal, $Q^{-1}=$', choices: ['$Q$', '$Q^\top$', '$-Q$', '$Q^2$'], a: 1, exp: '$Q^\top Q=I$.'}
+      - {type: num, d: 2, q: 'Coordinate of $\mathbf x=(3,4)$ along the unit vector $\mathbf q=(0.6,0.8)$?', a: '5', exp: '$1.8+3.2$.'}
+    cards:
+      - {f: 'Orthogonal matrix', b: 'Square, with orthonormal columns: $Q^\top Q=I$; preserves lengths and angles.'}
+    fun:
+      - kind: fact
+        title: "Gram–Schmidt's surprising origin"
+        body: |
+          The process is named for Gram (1883) and Schmidt (1907), but Laplace used it in 1812.
+          The textbook version is numerically unstable; libraries use Householder reflections.
+
+  - id: la-projections
+    title: "Projections onto Subspaces"
+    xp: 70
+    prereqs: [la-orthogonality]
+    readings:
+      - {book: MML, sec: "3.8", title: "Orthogonal Projections"}
+      - {book: MIT1806, sec: "Lec 15", title: "Projections onto subspaces"}
+    summary: |
+      The closest point to $\mathbf b$ in the column space of $A$ is its projection
+      $\hat{\mathbf b}=A(A^\top A)^{-1}A^\top\mathbf b$. The error $\mathbf b-\hat{\mathbf b}$ is
+      orthogonal to the subspace.
+    key_ideas:
+      - 'Onto a line: $\text{proj}_{\mathbf a}\mathbf b=\frac{\mathbf a\cdot\mathbf b}{\mathbf a\cdot\mathbf a}\mathbf a$.'
+      - 'Projection matrix $P=A(A^\top A)^{-1}A^\top$; $P^2=P$, $P^\top=P$.'
+      - 'Residual is perpendicular to every column of $A$.'
+    ds: |
+      Fitted values in regression are $P\mathbf y$ (the "hat matrix"); residuals are orthogonal
+      to every feature. Leverage of a data point = diagonal entry of $P$.
+    lab: |
+      Fit a line to 20 noisy points, compute the hat matrix, and verify the residual vector is
+      orthogonal to both columns of $X$ (intercept and slope).
+    questions:
+      - {type: mc, d: 2, q: 'Projection of $\mathbf b=(2,3)$ onto the line spanned by $\mathbf a=(1,1)$?', choices: ['$(2.5,2.5)$', '$(2,3)$', '$(5,5)$', '$(1,1)$'], a: 0, exp: '$\frac{5}{2}(1,1)$.'}
+      - {type: mc, d: 2, q: 'A projection matrix $P$ satisfies...', choices: ['$P^2=P$', '$P^2=I$', '$P^\top=-P$', '$\det P=1$'], a: 0, exp: 'Projecting twice changes nothing.'}
+    cards:
+      - {f: 'Projection onto the line through $\mathbf a$', b: '$\frac{\mathbf a\cdot\mathbf b}{\mathbf a\cdot\mathbf a}\mathbf a$'}
+      - {f: 'Key property of the residual in least squares', b: 'It is orthogonal to the column space of $A$.'}
+    fun:
+      - kind: fact
+        title: "Shadows"
+        body: |
+          A projection is a shadow: light shining perpendicular to a surface. Least squares is
+          "the shadow of your data on the space your model can represent".
+
+  - id: la-least-squares
+    title: "Least Squares & Data Fitting"
+    xp: 90
+    prereqs: [la-projections, la-inverse-det]
+    readings:
+      - {book: VMLS, sec: "Ch 12-13", title: "Least squares; Least squares data fitting"}
+      - {book: MIT1806, sec: "Lec 16", title: "Projection matrices and least squares"}
+    summary: |
+      When $A\mathbf x=\mathbf b$ has no solution, minimize $\|A\mathbf x-\mathbf b\|^2$. The
+      answer solves the normal equations $A^\top A\hat{\mathbf x}=A^\top\mathbf b$.
+    key_ideas:
+      - 'Normal equations come from orthogonality: $A^\top(\mathbf b-A\hat{\mathbf x})=\mathbf 0$.'
+      - 'Unique when $A$ has independent columns.'
+      - 'Polynomial and multi-feature fits are least squares with different $A$.'
+    ds: |
+      This is ordinary least squares regression -- derived geometrically here, and again with
+      calculus in Unit 7. Seeing both proofs is the point.
+    lab: |
+      Running lab: fit pace ~ distance + elevation gain with `np.linalg.lstsq`, then solve the
+      normal equations directly. Compare coefficients and check the residuals are orthogonal
+      to each column.
+    questions:
+      - {type: mc, d: 2, q: 'The least squares solution satisfies...', choices: ['$A\hat{\mathbf x}=\mathbf b$', '$A^\top A\hat{\mathbf x}=A^\top\mathbf b$', '$AA^\top\hat{\mathbf x}=\mathbf b$', '$\hat{\mathbf x}=A^\top\mathbf b$'], a: 1, exp: 'The normal equations.'}
+      - {type: num, d: 3, q: 'Fit $y=c$ (a constant) to $y=(1,2,6)$ by least squares. $\hat c=$', a: '3', exp: '$A=(1,1,1)^\top$: $3\hat c=9$. The mean, again.'}
+    cards:
+      - {f: 'Normal equations', b: '$A^\top A\hat{\mathbf x}=A^\top\mathbf b$'}
+    fun:
+      - kind: fact
+        title: "Same answer, two roads"
+        body: |
+          Geometry says "project onto the column space". Calculus says "set the gradient of
+          $\|A\mathbf x-\mathbf b\|^2$ to zero". Both give $A^\top A\mathbf x=A^\top\mathbf b$ --
+          one of the nicest convergences in applied math.
+
+  - id: la-change-basis
+    title: "Change of Basis"
+    xp: 40
+    optional: true
+    prereqs: [la-inverse-det]
+    readings:
+      - {book: MML, sec: "2.7.2", title: "Basis Change"}
+    videos:
+      - {book: 3B1B-LA, n: 13, title: "Change of basis"}
+    summary: |
+      The same vector has different coordinates in different bases. If $P$'s columns are the new
+      basis, new coordinates are $P^{-1}\mathbf x$, and a map $A$ becomes $P^{-1}AP$.
+    key_ideas:
+      - 'Similar matrices $P^{-1}AP$ represent the same map in different coordinates.'
+    ds: |
+      PCA is a change of basis to the directions of maximum variance; whitening is a change of
+      basis that makes features uncorrelated.
+    lab: |
+      Express $(3,1)$ in the basis $\{(1,1),(1,-1)\}$ by solving $P\mathbf c=\mathbf x$.
+    questions:
+      - {type: mc, d: 2, q: 'Coordinates of $(3,1)$ in the basis $\{(1,1),(1,-1)\}$?', choices: ['$(2,1)$', '$(1,2)$', '$(3,1)$', '$(4,2)$'], a: 0, exp: '$2(1,1)+1(1,-1)=(3,1)$.'}
+    cards:
+      - {f: 'Same linear map in a new basis $P$', b: '$P^{-1}AP$'}
+    fun:
+      - kind: fact
+        title: "Coordinates are a choice"
+        body: |
+          Nature doesn't come with axes. Choosing good coordinates (eigenvectors, principal
+          components, Fourier modes) is often what turns a hard problem into an easy one.
+
+  - id: la-eigen
+    title: "Eigenvalues & Eigenvectors"
+    xp: 90
+    prereqs: [la-inverse-det]
+    readings:
+      - {book: MML, sec: "4.2", title: "Eigenvalues and Eigenvectors"}
+      - {book: MIT1806, sec: "Lec 21", title: "Eigenvalues and eigenvectors"}
+    videos:
+      - {book: 3B1B-LA, n: 14, title: "Eigenvectors and eigenvalues"}
+      - {book: 3B1B-LA, n: 15, title: "A quick trick for computing eigenvalues"}
+    summary: |
+      $A\mathbf v=\lambda\mathbf v$: directions that $A$ only stretches. Find $\lambda$ from
+      $\det(A-\lambda I)=0$, then $\mathbf v$ from the null space of $A-\lambda I$.
+    key_ideas:
+      - 'Characteristic polynomial $\det(A-\lambda I)$.'
+      - 'Trace = sum of eigenvalues; determinant = product of eigenvalues.'
+      - 'Triangular matrix: eigenvalues are the diagonal entries.'
+    ds: |
+      Eigenvalues of the Hessian give curvature (learning-rate limits, Unit 8); of a covariance
+      matrix give PCA variances; of a Markov transition matrix give convergence speed.
+    lab: |
+      Use `np.linalg.eig` on $\begin{pmatrix}2&1\\1&2\end{pmatrix}$; verify $A\mathbf v=\lambda\mathbf v$
+      for each pair, and check trace and determinant against the eigenvalues.
+    questions:
+      - {type: mc, d: 2, q: 'Eigenvalues of $\begin{pmatrix}2&1\\1&2\end{pmatrix}$?', choices: ['$1$ and $3$', '$2$ and $2$', '$0$ and $4$', '$-1$ and $3$'], a: 0, exp: '$\lambda^2-4\lambda+3=0$.'}
+      - {type: num, d: 1, q: 'Largest eigenvalue of $\begin{pmatrix}3&5\\0&7\end{pmatrix}$?', a: '7', exp: 'Triangular: diagonal entries.'}
+      - {type: num, d: 2, q: 'A 3×3 matrix has eigenvalues 1, 2, 4. Its determinant?', a: '8', exp: 'Product of eigenvalues.'}
+      - {type: num, d: 2, q: 'A 2×2 matrix has trace 7 and determinant 10. Its larger eigenvalue?', a: '5', exp: '$\lambda^2-7\lambda+10=0$: 2 and 5.'}
+    cards:
+      - {f: 'Eigen equation', b: '$A\mathbf v=\lambda\mathbf v$, $\mathbf v\ne\mathbf 0$; $\lambda$ solves $\det(A-\lambda I)=0$.'}
+      - {f: 'Trace and determinant via eigenvalues', b: 'Trace = sum; determinant = product.'}
+    fun:
+      - kind: fact
+        title: "The 25-billion-dollar eigenvector"
+        body: |
+          A famous 2006 paper by Bryan and Leise, titled "The 25,000,000,000 Dollar Eigenvector", explained that Google's
+          PageRank is the dominant eigenvector of the web's link matrix -- the eigenvector behind
+          a company's founding valuation.
+
+  - id: la-diagonalize
+    title: "Diagonalization, Matrix Powers & Dynamics"
+    xp: 70
+    prereqs: [la-eigen]
+    readings:
+      - {book: MML, sec: "4.4", title: "Eigendecomposition and Diagonalization"}
+      - {book: MIT1806, sec: "Lec 22, 24", title: "Diagonalization and powers of A; Markov matrices"}
+    summary: |
+      With $n$ independent eigenvectors, $A=PDP^{-1}$, so $A^k=PD^kP^{-1}$. Long-run behavior of
+      $\mathbf x_{k+1}=A\mathbf x_k$ is dominated by the largest $|\lambda|$.
+    key_ideas:
+      - '$A^k=PD^kP^{-1}$: powers are cheap in the eigenbasis.'
+      - 'If all $|\lambda|<1$, $A^k\mathbf x\to\mathbf 0$; the largest $|\lambda|$ sets the rate.'
+      - 'Markov matrices have $\lambda=1$; its eigenvector is the stationary distribution.'
+    ds: |
+      Power iteration (repeatedly multiply and normalize) finds the dominant eigenvector -- it's
+      how PageRank is computed. RNN exploding/vanishing gradients are $|\lambda|>1$ / $<1$.
+    lab: |
+      Implement power iteration for the 3-state Markov chain from D06 and compare the
+      stationary distribution with the eigenvector for $\lambda=1$ from `np.linalg.eig`.
+    questions:
+      - {type: num, d: 2, q: 'If $A=PDP^{-1}$ with $D=\text{diag}(2,0.5)$, what is the largest eigenvalue of $A^{10}$?', a: '1024', exp: '$2^{10}$.'}
+      - {type: mc, d: 2, q: 'For $\mathbf x_{k+1}=A\mathbf x_k$ with eigenvalues 0.9 and 0.5, $\mathbf x_k$...', choices: ['grows without bound', 'tends to $\mathbf 0$', 'oscillates forever', 'stays constant'], a: 1, exp: 'All $|\lambda|<1$.'}
+    cards:
+      - {f: 'Powers of a diagonalizable matrix', b: '$A^k=PD^kP^{-1}$'}
+      - {f: 'Power iteration finds...', b: 'The eigenvector of the largest-magnitude eigenvalue.'}
+    fun:
+      - kind: puzzle
+        title: "Fibonacci by eigenvalues"
+        body: |
+          $\begin{pmatrix}F_{n+1}\\F_n\end{pmatrix}=\begin{pmatrix}1&1\\1&0\end{pmatrix}^n\begin{pmatrix}1\\0\end{pmatrix}$.
+          What are the eigenvalues of that matrix -- and why do they explain the golden ratio in
+          D03?
+        answer: "$\\lambda^2-\\lambda-1=0$: $\\varphi=\\frac{1+\\sqrt5}2$ and $\\psi=\\frac{1-\\sqrt5}2$. The dominant one, $\\varphi$, sets the growth rate."
+
+  - id: la-spectral
+    title: "Symmetric Matrices, Spectral Theorem & Positive Definiteness"
+    xp: 90
+    prereqs: [la-diagonalize, la-orthogonality]
+    readings:
+      - {book: MML, sec: "4.3-4.4", title: "Cholesky Decomposition; Eigendecomposition (spectral theorem)"}
+      - {book: MIT1806, sec: "Lec 25, 27", title: "Symmetric matrices and positive definiteness; Positive definite matrices and minima"}
+    summary: |
+      A symmetric matrix has real eigenvalues and orthonormal eigenvectors: $A=Q\Lambda Q^\top$.
+      It's positive definite ($\mathbf x^\top A\mathbf x>0$ for $\mathbf x\ne0$) iff all
+      eigenvalues are positive.
+    key_ideas:
+      - 'Spectral theorem: $A=A^\top \Rightarrow A=Q\Lambda Q^\top$.'
+      - 'PD $\iff$ all $\lambda_i>0$; PSD $\iff$ all $\lambda_i\ge0$.'
+      - '$X^\top X$ is always PSD; covariance matrices are PSD.'
+      - 'PD Hessian at a critical point => strict local minimum.'
+    ds: |
+      Covariance matrices, kernel (Gram) matrices and Hessians of convex losses are PSD. Cholesky
+      ($A=LL^\top$) samples multivariate Gaussians and solves PD systems fast.
+    lab: |
+      Show $X^\top X$ has nonnegative eigenvalues for random $X$. Use `np.linalg.cholesky` on a
+      covariance matrix to draw correlated Gaussian samples.
+    questions:
+      - {type: mc, d: 2, q: 'Is $\begin{pmatrix}2&1\\1&2\end{pmatrix}$ positive definite?', choices: ['yes', 'no'], a: 0, exp: 'Eigenvalues 1 and 3, both positive.'}
+      - {type: mc, d: 2, q: 'Is $\begin{pmatrix}1&2\\2&1\end{pmatrix}$ positive definite?', choices: ['yes', 'no'], a: 1, exp: 'Eigenvalues 3 and $-1$.'}
+      - {type: mc, d: 2, q: 'Eigenvectors of a symmetric matrix (distinct eigenvalues) are...', choices: ['parallel', 'orthogonal', 'complex', 'all equal'], a: 1, exp: 'Spectral theorem.'}
+    cards:
+      - {f: 'Spectral theorem', b: 'Symmetric $A=Q\Lambda Q^\top$: real eigenvalues, orthonormal eigenvectors.'}
+      - {f: 'Positive definite test', b: 'All eigenvalues positive (equivalently $\mathbf x^\top A\mathbf x>0$ for all $\mathbf x\ne0$).'}
+    fun:
+      - kind: fact
+        title: "Cholesky, the surveyor"
+        body: |
+          André-Louis Cholesky devised his factorization for map-making least-squares problems
+          around 1910 and was killed in WWI; a colleague published it posthumously in 1924.

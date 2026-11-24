@@ -1,0 +1,222 @@
+unit:
+  id: S01
+  ord: 85
+  course: core
+  title: "Probability Toolkit"
+  constellation: "The Urn"
+  color: "#ffca28"
+  blurb: |
+    The working probability a data scientist uses daily: expectation and variance algebra,
+    the standard distributions and when each fits, conditional expectation, and the two great
+    limit theorems that make statistics possible.
+  ds_why: |
+    Every model makes distributional assumptions; every metric is an expectation; the CLT is
+    why confidence intervals and A/B tests work; LLN is why Monte Carlo and SGD work.
+
+topics:
+  - id: st-expectation
+    title: "Expectation, Variance, Covariance & Correlation"
+    xp: 70
+    prereqs: [dm-random-variables, int-prob]
+    readings:
+      - {book: BH, sec: "4.2, 4.6", title: "Linearity of expectation; Variance"}
+      - {book: BH, sec: "7.3", title: "Covariance and correlation"}
+      - {book: ROSS, sec: "Ch 7", title: "Properties of Expectation"}
+    summary: |
+      $E[aX+bY]=aE[X]+bE[Y]$ always. $\text{Var}(aX+b)=a^2\text{Var}(X)$.
+      $\text{Var}(X+Y)=\text{Var}X+\text{Var}Y+2\text{Cov}(X,Y)$. Correlation is covariance
+      rescaled to $[-1,1]$.
+    key_ideas:
+      - 'Variance of a sum of independent variables = sum of variances.'
+      - 'Standard deviation of a mean of $n$ iid values: $\sigma/\sqrt n$.'
+      - 'Correlation measures LINEAR association only; zero correlation ≠ independence.'
+    ds: |
+      Portfolio risk, ensembling (averaging models reduces variance), error bars, and feature
+      correlation matrices all use these rules.
+    lab: |
+      Simulate $X\sim N(0,1)$ and $Y=X^2$. Compute their correlation (≈0) even though $Y$ is a
+      function of $X$. Plot it.
+    questions:
+      - {type: num, d: 1, q: '$\text{Var}(X)=4$. Find $\text{Var}(3X+7)$.', a: '36', exp: '$9\cdot4$; adding a constant changes nothing.'}
+      - {type: num, d: 2, q: '$X,Y$ independent, $\text{Var}X=2$, $\text{Var}Y=3$. $\text{Var}(X-Y)$?', a: '5', exp: 'Variances add even for differences.'}
+      - {type: num, d: 2, q: 'Std dev of one run''s pace is 30 s. Std dev of the average of 25 independent runs (seconds)?', a: '6', exp: '$30/\sqrt{25}$.'}
+      - {type: mc, d: 2, q: '$\text{Corr}(X,Y)=0$ implies...', choices: ['$X,Y$ independent', 'no linear relationship', '$Y$ is constant', '$E[XY]=1$'], a: 1, exp: '$Y=X^2$ is the counterexample to independence.'}
+    cards:
+      - {f: '$\text{Var}(X+Y)$', b: '$\text{Var}X+\text{Var}Y+2\text{Cov}(X,Y)$'}
+      - {f: 'Std error of a mean of $n$ iid values', b: '$\sigma/\sqrt n$'}
+    fun:
+      - kind: fact
+        title: "The wisdom of crowds"
+        body: |
+          In 1906 Francis Galton saw 787 people guess an ox's weight. The median guess (1,207 lb)
+          was within 1% of the truth (1,198 lb). Averaging independent errors shrinks them -- the
+          $\sigma/\sqrt n$ rule, and the reason ensembles beat single models.
+
+  - id: st-distributions
+    title: "The Distribution Zoo and When to Use Each"
+    xp: 70
+    prereqs: [st-expectation]
+    readings:
+      - {book: BH, sec: "5.4-5.6", title: "Normal; Exponential; Poisson processes"}
+      - {book: BH, sec: "8.3-8.4", title: "Beta; Gamma"}
+      - {book: BH, sec: "App. C", title: "Table of distributions"}
+    summary: |
+      Bernoulli/Binomial (counts of successes), Geometric (waits), Poisson (rare-event counts),
+      Uniform, Normal (sums), Exponential (waiting times), Beta (probabilities), Gamma (positive
+      skewed). Know each one's story, mean and variance.
+    key_ideas:
+      - 'Choose by the data''s STORY (counts? waits? proportions? sums?), not by habit.'
+      - 'Exponential is memoryless; Poisson counts per interval pair with Exponential gaps.'
+      - 'Beta lives on $[0,1]$: the natural prior for a probability.'
+    ds: |
+      Poisson/negative binomial for counts (clicks), exponential/Weibull for durations (churn),
+      Beta for conversion rates, lognormal for skewed money -- the right distribution fixes a
+      lot of bad models.
+    lab: |
+      Fit Poisson and normal distributions to your weekly run counts and compare log-likelihoods
+      with scipy.stats. Which story fits better?
+    questions:
+      - {type: mc, d: 1, q: 'Number of website signups per hour is most naturally modeled as...', choices: ['Normal', 'Poisson', 'Beta', 'Uniform'], a: 1, exp: 'Counts of events in an interval.'}
+      - {type: mc, d: 1, q: 'A prior for a click-through rate (a probability) is most naturally...', choices: ['Exponential', 'Beta', 'Poisson', 'Normal'], a: 1, exp: 'Beta is supported on [0,1].'}
+      - {type: num, d: 2, q: 'Mean of Exponential($\lambda=0.5$)?', a: '2', exp: '$1/\lambda$.'}
+      - {type: num, d: 2, q: 'Mean of Beta($\alpha=2$, $\beta=8$)?', a: '1/5', exp: '$\alpha/(\alpha+\beta)$.'}
+    cards:
+      - {f: 'Memoryless distribution (continuous)', b: 'Exponential: $P(X>s+t|X>s)=P(X>t)$.'}
+      - {f: 'Mean of Beta($\alpha,\beta$)', b: '$\frac{\alpha}{\alpha+\beta}$'}
+    fun:
+      - kind: fact
+        title: "Student was a brewer"
+        body: |
+          The t-distribution was published in 1908 by "Student" -- William Sealy Gosset, who
+          worked for Guinness and wasn't allowed to publish under his own name. Small-sample
+          statistics was born from quality control of beer.
+
+  - id: st-conditional-expectation
+    title: "Conditional Expectation & the Law of Total Expectation"
+    xp: 70
+    prereqs: [st-expectation, dm-conditional-bayes]
+    readings:
+      - {book: BH, sec: "9.1-9.5", title: "Conditional expectation; properties; conditional variance"}
+    summary: |
+      $E[Y|X]$ is the best prediction of $Y$ from $X$ (in squared error). Adam's law:
+      $E[Y]=E[E[Y|X]]$. Eve's law: $\text{Var}Y=E[\text{Var}(Y|X)]+\text{Var}(E[Y|X])$.
+    key_ideas:
+      - 'Regression estimates $E[Y|X]$.'
+      - 'Law of total expectation: average the conditional averages.'
+      - 'Total variance = within-group + between-group variance.'
+    ds: |
+      Every regression model targets $E[Y|X]$; Eve's law is the variance decomposition behind
+      ANOVA, $R^2$, and "how much does this feature explain".
+    lab: |
+      Group your runs by type (easy/tempo/long). Verify numerically that overall mean pace =
+      weighted average of group means, and decompose the variance into within + between.
+    questions:
+      - {type: num, d: 2, q: '60% of runs are easy (mean 9 min/mi), 40% are hard (mean 7). Overall mean pace?', a: '8.2', exp: '$0.6\cdot9+0.4\cdot7$.'}
+      - {type: mc, d: 2, q: 'Among all functions $g$, $E[(Y-g(X))^2]$ is minimized by...', choices: ['$g(X)=E[Y]$', '$g(X)=E[Y|X]$', '$g(X)=X$', '$g(X)=\text{median}(Y)$'], a: 1, exp: 'Conditional expectation is the MSE-optimal predictor.'}
+    cards:
+      - {f: 'Adam''s law', b: '$E[Y]=E[E[Y|X]]$'}
+      - {f: 'Eve''s law', b: '$\text{Var}(Y)=E[\text{Var}(Y|X)]+\text{Var}(E[Y|X])$'}
+    fun:
+      - kind: fact
+        title: "Adam and Eve"
+        body: |
+          Blitzstein named the two laws "Adam's" and "Eve's" (E[E[...]] and EVVE) at Harvard's
+          Stat 110 -- now one of the most-watched free probability courses on the internet.
+
+  - id: st-lln-clt
+    title: "Law of Large Numbers & Central Limit Theorem"
+    xp: 90
+    prereqs: [st-distributions]
+    readings:
+      - {book: BH, sec: "10.2-10.3", title: "Law of large numbers; Central limit theorem"}
+      - {book: ROSS, sec: "Ch 8", title: "Limit Theorems"}
+    summary: |
+      LLN: sample means converge to the true mean. CLT: the sample mean is approximately
+      $N(\mu,\sigma^2/n)$ for large $n$, whatever the original distribution (finite variance).
+    key_ideas:
+      - '$\bar X_n\approx N(\mu,\sigma^2/n)$, so $\frac{\bar X_n-\mu}{\sigma/\sqrt n}\approx N(0,1)$.'
+      - 'Works for sums too: binomials and Poissons become normal-ish for large counts.'
+      - 'Heavy tails (infinite variance, e.g. Cauchy) break it.'
+    ds: |
+      The CLT is why confidence intervals, z-tests and A/B tests work for means of non-normal
+      data (revenue, session lengths). LLN is why Monte Carlo and minibatch averages work.
+    lab: |
+      Draw 10,000 sample means of size $n=1,5,30$ from an exponential distribution and plot
+      histograms. Watch the skewed shape become a bell.
+    questions:
+      - {type: num, d: 2, q: 'Population std dev 12, sample size 36. Standard deviation of the sample mean?', a: '2', exp: '$12/6$.'}
+      - {type: mc, d: 2, q: 'The CLT requires the underlying distribution to be...', choices: ['normal', 'symmetric', 'finite-variance', 'discrete'], a: 2, exp: 'Shape doesn''t matter; finite variance does.'}
+      - {type: num, d: 3, q: 'A die is rolled 100 times. Approximate std dev of the SUM (variance of one roll is 35/12)?', a: 'sqrt(100*35/12)', tol: 0.01, exp: '$\sqrt{100\cdot35/12}\approx17.1$.'}
+    cards:
+      - {f: 'Central limit theorem', b: '$\bar X_n\approx N(\mu,\sigma^2/n)$ for large $n$ (finite variance).'}
+      - {f: 'Law of large numbers', b: 'Sample averages converge to the expected value.'}
+    fun:
+      - kind: fact
+        title: "Galton's bean machine"
+        body: |
+          Galton's "quincunx" drops beads through rows of pins; each bounces left or right at
+          random, and they pile into a bell curve -- the CLT made of wood and brass. He called the
+          normal law "the supreme law of Unreason".
+
+  - id: st-simulation
+    title: "Simulation & Monte Carlo Thinking"
+    xp: 60
+    prereqs: [st-lln-clt]
+    readings:
+      - {book: SR, sec: "Ch 3", title: "Sampling the Imaginary"}
+      - {book: BH, sec: "5.3", title: "Universality of the Uniform"}
+    summary: |
+      When math gets hard, simulate: draw samples, compute the quantity, average. Inverse-CDF
+      sampling turns uniforms into any distribution.
+    key_ideas:
+      - 'Probability ≈ fraction of simulations where the event happens.'
+      - 'Monte Carlo error shrinks like $1/\sqrt{N}$.'
+      - 'Inverse transform: if $U\sim$ Uniform(0,1), $F^{-1}(U)$ has CDF $F$.'
+    ds: |
+      Simulation answers "what if" questions, checks analytic results, builds intuition for
+      p-values, and is the engine of Bayesian inference (Unit S03).
+    lab: |
+      Simulate your marathon finish time: model each mile's pace as normal with your training
+      mean/std, sum 26.2 miles, repeat 100,000 times. What's P(sub-3:20)?
+    questions:
+      - {type: mc, d: 2, q: 'To halve the error of a Monte Carlo estimate, multiply the number of simulations by...', choices: ['2', '4', '8', '$\sqrt2$'], a: 1, exp: 'Error $\propto1/\sqrt N$.'}
+      - {type: expr, d: 3, var: u, q: 'Inverse-transform sampler for Exponential($\lambda=1$): if $U$ is uniform, $X=$? (in terms of $u$)', a: '-ln(1-u)', exp: '$F(x)=1-e^{-x}$; solve $u=F(x)$.'}
+    cards:
+      - {f: 'Inverse transform sampling', b: '$X=F^{-1}(U)$ with $U\sim$ Uniform(0,1) has CDF $F$.'}
+    fun:
+      - kind: puzzle
+        title: "Buffon's needle"
+        body: |
+          Drop a needle of length 1 on a floor with parallel lines 1 apart. It crosses a line
+          with probability $2/\pi$. Puzzle: how could you estimate $\pi$ with a box of
+          toothpicks?
+        answer: "Drop many, count crossings: $\\pi\\approx 2\\cdot\\text{drops}/\\text{crossings}$. (One of the first Monte Carlo methods, 1777.)"
+
+  - id: st-inequalities
+    title: "Probability Inequalities (Markov, Chebyshev)"
+    xp: 40
+    optional: true
+    prereqs: [st-expectation]
+    readings:
+      - {book: BH, sec: "10.1", title: "Inequalities"}
+    summary: |
+      Markov: $P(X\ge a)\le E[X]/a$ for $X\ge0$. Chebyshev: $P(|X-\mu|\ge k\sigma)\le1/k^2$.
+      Distribution-free worst-case bounds.
+    key_ideas:
+      - 'Chebyshev holds for ANY finite-variance distribution.'
+      - 'Concentration inequalities (Hoeffding) power learning-theory guarantees.'
+    ds: |
+      Generalization bounds and sample-size calculations in learning theory start from these.
+    lab: |
+      Compare Chebyshev's bound $P(|X-\mu|\ge2\sigma)\le0.25$ with the actual probability for
+      normal, exponential and uniform samples.
+    questions:
+      - {type: num, d: 2, q: 'Chebyshev: upper bound on $P(|X-\mu|\ge3\sigma)$?', a: '1/9', exp: '$1/k^2$.'}
+    cards:
+      - {f: 'Chebyshev''s inequality', b: '$P(|X-\mu|\ge k\sigma)\le1/k^2$'}
+    fun:
+      - kind: fact
+        title: "Teacher and student"
+        body: |
+          Chebyshev was Markov's doctoral advisor. Markov's inequality appeared in Chebyshev's
+          work first -- the student got his name on it anyway.

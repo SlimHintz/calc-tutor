@@ -1,0 +1,162 @@
+unit:
+  id: N01
+  ord: 0
+  course: neuro
+  title: "The Signaling Neuron"
+  constellation: "The Spark"
+  color: "#ffd54f"
+  blurb: |
+    Before memory, signal. How a cell with a leaky membrane and a few kinds of ion channel
+    becomes a device that computes, fires, and talks to thousands of others.
+  ds_why: |
+    Apply it: your brain's hardware has a fixed energy budget (about 20 W) and finite firing
+    rates -- the physical reason focused, well-rested study beats long, foggy sessions.
+    Bridge to math: the Nernst equation is a logarithm, and the action potential is a system of
+    differential equations (Hodgkin-Huxley).
+
+topics:
+  - id: nr-brain-behavior
+    title: "Brain, Behavior & the Neuron Doctrine"
+    xp: 50
+    prereqs: []
+    readings:
+      - {book: KAN, sec: "Ch 1", title: "The Brain and Behavior"}
+      - {book: KAN, sec: "Ch 2", title: "Nerve Cells, Neural Circuitry, and Behavior"}
+    summary: |
+      Mental functions are localized in brain regions yet emerge from circuits. The neuron is
+      the signaling unit: dendrites receive, the axon transmits, synapses connect.
+    key_ideas:
+      - 'Neuron doctrine (Cajal): the brain is made of discrete cells, not a continuous net.'
+      - 'Signals flow dendrites → cell body → axon → synaptic terminals (dynamic polarization).'
+      - 'Behavior arises from specific connections between ~86 billion neurons.'
+    ds: |
+      Apply it: "you are your connections" -- learning physically rewires circuits, so every
+      deliberate practice session is literally construction work. Bridge: artificial neural
+      nets borrowed this architecture (inputs, weighted sums, output) in 1943.
+    lab: |
+      Sketch a neuron from memory and label dendrites, soma, axon hillock, axon, myelin,
+      terminals. Then check against Kandel Fig. 2-? and note what you missed (retrieval practice!).
+    questions:
+      - {type: mc, d: 1, q: 'Which part of the neuron typically receives synaptic input?', choices: ['axon terminal', 'dendrites', 'myelin sheath', 'node of Ranvier'], a: 1, exp: 'Dendrites (and the soma) receive; the axon sends.'}
+      - {type: mc, d: 1, q: 'The neuron doctrine was championed by...', choices: ['Golgi', 'Cajal', 'Broca', 'Hebb'], a: 1, exp: 'Ramón y Cajal argued neurons are discrete cells; Golgi favored a continuous network. They shared the 1906 Nobel Prize while disagreeing.'}
+      - {type: free, d: 2, q: 'In your own words: why does "dynamic polarization" matter for understanding information flow in a circuit?', a: 'Signals flow in one direction within a neuron (dendrites to axon), which makes circuits directional and lets us trace information from input to output.'}
+    cards:
+      - {f: 'Direction of signal flow in a neuron', b: 'Dendrites/soma → axon hillock → axon → terminals.'}
+      - {f: 'Neuron doctrine', b: 'The nervous system is made of discrete cells (neurons) that are its signaling units.'}
+    fun:
+      - kind: fact
+        title: "The rival Nobel laureates"
+        body: |
+          Golgi invented the silver stain that made neurons visible; Cajal used Golgi's own
+          stain to prove Golgi wrong. In their shared 1906 Nobel lectures they publicly
+          contradicted each other.
+
+  - id: nr-cells
+    title: "Cells of the Nervous System"
+    xp: 40
+    prereqs: [nr-brain-behavior]
+    readings:
+      - {book: KAN, sec: "Ch 4", title: "The Cells of the Nervous System"}
+    summary: |
+      Neurons are outnumbered by glia: astrocytes (support, synapse regulation), oligodendrocytes
+      and Schwann cells (myelin), microglia (immune defense and synapse pruning).
+    key_ideas:
+      - 'Myelin speeds conduction (saltatory conduction between nodes of Ranvier).'
+      - 'Astrocytes help regulate synapses and the blood-brain barrier.'
+      - 'Microglia prune synapses -- including during sleep and development.'
+    ds: |
+      Apply it: myelination continues into adulthood and responds to practice -- repeated
+      skill practice is associated with white-matter changes. Skills get faster, not just
+      more accurate.
+    lab: |
+      Make a 6-row table: cell type | where | job | what happens if it fails. Fill it from
+      memory first, then from Kandel Ch 4.
+    questions:
+      - {type: mc, d: 1, q: 'Which cells form myelin in the central nervous system?', choices: ['Schwann cells', 'oligodendrocytes', 'microglia', 'astrocytes'], a: 1, exp: 'Schwann cells do it in the peripheral nervous system.'}
+      - {type: mc, d: 2, q: 'Myelin increases conduction speed mainly because...', choices: ['it adds ions', 'the signal jumps between nodes of Ranvier (saltatory conduction)', 'it releases transmitter', 'it cools the axon'], a: 1, exp: 'Insulation lets the action potential regenerate only at the nodes.'}
+    cards:
+      - {f: 'CNS vs PNS myelinating cells', b: 'CNS: oligodendrocytes. PNS: Schwann cells.'}
+    fun:
+      - kind: fact
+        title: "Einstein's glia"
+        body: |
+          When Einstein's brain was studied, one notable finding was a higher ratio of glial
+          cells to neurons in some regions. Small sample, big caveats -- but it helped spark
+          interest in glia as more than "glue" (the word's literal meaning).
+
+  - id: nr-membrane
+    title: "Ion Channels & the Resting Potential"
+    xp: 70
+    prereqs: [nr-cells]
+    readings:
+      - {book: KAN, sec: "Ch 5", title: "Ion Channels"}
+      - {book: KAN, sec: "Ch 6", title: "Membrane Potential and the Passive Electrical Properties of the Neuron"}
+      - {book: KAN, sec: "App. A", title: "Review of Basic Circuit Theory"}
+    summary: |
+      Ion gradients (K⁺ high inside, Na⁺ high outside) plus selective channels create a resting
+      potential of about −65 mV. The Nernst equation gives each ion's equilibrium potential:
+      $E=\frac{RT}{zF}\ln\frac{[\text{out}]}{[\text{in}]}$.
+    key_ideas:
+      - 'At rest the membrane is mostly permeable to K⁺, so $V_{rest}$ sits near $E_K$.'
+      - 'Nernst at body temperature: $E\approx 61.5\log_{10}\frac{[\text{out}]}{[\text{in}]}$ mV for $z=+1$.'
+      - 'The Na⁺/K⁺ pump maintains gradients and costs much of the brain''s energy.'
+      - 'The membrane is an RC circuit: capacitance plus leak resistance.'
+    ds: |
+      Bridge: the Nernst equation is a log-ratio -- the same shape as log-odds. Apply it: the
+      brain is ~2% of body weight but uses ~20% of resting energy, much of it pumping ions.
+      Fuel and recovery matter for cognition just as for running.
+    lab: |
+      Compute $E_K$ and $E_{Na}$ in Python for [K]out=5, [K]in=140, [Na]out=145, [Na]in=15
+      (mM). Plot $E$ vs the outside concentration ratio on a log axis -- it's a straight line.
+    questions:
+      - {type: num, d: 2, q: 'Nernst ($z=+1$): $E=61.5\log_{10}\frac{[\text{out}]}{[\text{in}]}$ mV. With $[\text{K}]_{out}=5$, $[\text{K}]_{in}=140$, find $E_K$ (mV, 1 decimal ok).', a: '61.5*log(5/140)/log(10)', tol: 0.01, exp: '$61.5\log_{10}(0.0357)\approx-89$ mV.'}
+      - {type: mc, d: 1, q: 'The resting potential is closest to the equilibrium potential of...', choices: ['Na⁺', 'K⁺', 'Ca²⁺', 'Cl⁻ always'], a: 1, exp: 'Resting membranes are mostly permeable to potassium.'}
+      - {type: mc, d: 2, q: 'If extracellular K⁺ rises (e.g. after intense activity), the resting potential becomes...', choices: ['more negative', 'less negative (depolarized)', 'unchanged', 'positive'], a: 1, exp: 'The K⁺ gradient shrinks, so $E_K$ moves toward 0.'}
+    cards:
+      - {f: 'Nernst equation', b: '$E=\frac{RT}{zF}\ln\frac{[\text{out}]}{[\text{in}]}$ ≈ $61.5\log_{10}\frac{\text{out}}{\text{in}}$ mV for $z=+1$ at 37°C.'}
+      - {f: 'Typical resting potential', b: 'About −65 mV (inside negative).'}
+    fun:
+      - kind: fact
+        title: "Your brain runs on 20 watts"
+        body: |
+          The brain draws roughly 20 watts -- a dim light bulb -- yet performs feats that take
+          data centers megawatts. A large share of that energy goes to the sodium-potassium
+          pumps restoring gradients after signals.
+
+  - id: nr-action-potential
+    title: "The Action Potential"
+    xp: 80
+    prereqs: [nr-membrane]
+    readings:
+      - {book: KAN, sec: "Ch 7", title: "Propagated Signaling: The Action Potential"}
+      - {book: KAN, sec: "App. F", title: "Theoretical Approaches to Neuroscience (single-neuron models)"}
+    summary: |
+      When depolarization crosses threshold, voltage-gated Na⁺ channels open (rapid rise), then
+      inactivate while K⁺ channels open (repolarization). The spike is all-or-none and
+      regenerates down the axon. Hodgkin and Huxley captured it in four coupled ODEs.
+    key_ideas:
+      - 'All-or-none: stimulus strength is coded by firing RATE, not spike size.'
+      - 'Refractory period limits maximum firing rate and makes propagation one-way.'
+      - 'Hodgkin-Huxley: $C\frac{dV}{dt}=-\sum_i g_i(V,t)(V-E_i)+I$.'
+    ds: |
+      Bridge: Hodgkin-Huxley is a nonlinear ODE system you can integrate with Euler's method
+      (Unit 10 of the math course). Rate coding is why "neurons as weighted sums + nonlinearity"
+      was a reasonable first model for artificial nets.
+    lab: |
+      Simulate a leaky integrate-and-fire neuron: $\tau\frac{dV}{dt}=-(V-V_{rest})+RI$, spike
+      and reset at threshold, using Euler steps. Plot firing rate vs input current (an
+      activation function!).
+    questions:
+      - {type: mc, d: 1, q: 'The rapid rising phase of the action potential is caused by...', choices: ['K⁺ efflux', 'Na⁺ influx', 'Cl⁻ influx', 'the Na⁺/K⁺ pump'], a: 1, exp: 'Voltage-gated sodium channels open.'}
+      - {type: mc, d: 2, q: 'A stronger stimulus typically produces...', choices: ['bigger spikes', 'a higher firing rate', 'longer spikes', 'slower conduction'], a: 1, exp: 'Spikes are all-or-none; intensity is rate-coded.'}
+      - {type: mc, d: 2, q: 'The refractory period mainly results from...', choices: ['Na⁺ channel inactivation (plus open K⁺ channels)', 'myelin', 'transmitter depletion', 'glia'], a: 0, exp: 'Inactivated sodium channels must recover before the next spike.'}
+    cards:
+      - {f: 'All-or-none principle', b: 'Spikes have fixed size; information is in timing and rate.'}
+      - {f: 'Hodgkin-Huxley model', b: 'ODEs for membrane voltage with voltage-dependent Na⁺ and K⁺ conductances (1952 Nobel).'}
+    fun:
+      - kind: fact
+        title: "The squid that won a Nobel"
+        body: |
+          Hodgkin and Huxley used the squid giant axon -- up to 1 mm thick, big enough to thread
+          a wire inside. They solved their equations partly with a hand-cranked calculator; a
+          single action potential took weeks to compute.

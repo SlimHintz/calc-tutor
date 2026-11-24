@@ -1,0 +1,204 @@
+unit:
+  id: S03
+  ord: 160
+  course: core
+  title: "Bayesian Inference"
+  constellation: "The Prior"
+  color: "#ffa000"
+  blurb: |
+    Probability as a calculus of belief: start with a prior, multiply by the likelihood,
+    normalize, and get a posterior -- then summarize it by sampling. Taught through your copy
+    of Statistical Rethinking.
+  ds_why: |
+    Bayesian A/B tests, hierarchical models for small groups, uncertainty-aware forecasts, and
+    the view of regularization as a prior. MCMC is how modern probabilistic programming works.
+
+topics:
+  - id: st-bayes-updating
+    title: "Bayesian Updating & Grid Approximation"
+    xp: 80
+    prereqs: [st-simulation, dm-conditional-bayes]
+    readings:
+      - {book: SR, sec: "Ch 2", title: "Small Worlds and Large Worlds"}
+      - {book: SR, sec: "Ch 3", title: "Sampling the Imaginary"}
+    summary: |
+      posterior ∝ likelihood × prior. Compute it on a grid of parameter values, normalize, then
+      sample from it to answer questions (intervals, predictions).
+    key_ideas:
+      - 'The posterior is a whole distribution, not a point.'
+      - 'Credible interval: "95% probability the parameter is in here" (given model and prior).'
+      - 'Yesterday''s posterior is today''s prior.'
+    ds: |
+      Bayesian A/B testing reports "P(B beats A) = 93%" -- what stakeholders actually want to
+      know -- instead of a p-value.
+    lab: |
+      Grid-approximate the posterior for "probability a run is under 8:00/mi" from your data with
+      a uniform prior (100 grid points). Plot prior, likelihood, posterior.
+    questions:
+      - {type: mc, d: 1, q: 'Posterior is proportional to...', choices: ['prior + likelihood', 'prior × likelihood', 'likelihood / prior', 'prior only'], a: 1, exp: 'Bayes'' rule up to normalization.'}
+      - {type: mc, d: 2, q: 'A 95% credible interval means...', choices: ['95% of repeated intervals cover the truth', 'given the model and prior, 95% probability the parameter lies inside', '95% of data are inside', 'p < 0.05'], a: 1, exp: 'A direct probability statement about the parameter.'}
+    cards:
+      - {f: 'Bayes for parameters', b: '$p(\theta|\text{data})\propto p(\text{data}|\theta)\,p(\theta)$'}
+    fun:
+      - kind: fact
+        title: "Turing's Bayes"
+        body: |
+          At Bletchley Park, Alan Turing used Bayesian updating (in units he called "bans") to
+          weigh evidence for Enigma settings. Bayesian methods helped win the war, then stayed
+          classified for decades.
+
+  - id: st-conjugate
+    title: "Conjugate Priors: the Beta-Binomial Model"
+    xp: 70
+    prereqs: [st-bayes-updating, st-distributions]
+    readings:
+      - {book: BH, sec: "8.3", title: "Beta (and Beta-Binomial conjugacy)"}
+    summary: |
+      Beta($a,b$) prior + $k$ successes in $n$ trials ⇒ Beta($a+k$, $b+n-k$) posterior. Prior
+      parameters act like pseudo-counts.
+    key_ideas:
+      - 'Posterior mean $\frac{a+k}{a+b+n}$: a blend of prior mean and data.'
+      - 'More data ⇒ the prior matters less.'
+    ds: |
+      Click-through rates for new items with little data (shrink toward the prior), Thompson
+      sampling for bandits, Bayesian A/B tests for conversion rates.
+    lab: |
+      Two landing pages: A 30/200 conversions, B 42/220. With Beta(1,1) priors, sample both
+      posteriors 100,000 times and estimate P(B > A).
+    questions:
+      - {type: num, d: 2, q: 'Prior Beta(2,2); observe 7 successes in 10 trials. Posterior mean?', a: '9/14', exp: 'Beta(9,5): $9/14$.'}
+      - {type: num, d: 2, q: 'Beta(1,1) prior, 0 successes in 3 trials. Posterior mean?', a: '1/5', exp: 'Beta(1,4): never says exactly 0 -- unlike the raw rate.'}
+    cards:
+      - {f: 'Beta-Binomial update', b: 'Beta($a,b$) + $k$ of $n$ ⇒ Beta($a+k$, $b+n-k$).'}
+    fun:
+      - kind: fact
+        title: "Laplace's sunrise"
+        body: |
+          Laplace asked: given the sun has risen every day for 5,000 years, what's the chance it
+          rises tomorrow? His "rule of succession" -- the Beta(1,1) posterior mean $(k+1)/(n+2)$ --
+          gave about 1 - 1/1,826,215.
+
+  - id: st-map
+    title: "MAP Estimation: Regularization as a Prior"
+    xp: 60
+    prereqs: [st-conjugate, opt-mle]
+    readings:
+      - {book: MML, sec: "8.3", title: "Parameter Estimation (MAP)"}
+      - {book: MML, sec: "9.2.3", title: "Maximum A Posteriori Estimation (linear regression)"}
+    summary: |
+      MAP = maximize log-likelihood + log-prior. A Gaussian prior on weights gives ridge (L2); a
+      Laplace prior gives lasso (L1).
+    key_ideas:
+      - '$\hat\theta_{MAP}=\arg\max[\log p(\text{data}|\theta)+\log p(\theta)]$.'
+      - 'Gaussian prior ⇔ L2 penalty; Laplace prior ⇔ L1 penalty.'
+      - 'Prior strength ⇔ regularization strength $\lambda$.'
+    ds: |
+      Every regularized model is secretly Bayesian. Choosing $\lambda$ is choosing how strongly
+      you believe weights are small.
+    lab: |
+      Fit ridge regressions with increasing $\lambda$ and plot the coefficient paths; interpret
+      $\lambda$ as the prior precision.
+    questions:
+      - {type: mc, d: 2, q: 'A Laplace (double-exponential) prior on weights corresponds to...', choices: ['ridge (L2)', 'lasso (L1)', 'no regularization', 'dropout'], a: 1, exp: '$-\log$ Laplace density ∝ $|w|$.'}
+    cards:
+      - {f: 'Ridge and lasso as priors', b: 'Ridge = Gaussian prior (L2). Lasso = Laplace prior (L1).'}
+    fun:
+      - kind: fact
+        title: "Tikhonov before ridge"
+        body: |
+          Ridge regression (Hoerl & Kennard, 1970) is a special case of Tikhonov regularization,
+          developed in the USSR in the 1940s-60s for ill-posed inverse problems.
+
+  - id: st-bayes-regression
+    title: "Bayesian Linear Regression"
+    xp: 80
+    prereqs: [st-map, st-regression-inference]
+    readings:
+      - {book: SR, sec: "Ch 4", title: "Geocentric Models"}
+    summary: |
+      Put priors on intercept, slopes and noise; the posterior gives full uncertainty for every
+      coefficient and prediction. Prior predictive checks keep priors sensible.
+    key_ideas:
+      - 'Predictions come with intervals that include parameter uncertainty.'
+      - 'Prior predictive simulation: does the prior generate plausible data?'
+    ds: |
+      Forecasts with honest uncertainty; small-data problems where priors stabilize estimates.
+    lab: |
+      Running lab: Bayesian regression of pace on distance with sensible priors (quadratic
+      approximation or `pymc`). Plot posterior predictive bands.
+    questions:
+      - {type: mc, d: 2, q: 'A prior predictive check asks...', choices: ['does the posterior fit the data?', 'does data simulated from the PRIOR look plausible?', 'is the p-value small?', 'is the prior uniform?'], a: 1, exp: 'Catches absurd priors before seeing data.'}
+    cards:
+      - {f: 'Prior predictive check', b: 'Simulate data from the prior alone and see whether it is plausible.'}
+    fun:
+      - kind: fact
+        title: "Geocentric models"
+        body: |
+          McElreath titles his regression chapter "Geocentric Models": like Ptolemy's epicycles,
+          linear regression can describe almost anything without being literally true -- useful,
+          as long as you remember it's a model.
+
+  - id: st-mcmc
+    title: "Markov Chain Monte Carlo"
+    xp: 90
+    prereqs: [st-bayes-regression, dm-markov]
+    readings:
+      - {book: SR, sec: "Ch 9", title: "Markov Chain Monte Carlo"}
+      - {book: BH, sec: "12.1-12.2", title: "Metropolis-Hastings; Gibbs sampling"}
+    summary: |
+      When the posterior can't be computed on a grid, build a Markov chain whose stationary
+      distribution IS the posterior, and sample from it. Check convergence (traces, R-hat,
+      effective sample size).
+    key_ideas:
+      - 'Metropolis: propose a move, accept with probability min(1, posterior ratio).'
+      - 'Hamiltonian Monte Carlo (Stan, PyMC) uses gradients -- calculus again!'
+      - 'Diagnose: trace plots, R-hat ≈ 1, enough effective samples.'
+    ds: |
+      Stan and PyMC fit hierarchical and custom models this way. HMC needs gradients, computed by
+      the autodiff you met in Unit 7.
+    lab: |
+      Write a 30-line Metropolis sampler for the posterior of a normal mean; compare its histogram
+      with the conjugate/analytic answer.
+    questions:
+      - {type: mc, d: 2, q: 'In Metropolis, a proposal to a point with HIGHER posterior density is...', choices: ['always accepted', 'always rejected', 'accepted with probability 0.5', 'accepted only if the step is small'], a: 0, exp: 'Ratio > 1, so min(1, ratio) = 1.'}
+      - {type: mc, d: 2, q: 'Hamiltonian Monte Carlo needs...', choices: ['the posterior''s gradient', 'conjugate priors', 'a grid', 'no model'], a: 0, exp: 'It simulates physics on the log-posterior surface.'}
+    cards:
+      - {f: 'Metropolis acceptance rule', b: 'Accept with probability $\min(1, p(\theta'')/p(\theta))$ (symmetric proposals).'}
+    fun:
+      - kind: fact
+        title: "Born at Los Alamos"
+        body: |
+          The Metropolis algorithm (1953) was developed on the MANIAC computer at Los Alamos. The
+          paper's authors included Arianna and Marshall Rosenbluth, who did much of the work.
+
+  - id: st-glm
+    title: "Generalized Linear Models: Logistic & Poisson Regression"
+    xp: 60
+    optional: true
+    prereqs: [st-bayes-regression, opt-mle]
+    readings:
+      - {book: SR, sec: "Ch 11", title: "God Spiked the Integers"}
+      - {book: ISL, sec: "4.3", title: "Logistic Regression"}
+    summary: |
+      Pick a distribution for the outcome (Bernoulli, Poisson) and a link function (logit, log)
+      connecting its mean to a linear predictor.
+    key_ideas:
+      - 'Logistic: $\text{logit}(p)=X\boldsymbol\beta$. Poisson: $\log\lambda=X\boldsymbol\beta$.'
+      - 'Coefficients act multiplicatively on odds / rates.'
+    ds: |
+      Churn, conversion and count models in production are GLMs; their coefficients are
+      interpretable in a way black boxes aren't.
+    lab: |
+      Fit a Poisson regression of weekly run count on month (seasonality) with statsmodels and
+      interpret exp(coefficient) as a rate ratio.
+    questions:
+      - {type: num, d: 2, q: 'A logistic coefficient of $\ln 2$ multiplies the odds by...', a: '2', exp: '$e^{\ln2}$.'}
+    cards:
+      - {f: 'Link functions', b: 'Logistic regression: logit link. Poisson regression: log link.'}
+    fun:
+      - kind: fact
+        title: "Nelder & Wedderburn"
+        body: |
+          GLMs were unified in 1972 by Nelder and Wedderburn, showing that linear, logistic and
+          Poisson regression are one family -- fitted by the same iteratively reweighted least
+          squares (Newton's method again).

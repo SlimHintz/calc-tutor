@@ -1,0 +1,237 @@
+unit:
+  id: U01
+  ord: 30
+  course: core
+  title: "Limits & Continuity"
+  constellation: "The Horizon"
+  color: "#7aa2ff"
+  blurb: |
+    The foundation everything else stands on: what value does a function *approach*?
+    Limits make "instantaneous rate" and "infinite sum" meaningful.
+  ds_why: |
+    Convergence of training, asymptotic complexity, numerical stability, and the very
+    definition of derivatives and integrals are all limit statements.
+
+topics:
+  - id: lim-intuition
+    title: "What Is a Limit?"
+    xp: 50
+    prereqs: [fn-basics]
+    readings:
+      - {book: STW, sec: "1.4", title: "The Tangent and Velocity Problems"}
+      - {book: STW, sec: "1.5", title: "The Limit of a Function"}
+      - {book: PRE, sec: "12.1", title: "Finding Limits Numerically and Graphically"}
+      - {book: OS1, sec: "2.1", title: "A Preview of Calculus"}
+      - {book: OS1, sec: "2.2", title: "The Limit of a Function"}
+    videos:
+      - {book: 3B1B, n: 7, title: "Limits, L'Hopital's rule, and epsilon delta definitions"}
+    summary: |
+      $\lim_{x\to a}f(x)=L$ means $f(x)$ gets arbitrarily close to $L$ as $x$ gets close to
+      (but not equal to) $a$. The value at $a$ itself is irrelevant.
+    key_ideas:
+      - 'Limits care about the approach, not the destination: $f(a)$ may differ or not exist.'
+      - 'One-sided limits $x\to a^-$ and $x\to a^+$; the limit exists iff both exist and agree.'
+      - 'Infinite limits ($f\to\pm\infty$) signal vertical asymptotes.'
+    ds: |
+      Training loss "converges" means $\lim_{t\to\infty}L(\theta_t)$ exists. Numerically
+      estimating a limit with a table of values is exactly how finite-difference gradients work.
+    lab: |
+      Tabulate $\frac{\sin x}{x}$ for $x=0.1, 0.01, \dots, 10^{-8}$ in Python. What does it
+      approach? What happens at $10^{-20}$? (Floating point is a limit's worst enemy.)
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $\lim_{x\to 3}\frac{x^2-9}{x-3}$.', a: '6', exp: 'Factor: $(x-3)(x+3)/(x-3)=x+3\to 6$. The hole at $x=3$ does not matter.'}
+      - {type: mc, d: 1, q: '$\lim_{x\to0^-}\frac{|x|}{x}$ and $\lim_{x\to0^+}\frac{|x|}{x}$ are $-1$ and $1$. So $\lim_{x\to 0}\frac{|x|}{x}$...', choices: ['is 0', 'is 1', 'does not exist', 'is undefined but equals 0 in practice'], a: 2, exp: 'One-sided limits disagree, so the two-sided limit does not exist.'}
+      - {type: num, d: 1, q: 'Evaluate $\lim_{x\to 0}\frac{\sin x}{x}$.', a: '1', exp: 'The famous limit; geometric squeeze proof in OS1 2.3.'}
+    cards:
+      - {f: 'Does $\lim_{x\to a}f(x)$ depend on $f(a)$?', b: 'No -- only on values near $a$.'}
+      - {f: 'When does a two-sided limit exist?', b: 'When both one-sided limits exist and are equal.'}
+    fun:
+      - kind: fact
+        title: "Zeno's paradox, solved"
+        body: |
+          Zeno argued a runner can never finish a race: first half the distance, then half the
+          remainder, forever. Limits resolve it: $\tfrac12+\tfrac14+\tfrac18+\cdots=1$. An
+          infinite number of steps, finite total. Every marathon you run is a convergent series.
+
+  - id: lim-laws
+    title: "Limit Laws & Algebraic Tricks"
+    xp: 60
+    prereqs: [lim-intuition]
+    readings:
+      - {book: STW, sec: "1.6", title: "Calculating Limits Using the Limit Laws"}
+      - {book: OS1, sec: "2.3", title: "The Limit Laws"}
+    summary: |
+      Limits respect sums, products and quotients. For "0/0" forms, use algebra: factor,
+      rationalize, or simplify. The squeeze theorem traps tricky limits.
+    key_ideas:
+      - 'Sum/product/quotient laws (quotient needs a nonzero denominator limit).'
+      - '0/0 is *indeterminate*, not 0, not 1 -- it means "do more work".'
+      - 'Rationalize with conjugates: multiply by $\frac{\sqrt{a}+\sqrt{b}}{\sqrt{a}+\sqrt{b}}$.'
+      - 'Squeeze: $g\le f\le h$ with $g,h\to L$ forces $f\to L$.'
+    ds: |
+      Algebraic rewriting to avoid 0/0 is the same move as numerically stable formulas:
+      `log1p`, `expm1`, and logsumexp are rewrites that dodge catastrophic cancellation.
+    lab: |
+      Compute $\frac{\sqrt{1+x}-1}{x}$ at $x=10^{-15}$ directly and in rationalized form
+      $\frac{1}{\sqrt{1+x}+1}$. Which one gives the right answer (0.5)?
+    questions:
+      - {type: num, d: 2, q: 'Evaluate $\lim_{x\to 0}\frac{\sqrt{x+4}-2}{x}$.', a: '1/4', exp: 'Rationalize: $\frac{x}{x(\sqrt{x+4}+2)}\to\frac{1}{4}$.'}
+      - {type: num, d: 1, q: 'Evaluate $\lim_{x\to 2}\frac{x^3-8}{x-2}$.', a: '12', exp: '$x^3-8=(x-2)(x^2+2x+4)$, so the limit is $4+4+4=12$.'}
+      - {type: num, d: 2, q: 'Evaluate $\lim_{x\to 0}x^2\sin(1/x)$.', a: '0', exp: 'Squeeze: $-x^2\le x^2\sin(1/x)\le x^2$, both bounds $\to 0$.'}
+    cards:
+      - {f: 'What does a 0/0 form tell you?', b: 'It is indeterminate -- simplify, factor, rationalize, or use L''Hopital.'}
+      - {f: 'Squeeze theorem', b: 'If $g\le f\le h$ near $a$ and $g,h\to L$, then $f\to L$.'}
+    fun:
+      - kind: puzzle
+        title: "The catastrophic cancellation trap"
+        body: |
+          In 64-bit floats, `(1 + 1e-16) - 1` evaluates to `0.0`, not `1e-16`. Your algebra
+          from this lesson (rationalizing, factoring) is precisely how numerical libraries avoid
+          this. Puzzle: rewrite $1-\cos x$ so it's accurate for tiny $x$.
+        answer: "$2\\sin^2(x/2)$ -- no subtraction of nearly-equal numbers."
+
+  - id: lim-continuity
+    title: "Continuity"
+    xp: 50
+    prereqs: [lim-laws]
+    readings:
+      - {book: STW, sec: "1.8", title: "Continuity"}
+      - {book: OS1, sec: "2.4", title: "Continuity"}
+    summary: |
+      $f$ is continuous at $a$ when $\lim_{x\to a}f(x)=f(a)$. Continuous functions on closed
+      intervals hit every intermediate value (IVT).
+    key_ideas:
+      - 'Three conditions: $f(a)$ defined, limit exists, they''re equal.'
+      - 'Discontinuity types: removable (hole), jump, infinite.'
+      - 'Intermediate Value Theorem: continuous $f$ on $[a,b]$ takes every value between $f(a)$ and $f(b)$.'
+    ds: |
+      IVT is the guarantee behind bisection search -- the root finder inside many quantile,
+      threshold, and calibration routines. Discontinuities (step functions, decision trees)
+      are why trees can't be trained by gradient descent.
+    lab: |
+      Implement bisection to find where $x^3-x-2=0$ on $[1,2]$ to 1e-8. Count iterations.
+      Why does IVT guarantee success?
+    questions:
+      - {type: mc, d: 1, q: '$f(x)=\frac{x^2-1}{x-1}$ has what kind of discontinuity at $x=1$?', choices: ['jump', 'removable', 'infinite', 'none -- it is continuous'], a: 1, exp: 'It simplifies to $x+1$ except at 1: a hole, fixable by defining $f(1)=2$.'}
+      - {type: num, d: 2, q: 'What value of $k$ makes $f(x)=kx+1$ for $x<2$ and $x^2$ for $x\ge 2$ continuous?', a: '3/2', exp: 'Match at $x=2$: $2k+1=4$.'}
+      - {type: mc, d: 2, q: '$p(x)=x^5-3x+1$ has $p(0)=1$ and $p(1)=-1$. IVT guarantees...', choices: ['a root in (0,1)', 'exactly one root in (0,1)', 'no roots in (0,1)', 'nothing'], a: 0, exp: 'At least one root; IVT says nothing about uniqueness.'}
+    cards:
+      - {f: 'Definition of continuity at $a$', b: '$\lim_{x\to a}f(x)=f(a)$ (defined, exists, equal).'}
+      - {f: 'Intermediate Value Theorem', b: 'Continuous on $[a,b]$ => hits every value between $f(a)$ and $f(b)$.'}
+    fun:
+      - kind: puzzle
+        title: "The monk on the mountain"
+        body: |
+          A monk climbs a mountain from 6am to 6pm, sleeps, then descends the same path from
+          6am to 6pm the next day (at any changing pace). Prove there's a time of day at which
+          he's at the exact same spot on both days.
+        answer: "Imagine both trips on the same day as two hikers. Their height difference is continuous and changes sign, so by IVT it hits zero: they meet."
+
+  - id: lim-infinity
+    title: "Limits at Infinity & Asymptotic Growth"
+    xp: 60
+    prereqs: [lim-laws, fn-explog]
+    readings:
+      - {book: STW, sec: "3.4", title: "Limits at Infinity; Horizontal Asymptotes"}
+      - {book: OS1, sec: "4.6", title: "Limits at Infinity and Asymptotes"}
+    summary: |
+      End behavior: what happens as $x\to\infty$? Leading terms dominate; exponentials beat
+      polynomials beat logarithms.
+    key_ideas:
+      - 'For rational functions, compare degrees: equal -> ratio of leading coefficients; bottom bigger -> 0.'
+      - 'Growth ladder: $\ln x \ll x^p \ll e^x \ll x!$ as $x\to\infty$.'
+      - 'Horizontal asymptotes come from limits at $\pm\infty$.'
+    ds: |
+      This IS big-O analysis: $O(n\log n)$ vs $O(n^2)$ is a limit-at-infinity comparison. It
+      also explains why sigmoid saturates (gradients vanish) as inputs grow.
+    lab: |
+      Time sorting arrays of size $2^{10}$..$2^{22}$ and plot time/($n\log n$). Does the ratio
+      level off (a limit at infinity)?
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $\lim_{x\to\infty}\frac{3x^2+5}{7x^2-x}$.', a: '3/7', exp: 'Same degree: ratio of leading coefficients.'}
+      - {type: num, d: 2, q: 'Evaluate $\lim_{x\to\infty}\frac{x^{100}}{e^x}$.', a: '0', exp: 'Exponentials eventually beat any polynomial.'}
+      - {type: num, d: 1, q: 'Horizontal asymptote of $\sigma(x)=\frac{1}{1+e^{-x}}$ as $x\to\infty$: $y=?$', a: '1', exp: '$e^{-x}\to 0$.'}
+    cards:
+      - {f: 'Growth ladder as $x\to\infty$', b: '$\ln x \ll x^p \ll e^x \ll x!$'}
+      - {f: 'Rational function, degree top < degree bottom: limit at infinity?', b: '0'}
+    fun:
+      - kind: fact
+        title: "Sorting a deck of cards"
+        body: |
+          There are $52!\approx 8\times10^{67}$ orderings of a deck -- more than the number of
+          atoms on Earth. Every well-shuffled deck is almost certainly an order that has never
+          existed before. Factorial growth makes exponentials look slow.
+
+  - id: lim-e
+    title: "The Number e as a Limit"
+    xp: 50
+    prereqs: [lim-infinity]
+    readings:
+      - {book: STW, sec: "6.4", title: "Derivatives of Logarithmic Functions (end: The Number e as a Limit)"}
+      - {book: PRE, sec: "4.1", title: "Exponential Functions (compound interest, e)"}
+      - {book: OS1, sec: "1.5", title: "Exponential and Logarithmic Functions (the number e)"}
+      - {book: OS1, sec: "6.7", title: "Integrals, Exponential Functions, and Logarithms (skim)"}
+    videos:
+      - {book: 3B1B, n: 5, title: "What's so special about Euler's number e?"}
+    summary: |
+      $e=\lim_{n\to\infty}\left(1+\frac1n\right)^n\approx 2.71828$. Continuous compounding,
+      continuous growth, and the function that is its own derivative.
+    key_ideas:
+      - '$\left(1+\frac{r}{n}\right)^{n}\to e^r$ as $n\to\infty$.'
+      - '$1^\infty$ is indeterminate -- take logs to resolve it.'
+    ds: |
+      Exponential decay of learning rates, discounting in reinforcement learning, Poisson
+      processes and the softmax all live on $e$.
+    lab: |
+      Compute $(1+1/n)^n$ for $n=10^k$, $k=1..16$. Watch it converge, then *break* near
+      $10^{16}$. Explain the break.
+    questions:
+      - {type: num, d: 2, q: 'Evaluate $\lim_{n\to\infty}\left(1+\frac{2}{n}\right)^n$.', a: 'e^2', exp: '$(1+r/n)^n\to e^r$ with $r=2$.'}
+      - {type: num, d: 2, q: 'A deposit of 1000 dollars at 5% compounded continuously for 10 years grows to $1000e^{k}$. What is $k$?', a: '0.5', exp: '$rt=0.05\cdot 10$.'}
+      - {type: num, d: 3, q: 'Evaluate $\lim_{n\to\infty}\left(1-\frac{1}{n}\right)^n$.', a: 'exp(-1)', exp: 'With $r=-1$: $e^{-1}\approx 0.368$. (Fun: the chance a random permutation has no fixed points tends to this.)'}
+    cards:
+      - {f: '$\lim_{n\to\infty}(1+r/n)^n$', b: '$e^r$'}
+      - {f: 'How to handle a $1^\infty$ limit?', b: 'Take the log, find the limit of $n\ln(\dots)$, then exponentiate.'}
+    fun:
+      - kind: puzzle
+        title: "The secretary problem"
+        body: |
+          You interview $n$ candidates in random order and must accept/reject on the spot.
+          Optimal strategy: reject the first $n/e\approx 37\%$, then take the next one better
+          than all before. You'll pick the very best with probability $\approx 1/e$. Puzzle:
+          for 100 candidates, how many do you skip?
+        answer: "About 37 (100/e ≈ 36.8)."
+
+  - id: lim-epsilon
+    title: "Epsilon-Delta: The Precise Definition"
+    xp: 60
+    optional: true
+    prereqs: [lim-laws]
+    readings:
+      - {book: STW, sec: "1.7", title: "The Precise Definition of a Limit"}
+      - {book: OS1, sec: "2.5", title: "The Precise Definition of a Limit"}
+    summary: |
+      For every tolerance $\varepsilon>0$ there's a $\delta>0$ such that being within $\delta$
+      of $a$ keeps $f(x)$ within $\varepsilon$ of $L$. A game: you name the error, I name the
+      neighborhood.
+    key_ideas:
+      - '$\forall\varepsilon>0\ \exists\delta>0: 0<|x-a|<\delta \Rightarrow |f(x)-L|<\varepsilon$.'
+      - 'For linear $f(x)=mx+b$, $\delta=\varepsilon/|m|$ works.'
+    ds: |
+      PAC learning and convergence guarantees ("with $n$ samples, error $<\varepsilon$") are
+      epsilon-delta statements wearing a lab coat.
+    lab: |
+      Write a function that, given epsilon, finds the largest delta (by search) such that
+      $|x^2-4|<\varepsilon$ whenever $|x-2|<\delta$. Plot delta vs epsilon.
+    questions:
+      - {type: num, d: 2, q: 'For $\lim_{x\to1}(3x+2)=5$, what is the largest $\delta$ that works for $\varepsilon=0.3$?', a: '0.1', exp: '$|3x+2-5|=3|x-1|<0.3 \iff |x-1|<0.1$.'}
+      - {type: free, d: 2, q: 'In your own words: why does the epsilon-delta definition use $0<|x-a|$ rather than $|x-a|<\delta$ alone?', a: 'Because the limit should not depend on the value (or existence) of f at a itself; we exclude x = a.'}
+    cards:
+      - {f: 'Epsilon-delta definition of $\lim_{x\to a}f(x)=L$', b: 'For every $\varepsilon>0$ there is $\delta>0$ with $0<|x-a|<\delta\Rightarrow|f(x)-L|<\varepsilon$.'}
+    fun:
+      - kind: fact
+        title: "Calculus ran 150 years without it"
+        body: |
+          Newton and Leibniz used "infinitesimals" that Bishop Berkeley mocked as "ghosts of
+          departed quantities." Rigorous epsilon-delta limits only arrived with Cauchy and
+          Weierstrass in the 1800s. Engineers happily used calculus the whole time.

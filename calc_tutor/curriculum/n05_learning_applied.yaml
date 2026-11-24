@@ -1,0 +1,305 @@
+unit:
+  id: N05
+  ord: 40
+  course: neuro
+  title: "Learning, Applied"
+  constellation: "The Lab"
+  color: "#ba68c8"
+  blurb: |
+    The payoff: what the neuroscience implies for how you study, sleep, train and stay
+    motivated -- backed by the best evidence in cognitive psychology. You'll test it on
+    yourself using your own data from this app.
+  ds_why: |
+    Every technique here is built into Calculus Quest: spaced repetition (the review queue),
+    retrieval practice (quizzes), interleaving (mixed quizzes), feedback (mistake journal),
+    and motivation (XP, streaks). This unit explains why -- and how to tune them.
+
+topics:
+  - id: nr-forgetting-spacing
+    title: "The Forgetting Curve & the Spacing Effect"
+    xp: 80
+    prereqs: [nr-creb]
+    readings:
+      - {book: EBB, sec: "Ch 7", title: "Retention and Obliviscence as a Function of the Time"}
+      - {book: CEP, sec: "paper", title: "Distributed Practice in Verbal Recall Tasks (meta-analysis)"}
+      - {book: DUN, sec: "Distributed practice", title: "Rated: high utility"}
+    summary: |
+      Ebbinghaus (1885) measured that retention drops steeply then levels off -- roughly
+      exponential decay. Reviews spread out over time produce far better long-term retention
+      than the same reviews massed together, and the optimal gap grows with how long you want
+      to remember.
+    key_ideas:
+      - 'Forgetting is roughly $R(t)=e^{-t/S}$ where stability $S$ grows with each successful spaced review.'
+      - 'Optimal spacing gap ≈ 10-20% of the retention interval you care about (Cepeda et al.).'
+      - 'Spacing works because of consolidation (CREB, sleep) between sessions.'
+    ds: |
+      Bridge: this app's SM-2 scheduler multiplies each card's interval by an ease factor
+      (~2.5) after successful reviews -- exponentially growing gaps, just like the theory says.
+      You can model your own forgetting curve from your review data.
+    lab: |
+      Export your card reviews (your assistant can query them) and estimate your personal forgetting
+      curve: P(remembered) vs days since last review, fit $e^{-t/S}$ with scipy. Does stability
+      $S$ grow with repetitions?
+    questions:
+      - {type: num, d: 2, q: 'If retention follows $R=e^{-t/S}$ with $S=5$ days, what fraction is retained after 5 days? (decimal)', a: 'exp(-1)', tol: 0.01, exp: '$e^{-1}\approx0.37$.'}
+      - {type: mc, d: 2, q: 'You want to remember material for about 1 year. Per Cepeda et al., a good gap between study sessions is roughly...', choices: ['1 hour', '1 day', '3-8 weeks', '2 years'], a: 2, exp: 'Roughly 10-20% of the retention interval.'}
+      - {type: mc, d: 1, q: 'Spaced practice beats massed practice for...', choices: ['immediate performance only', 'long-term retention', 'nothing; they are equal', 'only children'], a: 1, exp: 'Massed practice can feel better in the moment but fades faster.'}
+    cards:
+      - {f: 'Spacing effect', b: 'The same total study time spread across sessions yields better long-term retention than massed study.'}
+      - {f: 'Rule of thumb for spacing gap', b: 'About 10-20% of how long you want to remember it.'}
+    fun:
+      - kind: fact
+        title: "Ebbinghaus, his own lab rat"
+        body: |
+          Ebbinghaus memorized thousands of nonsense syllables (like "DAX", "BUP") over years,
+          testing only himself, to measure forgetting without meaning getting in the way. His
+          1885 curves still replicate today.
+
+  - id: nr-testing-effect
+    title: "Retrieval Practice (the Testing Effect)"
+    xp: 80
+    prereqs: [nr-memory-errors]
+    readings:
+      - {book: RK, sec: "paper", title: "Test-Enhanced Learning"}
+      - {book: DUN, sec: "Practice testing", title: "Rated: high utility"}
+    summary: |
+      Pulling information out of memory strengthens it far more than putting it in again.
+      Students who studied once then took recall tests remembered much more a week later than
+      students who restudied -- even though the restudiers felt more confident.
+    key_ideas:
+      - 'Retrieval is a learning event, not just a measurement.'
+      - 'Effortful (but successful) retrieval helps most -- "desirable difficulty".'
+      - 'Feedback after errors turns mistakes into learning (your mistake journal!).'
+    ds: |
+      Apply it: always try a problem before looking at the solution; close the book and
+      explain the idea out loud (your assistant can grade "explain-back"). Re-reading highlights is
+      rated LOW utility by Dunlosky et al.
+    lab: |
+      Self-experiment: pick 20 new flashcards, split them in two. Re-read 10 four times;
+      self-test the other 10 four times. Test both a week later and compare.
+    questions:
+      - {type: mc, d: 1, q: 'In Roediger & Karpicke (2006), which group recalled the most after one week?', choices: ['repeated study', 'repeated testing', 'no study', 'they were equal'], a: 1, exp: 'Testing won at the delay even though restudying looked better at 5 minutes.'}
+      - {type: mc, d: 2, q: 'Dunlosky et al. (2013) rated which technique LOW utility?', choices: ['practice testing', 'distributed practice', 'highlighting/underlining', 'interleaved practice (moderate)'], a: 2, exp: 'Highlighting and rereading rated low.'}
+    cards:
+      - {f: 'Testing effect', b: 'Retrieving information strengthens memory more than restudying it.'}
+      - {f: 'Two "high utility" techniques (Dunlosky 2013)', b: 'Practice testing and distributed (spaced) practice.'}
+    fun:
+      - kind: fact
+        title: "Feeling vs knowing"
+        body: |
+          In testing-effect studies, students who restudied typically PREDICTED they'd remember
+          more than students who tested -- and were wrong. Our sense of learning is a poor
+          judge of actual learning.
+
+  - id: nr-interleaving
+    title: "Interleaving & Desirable Difficulties"
+    xp: 70
+    prereqs: [nr-testing-effect, nr-hippocampus]
+    readings:
+      - {book: RT, sec: "paper", title: "The Shuffling of Mathematics Problems Improves Learning"}
+      - {book: DUN, sec: "Interleaved practice", title: "Rated: moderate utility"}
+    summary: |
+      Mixing problem types (ABCABC) instead of blocking them (AAABBBCCC) feels harder and
+      slower but produces much better test performance, because you practice choosing the
+      method -- not just executing it.
+    key_ideas:
+      - 'Blocked practice hides the "which strategy?" step that real tests require.'
+      - 'Interleaving trains discrimination between similar problem types (pattern separation).'
+      - 'Desirable difficulties (Bjork): effort that slows practice can speed learning.'
+    ds: |
+      Apply it: use this app's "Mixed quiz" and "Weak spots" modes regularly, not just topic
+      quizzes. When a quiz feels harder, that's often the point.
+    lab: |
+      Compare your accuracy on topic quizzes vs mixed quizzes in this app over two weeks, and
+      your retention on later reviews for each. (Expect mixed to look worse now and better later.)
+    questions:
+      - {type: mc, d: 2, q: 'In Rohrer & Taylor (2007), students who practiced interleaved (shuffled) math problems, compared with blocked practice, did...', choices: ['worse on the delayed test', 'much better on the delayed test despite worse practice performance', 'the same', 'better during practice but worse later'], a: 1, exp: 'Practice performance and learning dissociated.'}
+      - {type: free, d: 2, q: 'Explain why interleaving helps you decide when to use u-substitution vs integration by parts.', a: 'Interleaving forces you to identify the problem type before solving, practicing discrimination/strategy selection; blocked practice tells you the method in advance so that skill is never practiced.'}
+    cards:
+      - {f: 'Interleaving', b: 'Mixing different problem types in practice; improves strategy selection and long-term performance.'}
+      - {f: 'Desirable difficulty', b: 'A practice condition that slows performance now but improves long-term learning (spacing, testing, interleaving).'}
+    fun:
+      - kind: fact
+        title: "Baseball batting practice"
+        body: |
+          In a classic study, college baseball players who practiced hitting randomly mixed
+          pitches (fastballs, curves, changeups) improved more on later tests than those who
+          practiced each pitch type in blocks -- interleaving works for motor skills too.
+
+  - id: nr-dopamine-motivation
+    title: "Dopamine, Prediction Error & Motivation"
+    xp: 90
+    prereqs: [nr-neuromodulators, nr-emotion-habit]
+    readings:
+      - {book: SDM, sec: "paper", title: "A Neural Substrate of Prediction and Reward"}
+      - {book: KAN, sec: "Ch 49", title: "Homeostasis, Motivation, and Addictive States"}
+    summary: |
+      Dopamine neurons fire not for reward itself but for reward prediction error: better than
+      expected → burst, as expected → nothing, worse → dip. This is the temporal-difference
+      learning signal from reinforcement learning, found in the brain.
+    key_ideas:
+      - 'RPE $\delta=r+\gamma V(s'')-V(s)$ (temporal-difference error).'
+      - 'After learning, dopamine shifts from the reward to the earliest predictive cue.'
+      - 'Unpredictable rewards sustain engagement (and are exploited by slot machines and feeds).'
+    ds: |
+      Bridge: TD learning (Unit 5 geometric discounting!) and actor-critic RL algorithms mirror
+      dopamine dynamics. Apply it: variable rewards (pop quizzes with 2x XP, surprise
+      achievements) keep motivation up -- but intrinsic curiosity is the sustainable fuel.
+    lab: |
+      Implement TD(0) for a 5-state chain with a reward at the end. Plot the prediction error at
+      each state over episodes and watch the "dopamine burst" migrate from the reward back to
+      the start, as in Schultz's recordings.
+    questions:
+      - {type: mc, d: 1, q: 'A monkey has learned a light predicts juice. When juice arrives as expected, dopamine neurons...', choices: ['burst strongly', 'show little change', 'stop forever', 'release serotonin'], a: 1, exp: 'No prediction error; the burst moved to the light.'}
+      - {type: mc, d: 2, q: 'If the expected juice is omitted, dopamine activity at the expected time...', choices: ['bursts', 'dips below baseline', 'is unchanged', 'doubles'], a: 1, exp: 'Negative prediction error.'}
+      - {type: num, d: 2, q: 'TD error $\delta=r+\gamma V(s'')-V(s)$ with $r=1$, $\gamma=0.9$, $V(s'')=2$, $V(s)=2.5$. Find $\delta$.', a: '0.3', exp: '$1+1.8-2.5$.'}
+    cards:
+      - {f: 'What does phasic dopamine encode?', b: 'Reward prediction error: actual minus expected reward (TD error).'}
+      - {f: 'TD error', b: '$\delta=r+\gamma V(s'')-V(s)$'}
+    fun:
+      - kind: fact
+        title: "Neuroscience meets RL"
+        body: |
+          Schultz recorded dopamine neurons in monkeys; Dayan and Montague recognized the
+          pattern as Sutton's temporal-difference learning signal from computer science. That
+          1997 paper is one of the great cross-disciplinary moments in science -- and part of
+          why AlphaGo-style RL looks "brain-like".
+
+  - id: nr-sleep
+    title: "Sleep & Memory Consolidation"
+    xp: 80
+    prereqs: [nr-hippocampus]
+    readings:
+      - {book: KAN, sec: "Ch 51", title: "Sleep and Dreaming"}
+      - {book: STK, sec: "paper", title: "Sleep-Dependent Memory Consolidation"}
+    summary: |
+      Sleep alternates non-REM (including slow-wave) and REM in ~90-minute cycles. During
+      slow-wave sleep the hippocampus replays recent experiences, helping transfer them into
+      cortex; sleep also supports synaptic downscaling and skill consolidation.
+    key_ideas:
+      - 'NREM/REM cycles (ultradian) within circadian rhythm.'
+      - 'Hippocampal replay during slow-wave sleep supports systems consolidation.'
+      - 'Sleep deprivation impairs next-day encoding as well as consolidation.'
+    ds: |
+      Apply it: study before sleep, review the next day; don't trade sleep for cram time. In
+      marathon terms: sleep is when adaptation happens -- for memories as for muscles.
+    lab: |
+      Pull your Garmin sleep data (via the running-data MCP) for the past month and compare
+      with your daily quiz accuracy in this app. Any relationship? (Small n -- treat as
+      exploratory.)
+    questions:
+      - {type: num, d: 1, q: 'A typical NREM-REM sleep cycle lasts about how many minutes?', a: '90', tol: 0.2, exp: 'Roughly 90 minutes (range ~70-120).'}
+      - {type: mc, d: 2, q: 'Hippocampal "replay" of recent experiences is especially prominent during...', choices: ['REM only', 'slow-wave (deep NREM) sleep', 'wakeful exercise only', 'never'], a: 1, exp: 'Sharp-wave ripples in slow-wave sleep.'}
+      - {type: mc, d: 1, q: 'Pulling an all-nighter before an exam mostly...', choices: ['improves long-term retention', 'impairs consolidation and next-day encoding', 'has no effect', 'only affects motor skills'], a: 1, exp: 'Both consolidation and future learning suffer.'}
+    cards:
+      - {f: 'Role of slow-wave sleep in memory', b: 'Hippocampal replay helps consolidate recent explicit memories into cortex.'}
+    fun:
+      - kind: fact
+        title: "Rats dream of mazes"
+        body: |
+          Recording place cells in rats, researchers found the same sequences that fired while
+          running a track replayed during subsequent sleep -- compressed in time. Your brain
+          may be re-running today's calculus tonight.
+
+  - id: nr-exercise
+    title: "Exercise, BDNF & the Hippocampus"
+    xp: 80
+    prereqs: [nr-hippocampus, nr-ltp]
+    readings:
+      - {book: ERK, sec: "paper", title: "Exercise Training Increases Size of Hippocampus and Improves Memory"}
+      - {book: KAN, sec: "Ch 59", title: "The Aging Brain (structure and function change with age)"}
+    summary: |
+      Aerobic exercise raises BDNF (brain-derived neurotrophic factor), supports synaptic
+      plasticity and adult neurogenesis in the dentate gyrus (in animals), and in a randomized
+      trial of older adults, a year of walking increased hippocampal volume by about 2%.
+    key_ideas:
+      - 'BDNF supports LTP and synapse growth; exercise increases it.'
+      - 'Erickson et al. 2011: aerobic group hippocampus +2%; stretching controls declined.'
+      - 'Effects on memory are real but modest; consistency matters more than intensity.'
+    ds: |
+      Apply it: you already have the best cognitive habit there is. Try short review sessions
+      soon after easy runs, and avoid the hardest new material right after an exhausting
+      workout (Yerkes-Dodson again).
+    lab: |
+      Compare your quiz accuracy in this app on run days vs rest days, and within run days by
+      time since the run (Strava timestamps + attempt timestamps). Plot and interpret honestly.
+    questions:
+      - {type: num, d: 1, q: 'In Erickson et al. (2011), by roughly what percent did hippocampal volume increase in the aerobic exercise group over one year?', a: '2', tol: 0.25, exp: 'About 2%, reversing typical age-related loss of ~1-2% per year.'}
+      - {type: mc, d: 1, q: 'Which molecule is most associated with exercise-induced brain plasticity?', choices: ['BDNF', 'insulin', 'melatonin', 'histamine'], a: 0, exp: 'Brain-derived neurotrophic factor.'}
+    cards:
+      - {f: 'BDNF', b: 'Brain-derived neurotrophic factor: supports synaptic plasticity and neuron growth; increased by aerobic exercise.'}
+    fun:
+      - kind: fact
+        title: "Running grows new neurons (in mice)"
+        body: |
+          In 1999, Henriette van Praag and colleagues showed that mice with running wheels
+          roughly doubled the number of new neurons in the dentate gyrus compared with
+          sedentary mice -- and learned a water maze faster.
+
+  - id: nr-aging
+    title: "The Aging Brain"
+    xp: 50
+    optional: true
+    prereqs: [nr-exercise]
+    readings:
+      - {book: KAN, sec: "Ch 59", title: "The Aging Brain"}
+    summary: |
+      Processing speed and some memory functions decline gradually with age, while knowledge
+      and vocabulary hold up or grow. Dementia is not normal aging. Exercise, sleep, social and
+      cognitive engagement are protective factors.
+    key_ideas:
+      - 'Fluid abilities (speed) decline; crystallized knowledge is stable or improves.'
+      - 'Alzheimer disease: amyloid plaques and neurofibrillary tangles; not inevitable.'
+      - 'Lifestyle factors (exercise, sleep, learning) build "cognitive reserve".'
+    ds: |
+      Apply it: lifelong learning projects like this one are a reasonable bet for cognitive
+      reserve -- and enjoyable on their own terms.
+    lab: |
+      Reflect: write down which of your current habits support cognitive reserve (exercise,
+      sleep, learning, social) and one you'd like to improve.
+    questions:
+      - {type: mc, d: 1, q: 'Which typically holds up best with healthy aging?', choices: ['processing speed', 'vocabulary and accumulated knowledge', 'working memory span', 'reaction time'], a: 1, exp: 'Crystallized intelligence.'}
+    cards:
+      - {f: 'Fluid vs crystallized abilities with age', b: 'Fluid (speed, novel reasoning) declines gradually; crystallized (knowledge, vocabulary) is maintained or grows.'}
+    fun:
+      - kind: fact
+        title: "The Nun Study"
+        body: |
+          In the long-running Nun Study, some sisters whose brains showed substantial
+          Alzheimer pathology at autopsy had shown few symptoms in life -- evidence for
+          "cognitive reserve" built over a lifetime.
+
+  - id: nr-capstone
+    title: "Capstone: Design & Test Your Own Study System"
+    xp: 150
+    prereqs: [nr-forgetting-spacing, nr-testing-effect, nr-interleaving, nr-sleep]
+    readings:
+      - {book: DUN, sec: "full review", title: "Improving Students' Learning With Effective Learning Techniques"}
+      - {book: KAN, sec: "Ch 65-67", title: "Learning and Memory chapters (reread with fresh eyes)"}
+    summary: |
+      Pull it all together: write a personal learning protocol grounded in mechanisms
+      (synaptic plasticity, consolidation, modulators) and evidence (spacing, testing,
+      interleaving, sleep, exercise), then test it on your own data from this app.
+    key_ideas:
+      - 'Mechanism → principle → practice: each study habit should trace back to biology.'
+      - 'Measure, don''t trust feelings of learning.'
+      - 'Iterate like a training block: plan, execute, review, adjust.'
+    ds: |
+      Bridge: this capstone uses both courses -- data analysis of your own learning (math
+      course) to evaluate the science of learning (this course).
+    lab: |
+      Project: (1) write a 1-page protocol (schedule, methods, sleep/exercise rules); (2)
+      follow it for 4 weeks; (3) analyze your Calculus Quest data -- retention by review
+      interval, accuracy by quiz mode, accuracy by sleep/run days; (4) write up what you'd keep
+      or change. Share with your assistant for grading (record_grade, kind=lab).
+    questions:
+      - {type: free, d: 3, q: 'Trace one study habit all the way from molecule to behavior (e.g. why spacing works: CREB → protein synthesis → structural change → retention).', a: 'E.g. spaced reviews repeatedly activate the cAMP-PKA-CREB pathway, relieving CREB-2 repression and enabling gene expression and protein synthesis that grows synapses; sleep between sessions allows replay and consolidation; so spaced retrieval yields durable long-term memory, whereas massed study mostly produces short-term facilitation.'}
+    cards:
+      - {f: 'The three highest-leverage evidence-based study techniques', b: 'Spaced practice, retrieval practice (testing), and interleaving -- plus sleep and exercise as foundations.'}
+    fun:
+      - kind: fact
+        title: "Meta-learning"
+        body: |
+          You've now studied how learning works while using a system built on those very
+          principles. Researchers call knowing how you learn "metacognition" -- and it's one of
+          the strongest predictors of learning success there is.

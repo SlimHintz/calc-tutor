@@ -1,0 +1,196 @@
+unit:
+  id: N04
+  ord: 30
+  course: neuro
+  title: "Memory Systems"
+  constellation: "The Archive"
+  color: "#81c784"
+  blurb: |
+    There isn't one memory but several: working memory in prefrontal cortex, explicit
+    (episodic and semantic) memory via the hippocampus, and implicit memories in the
+    amygdala, striatum and cerebellum. And all of them reconstruct rather than replay.
+  ds_why: |
+    Apply it: different kinds of knowledge need different practice. Facts and concepts
+    (explicit) need retrieval and spacing; skills (procedural/implicit) need repetition with
+    feedback; working memory is tiny, so chunk and offload.
+
+topics:
+  - id: nr-memory-taxonomy
+    title: "Short vs Long-Term, Explicit vs Implicit"
+    xp: 60
+    prereqs: [nr-brain-behavior]
+    readings:
+      - {book: KAN, sec: "Ch 65", title: "Learning and Memory (STM vs LTM; explicit vs implicit; episodic vs semantic; priming)"}
+    summary: |
+      Patient H.M. lost his hippocampi and could no longer form new explicit memories -- yet
+      learned new motor skills. Memory divides into explicit (declarative: episodic, semantic)
+      and implicit (procedural, priming, conditioning, habituation).
+    key_ideas:
+      - 'Explicit = consciously recalled facts and events (hippocampus + cortex).'
+      - 'Implicit = shown through performance (striatum, cerebellum, amygdala, reflex pathways).'
+      - 'Episodic (what happened to me) vs semantic (general knowledge).'
+    ds: |
+      Apply it: "knowing the chain rule" (semantic) differs from "fluently applying it"
+      (procedural). This app trains both: flashcards for the first, practice problems for
+      the second.
+    lab: |
+      Classify 10 things you know (your marathon pace plan, the derivative of $e^x$, how to
+      tie shoes, your first race...) as episodic, semantic, procedural or primed.
+    questions:
+      - {type: mc, d: 1, q: 'After surgery, patient H.M. could still...', choices: ['form new explicit memories', 'learn new motor skills (mirror drawing)', 'remember new people', 'recall recent events'], a: 1, exp: 'Implicit learning was spared.'}
+      - {type: mc, d: 1, q: 'Remembering your first marathon finish line is...', choices: ['semantic', 'episodic', 'procedural', 'priming'], a: 1, exp: 'A personal event in time and place.'}
+      - {type: mc, d: 1, q: 'Knowing that the derivative of $e^x$ is $e^x$ is...', choices: ['episodic', 'semantic', 'procedural', 'habituation'], a: 1, exp: 'General factual knowledge.'}
+    cards:
+      - {f: 'Explicit vs implicit memory', b: 'Explicit: consciously recalled facts/events (hippocampus). Implicit: expressed through performance (skills, priming, conditioning).'}
+      - {f: 'Patient H.M. taught us...', b: 'The hippocampus is needed to form new explicit memories; other memory systems are separate.'}
+    fun:
+      - kind: fact
+        title: "H.M. and the mirror"
+        body: |
+          Brenda Milner had H.M. trace a star while watching only its mirror image. He improved
+          day after day -- while insisting each time he'd never done the task before. Skill
+          memory and fact memory live in different systems.
+
+  - id: nr-working-memory
+    title: "Working Memory & Prefrontal Cortex"
+    xp: 60
+    prereqs: [nr-memory-taxonomy]
+    readings:
+      - {book: KAN, sec: "Ch 67", title: "Working Memory Depends on Persistent Neural Activity in the Prefrontal Cortex"}
+      - {book: KAN, sec: "Ch 18", title: "The Organization of Cognition (skim)"}
+    summary: |
+      Working memory holds a few items active for seconds via persistent firing in prefrontal
+      circuits. Its capacity is tiny (roughly 4 chunks), and it's the bottleneck of
+      reasoning.
+    key_ideas:
+      - 'Persistent activity, not synaptic change, carries short-term holding.'
+      - 'Capacity ~4 chunks; chunking expands effective capacity.'
+      - 'Overloading working memory (cognitive load) blocks learning.'
+    ds: |
+      Apply it: write intermediate steps down, use worked examples first, and learn notation
+      until it chunks (e.g. "$\nabla L$" becomes one item). That's why the math units start
+      with concrete numbers before abstractions.
+    lab: |
+      Try holding a 7-digit vs a 12-digit number for 20 seconds; then chunk the 12-digit one
+      into four 3-digit groups. Note the difference and connect it to "chunks, not items".
+    questions:
+      - {type: mc, d: 1, q: 'Working memory capacity is roughly...', choices: ['1 item', 'about 4 chunks', '100 items', 'unlimited'], a: 1, exp: 'Modern estimates ~4 chunks (Miller''s 7±2 counted chunks loosely).'}
+      - {type: mc, d: 2, q: 'Working memory over a short delay is maintained mainly by...', choices: ['protein synthesis', 'persistent neural firing in prefrontal circuits', 'new synapse growth', 'myelination'], a: 1, exp: 'Activity-based, not structural.'}
+    cards:
+      - {f: 'Working memory capacity and trick to expand it', b: 'About 4 chunks; chunking groups items into meaningful units.'}
+    fun:
+      - kind: fact
+        title: "The magical number"
+        body: |
+          George Miller's 1956 paper "The Magical Number Seven, Plus or Minus Two" is among the
+          most cited in psychology. Later work (Cowan, 2001) argued the true limit is about
+          four chunks once rehearsal and grouping tricks are controlled for.
+
+  - id: nr-hippocampus
+    title: "The Hippocampus: Place Cells, Maps & Pattern Separation"
+    xp: 90
+    prereqs: [nr-memory-taxonomy, nr-ltp]
+    readings:
+      - {book: KAN, sec: "Ch 67", title: "Spatial Memory and LTP; A Spatial Map in the Hippocampus; Pattern Separation and Completion"}
+    summary: |
+      Hippocampal place cells fire at specific locations; entorhinal grid cells tile space in
+      hexagons. The dentate gyrus separates similar experiences into distinct codes; CA3
+      completes patterns from partial cues.
+    key_ideas:
+      - 'Place cells (O''Keefe) and grid cells (Mosers): the brain''s GPS -- 2014 Nobel.'
+      - 'Pattern separation (dentate gyrus) prevents similar memories blurring together.'
+      - 'Pattern completion (CA3 recurrent network) recalls from fragments -- a Hopfield net.'
+      - 'The hippocampus indexes memories that are later consolidated into cortex.'
+    ds: |
+      Apply it: the "method of loci" (memory palace) hijacks spatial memory to store anything.
+      Interleaving similar problem types trains pattern separation -- telling apart when to use
+      u-sub vs integration by parts.
+    lab: |
+      Build a memory palace along your marathon course: place the 10 derivative rules at 10
+      landmarks. Test recall tomorrow and in a week (log it as cards in this app).
+    questions:
+      - {type: mc, d: 1, q: 'Neurons that fire when an animal is in a specific location are...', choices: ['grid cells', 'place cells', 'mirror neurons', 'motor neurons'], a: 1, exp: 'Grid cells fire at many locations forming a hexagonal lattice.'}
+      - {type: mc, d: 2, q: 'Keeping two similar days'' runs as distinct memories relies on...', choices: ['pattern completion', 'pattern separation (dentate gyrus)', 'habituation', 'priming'], a: 1, exp: 'Separation orthogonalizes similar inputs.'}
+      - {type: mc, d: 2, q: 'CA3''s recurrent connections make it well suited to...', choices: ['pattern completion', 'motor control', 'pain', 'smell'], a: 0, exp: 'An autoassociative (Hopfield-like) network.'}
+    cards:
+      - {f: 'Pattern separation vs completion', b: 'Separation (dentate gyrus): make similar inputs distinct. Completion (CA3): recall the whole from a part.'}
+      - {f: 'Place cells vs grid cells', b: 'Place cells: one location (hippocampus). Grid cells: hexagonal lattice of locations (entorhinal cortex).'}
+    fun:
+      - kind: fact
+        title: "Memory champions use maps"
+        body: |
+          A 2003 study of world memory champions found their brains weren't structurally
+          special -- but nearly all used the method of loci, engaging spatial regions
+          including the hippocampus. Their superpower is a technique you can learn.
+
+  - id: nr-emotion-habit
+    title: "Emotional Memory (Amygdala) & Habits (Striatum)"
+    xp: 70
+    prereqs: [nr-memory-taxonomy, nr-implicit-aplysia]
+    readings:
+      - {book: KAN, sec: "Ch 66", title: "Memory for Learned Fear Involves the Amygdala; Habit Learning Requires the Striatum"}
+      - {book: KAN, sec: "Ch 48", title: "Emotions and Feelings"}
+      - {book: KAN, sec: "Ch 43", title: "The Basal Ganglia"}
+    summary: |
+      The amygdala learns and stores emotional (fear) associations and boosts hippocampal
+      encoding of emotional events. The striatum learns stimulus-response habits through
+      repetition and reward, slowly and inflexibly.
+    key_ideas:
+      - 'Fear conditioning: tone + shock → tone alone triggers fear (amygdala).'
+      - 'Emotional arousal enhances explicit memory consolidation (amygdala modulates hippocampus).'
+      - 'Habits: goal-directed actions become automatic with repetition (dorsal striatum).'
+    ds: |
+      Apply it: math anxiety is a learned (amygdala) association -- small wins and low-stakes
+      practice extinguish it. Make studying a habit cue (same time, same place, after your run)
+      so the striatum carries the load instead of willpower.
+    lab: |
+      Design a "study habit loop": cue (e.g. post-run shower), routine (10-minute review),
+      reward (XP + streak). Track it for 2 weeks with this app's streak and reflect.
+    questions:
+      - {type: mc, d: 1, q: 'Which structure is central to fear conditioning?', choices: ['hippocampus', 'amygdala', 'cerebellum', 'visual cortex'], a: 1, exp: 'Lateral amygdala stores the CS-US association.'}
+      - {type: mc, d: 2, q: 'Why do emotional events tend to be remembered better?', choices: ['they are repeated more', 'the amygdala (and stress hormones) enhance hippocampal consolidation', 'they bypass memory', 'they are stored in the spinal cord'], a: 1, exp: 'Arousal modulates encoding and consolidation.'}
+      - {type: mc, d: 2, q: 'Habit learning depends heavily on...', choices: ['the dorsal striatum', 'the olfactory bulb', 'the retina', 'the hippocampus alone'], a: 0, exp: 'Basal ganglia circuits.'}
+    cards:
+      - {f: 'Amygdala''s two memory roles', b: 'Stores fear/emotional associations; enhances consolidation of emotional explicit memories.'}
+      - {f: 'Where are habits learned?', b: 'The (dorsal) striatum of the basal ganglia.'}
+    fun:
+      - kind: fact
+        title: "Flashbulb memories aren't accurate"
+        body: |
+          People feel vividly certain about where they were during shocking news events, but
+          studies that re-interview them years later find their stories have often changed
+          substantially. Emotion boosts confidence and vividness more than accuracy.
+
+  - id: nr-memory-errors
+    title: "Reconstruction, Forgetting & False Memories"
+    xp: 60
+    prereqs: [nr-memory-taxonomy]
+    readings:
+      - {book: KAN, sec: "Ch 65", title: "Errors and Imperfections in Memory Shed Light on Normal Memory Processes"}
+    summary: |
+      Recall rebuilds memories from fragments plus expectations, so errors are systematic:
+      transience (fading), misattribution, suggestibility, bias. Retrieval also changes the
+      memory it retrieves.
+    key_ideas:
+      - 'Memory is reconstructive, not a recording.'
+      - 'Retrieval reconsolidates (and can update or distort) memories.'
+      - 'Forgetting is adaptive: it prunes the irrelevant.'
+    ds: |
+      Apply it: the "illusion of knowing" after re-reading is a reconstruction error --
+      familiarity feels like mastery. Only testing reveals what you can actually retrieve.
+    lab: |
+      Try the Deese-Roediger-McDermott effect on yourself: have your assistant read you a 12-word list
+      of sleep-related words (bed, rest, tired...) without "sleep", then recall. Did "sleep"
+      sneak in?
+    questions:
+      - {type: mc, d: 1, q: 'Memory recall is best described as...', choices: ['playing back a recording', 'reconstruction from stored fragments and expectations', 'random guessing', 'only possible for recent events'], a: 1, exp: 'Bartlett showed this as early as 1932.'}
+      - {type: mc, d: 2, q: 'Feeling confident after re-reading notes, then failing a quiz, illustrates...', choices: ['the illusion of knowing (fluency mistaken for mastery)', 'a perfect memory', 'habituation', 'pattern separation'], a: 0, exp: 'Fluency is not retrievability.'}
+    cards:
+      - {f: 'Why is recall reconstructive?', b: 'Memories are stored as distributed fragments and rebuilt using schemas and expectations each time.'}
+    fun:
+      - kind: fact
+        title: "Lost in the mall"
+        body: |
+          In Elizabeth Loftus's studies, a substantial minority of participants came to
+          "remember" being lost in a shopping mall as a child -- an event invented by the
+          researchers. Memory is editable, which is both a vulnerability and a feature.

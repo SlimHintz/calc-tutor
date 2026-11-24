@@ -1,0 +1,285 @@
+unit:
+  id: D06
+  ord: 120
+  course: core
+  title: "Graphs, Trees & Markov Chains"
+  constellation: "The Web"
+  color: "#f06292"
+  blurb: |
+    Vertices and edges model anything connected: roads, friendships, web pages, molecules,
+    neural networks. Trees organize data and decisions; Markov chains are random walks on
+    graphs whose long-run behavior is linear algebra.
+  ds_why: |
+    Social and transport networks, recommendation graphs, knowledge graphs, decision trees,
+    PageRank, graph neural networks and MCMC all start here.
+
+topics:
+  - id: dm-graphs
+    title: "Graphs: Vocabulary & the Handshake Theorem"
+    xp: 50
+    prereqs: [dm-relations]
+    readings:
+      - {book: EPP, sec: "11.1", title: "Graphs: An Introduction"}
+      - {book: KBR, sec: "8.1", title: "Graphs"}
+    summary: |
+      Vertices, edges, degree, directed vs undirected, simple graphs, complete and bipartite
+      graphs. Handshake theorem: the degrees sum to twice the number of edges.
+    key_ideas:
+      - '$\sum_v\deg(v)=2|E|$, so the number of odd-degree vertices is even.'
+      - 'Complete graph $K_n$ has $\binom n2$ edges.'
+      - 'Bipartite graphs: users-items, a natural fit for recommendation.'
+    ds: |
+      A user-item interaction matrix IS a bipartite graph. Degree distributions of real
+      networks are heavy-tailed (a few hubs) -- relevant for sampling and fairness.
+    lab: |
+      With `networkx`, build a graph of your running routes (nodes = segments, edges =
+      consecutive segments) or the karate-club graph, plot the degree histogram and verify the
+      handshake theorem.
+    questions:
+      - {type: num, d: 1, q: 'A graph has degrees 3, 3, 2, 2, 2. How many edges?', a: '6', exp: 'Sum 12, halved.'}
+      - {type: num, d: 1, q: 'Edges in the complete graph $K_8$?', a: '28', exp: '$\binom82$.'}
+      - {type: mc, d: 2, q: 'Can a graph have exactly 3 vertices of odd degree?', choices: ['yes', 'no'], a: 1, exp: 'The number of odd-degree vertices is always even.'}
+    cards:
+      - {f: 'Handshake theorem', b: '$\sum_v \deg(v)=2|E|$'}
+    fun:
+      - kind: fact
+        title: "Six degrees"
+        body: |
+          A 2016 Facebook study found the average separation between any two users was about
+          3.5 hops. Social graphs are "small worlds": tiny diameter despite billions of nodes.
+
+  - id: dm-paths
+    title: "Paths, Circuits: Euler & Hamilton"
+    xp: 60
+    prereqs: [dm-graphs]
+    readings:
+      - {book: EPP, sec: "11.2", title: "Paths and Circuits"}
+      - {book: KBR, sec: "8.2-8.3", title: "Euler Paths and Circuits; Hamiltonian Paths and Circuits"}
+    summary: |
+      An Euler circuit uses every edge once (exists iff connected and all degrees even). A
+      Hamiltonian circuit visits every vertex once -- easy to state, NP-hard to find.
+    key_ideas:
+      - 'Euler: connected + all even degrees <=> Euler circuit; exactly 2 odd => Euler path.'
+      - 'Hamiltonian circuits: no simple test; traveling salesman is NP-hard.'
+    ds: |
+      Route planning (street sweepers and snowplows are Euler problems; delivery routes are
+      Hamiltonian/TSP) -- and a reminder that some easy-sounding problems need heuristics.
+    lab: |
+      Design a running route that covers every street in a small neighborhood exactly once:
+      model it as a graph and use `networkx.eulerian_circuit` (add edges to fix odd vertices).
+    questions:
+      - {type: mc, d: 1, q: 'A connected graph has vertex degrees 2, 4, 4, 2, 6. Euler circuit?', choices: ['yes', 'no', 'only an Euler path'], a: 0, exp: 'All degrees even.'}
+      - {type: mc, d: 2, q: 'Degrees 3, 3, 2, 2 (connected). What exists?', choices: ['Euler circuit', 'Euler path but no circuit', 'neither'], a: 1, exp: 'Exactly two odd vertices: start at one, end at the other.'}
+    cards:
+      - {f: 'When does a connected graph have an Euler circuit?', b: 'Exactly when every vertex has even degree.'}
+    fun:
+      - kind: fact
+        title: "The bridges of Königsberg"
+        body: |
+          Citizens of Königsberg wondered if they could walk across all 7 bridges exactly once.
+          In 1736 Euler proved it impossible (four land masses of odd degree), founding graph
+          theory -- and running-route planning.
+
+  - id: dm-graph-matrices
+    title: "Adjacency Matrices & Counting Walks"
+    xp: 70
+    prereqs: [dm-graphs]
+    readings:
+      - {book: EPP, sec: "11.3", title: "Matrix Representations of Graphs"}
+      - {book: KBR, sec: "4.6", title: "Data Structures for Relations and Digraphs"}
+      - {book: PRE, sec: "9.5", title: "The Algebra of Matrices (refresher)"}
+    summary: |
+      Adjacency matrix $A$: $A_{ij}=1$ if there's an edge $i\to j$. The $(i,j)$ entry of $A^k$
+      counts walks of length $k$ from $i$ to $j$.
+    key_ideas:
+      - 'Undirected graphs have symmetric adjacency matrices.'
+      - '$(A^k)_{ij}$ = number of length-$k$ walks.'
+      - 'Sparse storage (edge lists, CSR) for big graphs.'
+    ds: |
+      Graph neural networks propagate features by multiplying by (a normalized) $A$ -- each
+      layer is one more hop. Collaborative filtering uses $A^2$ ("users who liked X also
+      liked Y").
+    lab: |
+      Build the adjacency matrix of a 5-cycle in numpy, compute $A^2$ and $A^3$, and verify
+      the walk counts by hand for one pair of vertices.
+    questions:
+      - {type: num, d: 2, q: 'In a triangle graph $K_3$, how many walks of length 2 go from a vertex back to itself?', a: '2', exp: 'Go to either neighbor and back.'}
+      - {type: mc, d: 2, q: '$(A^3)_{ii}$ for an undirected simple graph counts...', choices: ['edges at $i$', 'closed walks of length 3 at $i$ (2 per triangle)', 'paths of length 3', 'vertices'], a: 1, exp: 'Each triangle through $i$ is traversed in 2 directions.'}
+    cards:
+      - {f: 'Meaning of $(A^k)_{ij}$', b: 'Number of walks of length $k$ from $i$ to $j$.'}
+    fun:
+      - kind: fact
+        title: "Counting triangles"
+        body: |
+          $\text{trace}(A^3)/6$ counts the triangles in a graph. Social networks have far more
+          triangles than random graphs (friends of friends become friends) -- the "clustering
+          coefficient" that marketers and epidemiologists care about.
+
+  - id: dm-trees
+    title: "Trees & Spanning Trees"
+    xp: 60
+    prereqs: [dm-paths]
+    readings:
+      - {book: EPP, sec: "11.5", title: "Trees"}
+      - {book: EPP, sec: "11.6", title: "Spanning Trees"}
+      - {book: KBR, sec: "7.1-7.5", title: "Trees; Labeled Trees; Tree Searching; Undirected Trees; Minimal Spanning Trees"}
+    summary: |
+      A tree is a connected graph with no cycles; with $n$ vertices it has exactly $n-1$ edges.
+      Rooted and binary trees; minimum spanning trees (Kruskal, Prim) via greedy choices.
+    key_ideas:
+      - 'Tree on $n$ vertices <=> connected with $n-1$ edges <=> acyclic with $n-1$ edges.'
+      - 'Binary tree of height $h$ has at most $2^h$ leaves.'
+      - 'Greedy works for MSTs (cut property).'
+    ds: |
+      Decision trees, random forests and gradient boosting are rooted trees; hierarchical
+      clustering builds a tree (dendrogram), and single-linkage clustering IS a minimum
+      spanning tree.
+    lab: |
+      Fit `sklearn.tree.DecisionTreeClassifier(max_depth=3)` and count its leaves and internal
+      nodes; check the $n-1$ edges rule. Then compute an MST with `networkx` on 20 random points.
+    questions:
+      - {type: num, d: 1, q: 'A tree has 50 vertices. How many edges?', a: '49', exp: '$n-1$.'}
+      - {type: num, d: 2, q: 'Maximum number of leaves of a binary decision tree of depth 6?', a: '64', exp: '$2^6$.'}
+    cards:
+      - {f: 'Edges in a tree with $n$ vertices', b: '$n-1$'}
+      - {f: 'Single-linkage clustering relates to...', b: 'The minimum spanning tree (cut its longest edges).'}
+    fun:
+      - kind: fact
+        title: "Cayley's formula"
+        body: |
+          There are exactly $n^{n-2}$ labeled trees on $n$ vertices (Cayley, 1889). For 10
+          vertices that's 100 million different trees -- one reason exhaustive tree search is
+          hopeless and decision trees are grown greedily.
+
+  - id: dm-graph-search
+    title: "Graph Search: BFS, DFS & Shortest Paths"
+    xp: 60
+    prereqs: [dm-trees, dm-algo-analysis]
+    readings:
+      - {book: KBR, sec: "7.3", title: "Tree Searching"}
+      - {book: KBR, sec: "8.4", title: "Transport Networks"}
+      - {book: KBR, sec: "4.8", title: "Transitive Closure and Warshall's Algorithm"}
+    summary: |
+      Breadth-first search finds shortest paths in unweighted graphs; depth-first search
+      explores deeply (cycle detection, topological sort). Dijkstra handles nonnegative weights.
+    key_ideas:
+      - 'BFS and DFS are $O(|V|+|E|)$.'
+      - 'BFS layers = distance from the source.'
+      - 'Dijkstra = BFS with a priority queue; fails with negative weights.'
+    ds: |
+      Degrees of separation, connected components (entity resolution: which records refer to
+      the same person?), route-finding, and dependency resolution in pipelines.
+    lab: |
+      Use BFS (`collections.deque`) to find connected components among records that share an
+      email or phone number -- a mini entity-resolution problem.
+    questions:
+      - {type: mc, d: 1, q: 'Which finds shortest paths (fewest edges) in an unweighted graph?', choices: ['DFS', 'BFS', 'random walk', 'Kruskal'], a: 1, exp: 'BFS explores in order of distance.'}
+      - {type: mc, d: 2, q: 'BFS on a graph with $V$ vertices and $E$ edges costs...', choices: ['$O(V^2E)$', '$O(V+E)$', '$O(E\log V)$', '$O(2^V)$'], a: 1, exp: 'Each vertex and edge is processed once.'}
+    cards:
+      - {f: 'BFS vs DFS use cases', b: 'BFS: shortest unweighted paths, layers. DFS: cycle detection, topological sort, components.'}
+    fun:
+      - kind: fact
+        title: "Dijkstra's 20-minute invention"
+        body: |
+          Edsger Dijkstra designed his shortest-path algorithm in about 20 minutes in 1956,
+          sitting at a café in Amsterdam with his fiancée, without pencil and paper. Your
+          maps app runs descendants of it every time you plan a route.
+
+  - id: dm-markov
+    title: "Markov Chains & PageRank"
+    xp: 90
+    prereqs: [dm-graph-matrices, dm-conditional-bayes]
+    readings:
+      - {book: BH, sec: "11.1-11.3", title: "Markov property and transition matrix; Classification of states; Stationary distribution"}
+      - {book: BH, sec: "12.1", title: "Metropolis-Hastings (preview)"}
+    summary: |
+      A Markov chain moves between states with probabilities depending only on the current
+      state. Transition matrix $Q$; distribution after $n$ steps: $\mathbf p Q^n$. A
+      stationary distribution satisfies $\boldsymbol\pi Q=\boldsymbol\pi$.
+    key_ideas:
+      - 'Rows of $Q$ sum to 1.'
+      - 'Irreducible + aperiodic finite chain: $\mathbf pQ^n\to\boldsymbol\pi$ from any start.'
+      - 'PageRank = stationary distribution of a random surfer (with teleportation).'
+    ds: |
+      PageRank, customer journey models, text generation (n-gram models), and MCMC sampling
+      for Bayesian inference (Statistical Rethinking territory) are Markov chains.
+    lab: |
+      Build a 3-state "easy / tempo / rest" training-day Markov chain from your Strava history
+      (count transitions), then find its stationary distribution by power iteration and by
+      solving $\boldsymbol\pi Q=\boldsymbol\pi$ with numpy.
+    questions:
+      - {type: num, d: 2, q: 'Two states, $Q=\begin{pmatrix}0.9&0.1\\0.5&0.5\end{pmatrix}$. Stationary probability of state 1?', a: '5/6', exp: 'Solve $\pi_1=0.9\pi_1+0.5\pi_2$, $\pi_1+\pi_2=1$: $0.1\pi_1=0.5\pi_2$.'}
+      - {type: mc, d: 2, q: 'PageRank adds a small "teleport" probability mainly to...', choices: ['speed up the web', 'make the chain irreducible and aperiodic so a unique stationary distribution exists', 'favor new pages', 'reduce storage'], a: 1, exp: 'Dead ends and closed loops otherwise break convergence.'}
+    cards:
+      - {f: 'Stationary distribution', b: '$\boldsymbol\pi$ with $\boldsymbol\pi Q=\boldsymbol\pi$, entries summing to 1.'}
+      - {f: 'PageRank in one sentence', b: 'The long-run fraction of time a random surfer (who sometimes teleports) spends on each page.'}
+    fun:
+      - kind: fact
+        title: "Markov's poetry"
+        body: |
+          In 1913 Andrey Markov analyzed the first 20,000 letters of Pushkin's poem Eugene
+          Onegin, modeling vowel/consonant sequences as a chain. That linguistics hobby project
+          is the ancestor of PageRank, MCMC and language models.
+
+  - id: dm-graph-coloring
+    title: "Graph Coloring"
+    xp: 40
+    optional: true
+    prereqs: [dm-graphs]
+    readings:
+      - {book: KBR, sec: "8.6", title: "Coloring Graphs"}
+    summary: |
+      Color vertices so neighbors differ, using as few colors as possible (chromatic number).
+      Planar graphs need at most 4 colors.
+    key_ideas:
+      - 'Scheduling with conflicts = coloring the conflict graph.'
+      - 'Greedy coloring uses at most $\Delta+1$ colors ($\Delta$ = max degree).'
+    ds: |
+      Scheduling jobs that share resources, register allocation in compilers, and assigning
+      frequencies to cell towers are coloring problems.
+    lab: |
+      Use `networkx.greedy_color` to schedule 10 exams where some pairs share students. How
+      many time slots do you need?
+    questions:
+      - {type: num, d: 1, q: 'Chromatic number of the complete graph $K_5$?', a: '5', exp: 'Every pair is adjacent.'}
+    cards:
+      - {f: 'Four color theorem', b: 'Every planar map can be colored with 4 colors so neighbors differ.'}
+    fun:
+      - kind: fact
+        title: "Proof by computer"
+        body: |
+          The four color theorem (1976, Appel & Haken) was the first major theorem proved with
+          essential computer help -- checking 1,936 configurations. Many mathematicians were
+          uneasy; a formally verified proof (Coq, 2005) settled the doubts.
+
+  - id: dm-automata
+    title: "Regular Expressions & Finite-State Machines"
+    xp: 40
+    optional: true
+    prereqs: [dm-sets]
+    readings:
+      - {book: EPP, sec: "12.1-12.2", title: "Formal Languages and Regular Expressions; Finite-State Automata"}
+      - {book: KBR, sec: "10.3", title: "Finite-State Machines"}
+    summary: |
+      Regular expressions and finite-state automata describe exactly the same languages.
+      Every regex you write compiles to a state machine.
+    key_ideas:
+      - 'A DFA reads input symbol by symbol, changing state; accepts if it ends in an accept state.'
+      - 'Kleene''s theorem: regex <=> finite automaton.'
+      - 'Regexes cannot match balanced parentheses (needs memory).'
+    ds: |
+      Text cleaning, log parsing and data validation run on regex; tokenizers and simple
+      sequence models are finite-state machines.
+    lab: |
+      Write a regex for valid pace strings like `7:45/mi` and test it on messy log lines.
+      Then sketch the equivalent finite-state machine.
+    questions:
+      - {type: mc, d: 2, q: 'Which language can a regular expression NOT describe?', choices: ['strings ending in .csv', 'binary strings with an even number of 1s', 'balanced parentheses', 'dates like 2026-10-18'], a: 2, exp: 'Requires unbounded counting; finite automata have finite memory.'}
+    cards:
+      - {f: 'Kleene''s theorem', b: 'Regular expressions and finite automata recognize the same languages.'}
+    fun:
+      - kind: fact
+        title: "The regex that took down the internet"
+        body: |
+          In July 2019 a single badly-backtracking regular expression in a Cloudflare firewall
+          rule pegged CPUs worldwide and took down a huge swath of websites for about 27 minutes.

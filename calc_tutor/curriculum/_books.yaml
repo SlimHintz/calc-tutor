@@ -1,0 +1,172 @@
+# Every resource is free & legal online.
+OS1:
+  title: "Calculus Volume 1"
+  authors: "Gilbert Strang & Edwin Herman (OpenStax)"
+  url: "https://openstax.org/details/books/calculus-volume-1"
+  role: "Core spine: functions, limits, derivatives, integrals. Answers to odd exercises in the back."
+OS2:
+  title: "Calculus Volume 2"
+  authors: "Gilbert Strang & Edwin Herman (OpenStax)"
+  url: "https://openstax.org/details/books/calculus-volume-2"
+  role: "Integration techniques, differential equations, series & Taylor."
+OS3:
+  title: "Calculus Volume 3"
+  authors: "Gilbert Strang & Edwin Herman (OpenStax)"
+  url: "https://openstax.org/details/books/calculus-volume-3"
+  role: "Vectors, partial derivatives, gradients, Lagrange, multiple integrals."
+MML:
+  title: "Mathematics for Machine Learning"
+  authors: "Marc Peter Deisenroth, A. Aldo Faisal, Cheng Soon Ong (Cambridge UP)"
+  url: "https://mml-book.github.io/"
+  role: "The data-science bridge: vector calculus (Ch 5), probability (Ch 6), optimization (Ch 7), regression (Ch 9)."
+MCDL:
+  title: "The Matrix Calculus You Need For Deep Learning"
+  authors: "Terence Parr & Jeremy Howard"
+  url: "https://explained.ai/matrix-calculus/"
+  role: "Short, friendly guide to Jacobians and vector chain rules for neural nets."
+BH:
+  title: "Introduction to Probability (2nd ed.)"
+  authors: "Joseph K. Blitzstein & Jessica Hwang"
+  url: "https://projects.iq.harvard.edu/stat110/home"
+  role: "Integrals in action: densities, expectation, joint distributions (Ch 5, 7)."
+3B1B:
+  title: "Essence of Calculus (video series)"
+  authors: "Grant Sanderson / 3Blue1Brown"
+  url: "https://www.3blue1brown.com/topics/calculus"
+  role: "Visual intuition. Watch before reading each matching section."
+3B1B-NN:
+  title: "Neural Networks (video series)"
+  authors: "Grant Sanderson / 3Blue1Brown"
+  url: "https://www.3blue1brown.com/topics/neural-networks"
+  role: "Gradient descent and backpropagation, visualized."
+KA-MV:
+  title: "Multivariable Calculus"
+  authors: "Khan Academy (taught by Grant Sanderson)"
+  url: "https://www.khanacademy.org/math/multivariable-calculus"
+  role: "Video + exercises for gradients, Hessians, Lagrange multipliers."
+
+# ---- Local library: PDFs of books you own, under CALC_TUTOR_BOOKS_DIR (`local` = path) ----
+STW:
+  title: "Calculus, 7th Edition"
+  authors: "James Stewart (Cengage, 2012)"
+  local: "books/calculus/stewart-calculus-7e-2012.pdf"
+  role: "PRIMARY calculus text. Best explanations and exercises; answers to odd exercises in Appendix I."
+PRE:
+  title: "Precalculus: Mathematics for Calculus, 5th Edition"
+  authors: "Stewart, Redlin & Watson (Brooks/Cole, 2008)"
+  local: "books/calculus/stewart-redlin-watson-precalculus-5e-2008.pdf"
+  role: "Brush-up readings: algebra, functions, exponentials/logs, trig, matrices, sequences."
+EPP:
+  title: "Discrete Mathematics with Applications, 3rd Edition"
+  authors: "Susanna S. Epp (Brooks/Cole, 2004)"
+  local: "books/discrete-math/epp-discrete-mathematics-with-applications-3e-2004.pdf"
+  role: "PRIMARY discrete math text: logic, proof, sets, counting, recursion, relations, graphs."
+KBR:
+  title: "Discrete Mathematical Structures, 6th Edition"
+  authors: "Kolman, Busby & Ross (Pearson, 2009)"
+  local: "books/discrete-math/kolman-busby-ross-discrete-mathematical-structures-6e-2009.pdf"
+  role: "Secondary discrete text, more CS-flavoured: relations/digraphs, trees, graph algorithms."
+ROSS:
+  title: "A First Course in Probability, 10th Edition"
+  authors: "Sheldon Ross (Pearson, 2019)"
+  local: "books/probability-stats/ross-first-course-in-probability-10e-2019.pdf"
+  role: "Classic probability text with a huge stock of worked problems."
+SR:
+  title: "Statistical Rethinking, 2nd Edition"
+  authors: "Richard McElreath (CRC, 2020)"
+  local: "books/probability-stats/mcelreath-statistical-rethinking-2e-2020.pdf"
+  role: "Bayesian modeling for later: where the probability and optimization units lead."
+KAN:
+  title: "Principles of Neural Science, 5th Edition"
+  authors: "Kandel, Schwartz, Jessell, Siegelbaum & Hudspeth (McGraw-Hill, 2013)"
+  local: "books/neuroscience/kandel-principles-of-neural-science-5e-2013.pdf"
+  role: "PRIMARY text for the Learning & Memory course (cited by chapter; App. E = neural networks)."
+
+# ---- Learning-science papers (Learning & Memory course) ----
+EBB:
+  title: "Memory: A Contribution to Experimental Psychology (1885)"
+  authors: "Hermann Ebbinghaus (free translation at York University's Classics in the History of Psychology)"
+  url: "https://psychclassics.yorku.ca/Ebbinghaus/index.htm"
+  role: "The forgetting curve and the first spacing experiments."
+DUN:
+  title: "Improving Students' Learning With Effective Learning Techniques (2013)"
+  authors: "Dunlosky, Rawson, Marsh, Nathan & Willingham, Psychological Science in the Public Interest"
+  url: "https://doi.org/10.1177/1529100612453266"
+  role: "The definitive review ranking 10 study techniques by evidence."
+CEP:
+  title: "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis (2006)"
+  authors: "Cepeda, Pashler, Vul, Wixted & Rohrer, Psychological Bulletin"
+  url: "https://doi.org/10.1037/0033-2909.132.3.354"
+  role: "Meta-analysis of the spacing effect."
+RK:
+  title: "Test-Enhanced Learning (2006)"
+  authors: "Roediger & Karpicke, Psychological Science"
+  url: "https://doi.org/10.1111/j.1467-9280.2006.01693.x"
+  role: "The testing (retrieval practice) effect."
+RT:
+  title: "The Shuffling of Mathematics Problems Improves Learning (2007)"
+  authors: "Rohrer & Taylor, Instructional Science"
+  url: "https://doi.org/10.1007/s11251-007-9015-8"
+  role: "Interleaved practice in math."
+SDM:
+  title: "A Neural Substrate of Prediction and Reward (1997)"
+  authors: "Schultz, Dayan & Montague, Science"
+  url: "https://doi.org/10.1126/science.275.5306.1593"
+  role: "Dopamine neurons encode reward prediction error -- the bridge to reinforcement learning."
+STK:
+  title: "Sleep-Dependent Memory Consolidation (2005)"
+  authors: "Robert Stickgold, Nature"
+  url: "https://doi.org/10.1038/nature04286"
+  role: "Review of how sleep consolidates memory."
+ERK:
+  title: "Exercise Training Increases Size of Hippocampus and Improves Memory (2011)"
+  authors: "Erickson et al., PNAS"
+  url: "https://doi.org/10.1073/pnas.1015950108"
+  role: "Aerobic exercise grows the hippocampus. Yes, running counts."
+
+# ---- Linear algebra & statistics (added after the evidence review) ----
+VMLS:
+  title: "Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares"
+  authors: "Stephen Boyd & Lieven Vandenberghe (Cambridge UP, 2018) -- free PDF + Python companion"
+  url: "https://web.stanford.edu/~boyd/vmls/"
+  role: "PRIMARY applied linear algebra text (Stanford ENGR108): vectors, matrices, least squares, with data examples."
+3B1B-LA:
+  title: "Essence of Linear Algebra (video series)"
+  authors: "Grant Sanderson / 3Blue1Brown"
+  url: "https://www.3blue1brown.com/topics/linear-algebra"
+  role: "Watch FIRST for each linear algebra topic: the geometric picture of what matrices do."
+MIT1806:
+  title: "MIT 18.06 Linear Algebra (lecture videos)"
+  authors: "Gilbert Strang, MIT OpenCourseWare"
+  url: "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/"
+  role: "The classic lectures for eigenvalues, symmetric/positive-definite matrices and the SVD."
+OI:
+  title: "OpenIntro Statistics, 4th Edition"
+  authors: "Diez, Çetinkaya-Rundel & Barr -- free PDF"
+  url: "https://www.openintro.org/book/os/"
+  role: "PRIMARY applied statistics text: inference, testing, regression."
+ISL:
+  title: "An Introduction to Statistical Learning (2nd ed., Python edition available)"
+  authors: "James, Witten, Hastie & Tibshirani -- free PDF"
+  url: "https://www.statlearning.com/"
+  role: "Bias-variance, resampling (cross-validation, bootstrap), regression and classification."
+
+# ---- Algebra Foundations (free OpenStax books, also saved locally for reMarkable study packs) ----
+EA:
+  title: "Elementary Algebra 2e"
+  authors: "Marecek, Anthony-Smith & Honeycutt Mathis (OpenStax, 2020) -- CC BY-NC-SA"
+  url: "https://openstax.org/details/books/elementary-algebra-2e"
+  local: "books/algebra/openstax-elementary-algebra-2e.pdf"
+  role: "Algebra 1: integers, fractions, linear equations, graphing, systems, polynomials, factoring."
+IA:
+  title: "Intermediate Algebra 2e"
+  authors: "Marecek, Anthony-Smith & Honeycutt Mathis (OpenStax, 2020) -- CC BY-NC-SA"
+  url: "https://openstax.org/details/books/intermediate-algebra-2e"
+  local: "books/algebra/openstax-intermediate-algebra-2e.pdf"
+  role: "Algebra 2: rational expressions, radicals, complex numbers, quadratics, exponentials and logs."
+CA:
+  title: "College Algebra 2e"
+  authors: "Abramson et al. (OpenStax, 2021) -- CC BY-NC-SA"
+  url: "https://openstax.org/details/books/college-algebra-2e"
+  local: "books/algebra/openstax-college-algebra-2e.pdf"
+  role: "Algebra 3: functions, polynomial/rational functions, models, systems and matrices, sequences."

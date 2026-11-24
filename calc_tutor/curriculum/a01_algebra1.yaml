@@ -1,0 +1,517 @@
+unit:
+  id: A01
+  ord: 0
+  course: algebra
+  title: "Algebra 1: Numbers, Equations, Lines & Polynomials"
+  constellation: "The Abacus"
+  color: "#8bc34a"
+  blurb: |
+    Start from solid ground: signed numbers and fractions, the language of variables, solving
+    linear equations and inequalities, graphing lines, systems of equations, and the
+    polynomial and factoring skills that everything later leans on. Slow is smooth; smooth is
+    fast.
+  ds_why: |
+    Every formula you'll ever rearrange -- a z-score, a learning-rate schedule, a pace
+    conversion -- is Algebra 1. Fluency here is what makes the later math feel like ideas
+    instead of bookkeeping.
+
+topics:
+  - id: al-integers
+    title: "Signed Numbers: Adding, Subtracting, Multiplying, Dividing"
+    xp: 30
+    prereqs: []
+    readings:
+      - {book: EA, sec: "1.3, 1.4", title: "Add and Subtract Integers; Multiply and Divide Integers"}
+    summary: |
+      Integers are whole numbers and their negatives. Subtracting is adding the opposite;
+      a product or quotient is negative exactly when an odd number of factors are negative.
+    key_ideas:
+      - '$a-b=a+(-b)$: subtracting a negative adds.'
+      - 'Signs: $(+)(+)=+$, $(-)(-)=+$, $(+)(-)=-$. Same rule for division.'
+      - 'Absolute value $|a|$ is distance from zero, never negative.'
+    ds: |
+      Temperature changes, elevation gain/loss on a run, and residuals (actual minus
+      predicted) are signed numbers. A sign slip flips the meaning of a result.
+    lab: |
+      Running lab: list the elevation at 6 points of a hilly route. Compute each change
+      (later minus earlier) as a signed number, then total gain (positives) and loss (negatives).
+    questions:
+      - {type: num, d: 1, q: 'Compute $-7-(-12)$.', a: '5', exp: 'Subtracting $-12$ is adding 12: $-7+12=5$.'}
+      - {type: num, d: 1, q: 'Compute $(-3)(-4)(-2)$.', a: '-24', exp: 'Three negatives: odd, so negative. $3\cdot4\cdot2=24$.'}
+      - {type: num, d: 1, q: 'Compute $\frac{-48}{6}+|-5|$.', a: '-3', exp: '$-8+5$.'}
+      - {type: num, d: 2, q: 'Compute $-2^2-(-2)^3$.', a: '4', exp: '$-4-(-8)=4$. The exponent applies before the minus in $-2^2$.'}
+    cards:
+      - {f: 'Subtracting a negative number', b: '$a-(-b)=a+b$'}
+      - {f: 'Sign of a product of 5 negative numbers', b: 'Negative (odd count of negatives).'}
+    fun:
+      - kind: fact
+        title: "Negative numbers were 'absurd'"
+        body: |
+          Chinese mathematicians used red and black counting rods for positive and negative
+          numbers 2,000 years ago, but many European mathematicians called negatives "absurd"
+          or "fictitious" well into the 1700s. Your bank balance disagrees.
+
+  - id: al-fractions
+    title: "Fractions & Decimals"
+    xp: 40
+    prereqs: [al-integers]
+    readings:
+      - {book: EA, sec: "1.5, 1.6, 1.7", title: "Visualize Fractions; Add and Subtract Fractions; Decimals"}
+    summary: |
+      Simplify by dividing out common factors; add with a common denominator; multiply straight
+      across; divide by multiplying by the reciprocal. Decimals are fractions with denominators
+      10, 100, 1000...
+    key_ideas:
+      - '$\frac ab\pm\frac cd=\frac{ad\pm bc}{bd}$ (or use the least common denominator).'
+      - '$\frac ab\cdot\frac cd=\frac{ac}{bd}$; $\frac ab\div\frac cd=\frac ab\cdot\frac dc$.'
+      - 'Percent means "per hundred": $35\%=0.35=\frac{7}{20}$.'
+    ds: |
+      Rates, proportions, probabilities and normalized features are all fractions. Pace (min per
+      mile) and speed (miles per minute) are reciprocals of each other.
+    lab: |
+      Convert your marathon goal pace (e.g. 7:38 per mile) into a fraction of an hour per mile,
+      then into miles per hour, by hand. Check with Python.
+    questions:
+      - {type: num, d: 1, q: 'Compute $\frac{3}{4}+\frac{5}{6}$.', a: '19/12', exp: 'LCD 12: $\frac{9+10}{12}$.'}
+      - {type: num, d: 1, q: 'Compute $\frac{2}{3}\cdot\frac{9}{10}$ (simplified).', a: '3/5', exp: '$\frac{18}{30}=\frac35$.'}
+      - {type: num, d: 2, q: 'Compute $\frac{5}{8}\div\frac{15}{4}$.', a: '1/6', exp: '$\frac58\cdot\frac{4}{15}=\frac{20}{120}$.'}
+      - {type: num, d: 1, q: 'Write $0.125$ as a fraction (value check).', a: '1/8', exp: '$125/1000$.'}
+    cards:
+      - {f: 'Dividing fractions', b: 'Multiply by the reciprocal: $\frac ab\div\frac cd=\frac{ad}{bc}$.'}
+      - {f: 'Adding fractions', b: 'Rewrite with a common denominator, then add numerators.'}
+    fun:
+      - kind: puzzle
+        title: "The Egyptian fractions"
+        body: |
+          Ancient Egyptians wrote fractions only as sums of distinct unit fractions:
+          $\frac{3}{4}=\frac12+\frac14$. Puzzle: write $\frac{5}{6}$ that way.
+        answer: "$\\frac12+\\frac13$."
+
+  - id: al-real-numbers
+    title: "The Number Systems: Rational & Irrational Numbers"
+    xp: 50
+    prereqs: [al-fractions]
+    readings:
+      - {book: EA, sec: "1.8", title: "The Real Numbers"}
+      - {book: CA, sec: "1.1", title: "Real Numbers: Algebra Essentials"}
+    summary: |
+      Naturals ⊂ integers ⊂ rationals ⊂ reals. A rational number is a ratio of integers; its
+      decimal ends or repeats. An irrational number (√2, π, e) can't be written as a ratio; its
+      decimal never ends or repeats. Together they fill the number line.
+    key_ideas:
+      - 'Rational ⇔ decimal terminates or repeats: $0.\overline{3}=\frac13$.'
+      - '$\sqrt n$ is irrational unless $n$ is a perfect square ($\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$ are; $\sqrt{9}=3$ isn''t).'
+      - 'Rational + irrational is irrational; but irrational + irrational can be rational ($\sqrt2+(-\sqrt2)=0$).'
+      - 'Next stop: numbers that aren''t on the line at all -- imaginary numbers (Algebra 2).'
+    ds: |
+      Computers store only finitely many digits, so every irrational (and most rationals, like
+      0.1) is approximated in floating point: `0.1 + 0.2 != 0.3` in Python. Knowing why prevents
+      bugs in equality checks.
+    lab: |
+      In Python, check `0.1 + 0.2 == 0.3`, then `math.isclose(0.1 + 0.2, 0.3)`. Convert
+      $0.\overline{142857}$ to a fraction with `fractions.Fraction` and explain the result.
+    questions:
+      - {type: mc, d: 1, q: 'Which number is irrational?', choices: ['$\sqrt{16}$', '$0.75$', '$\sqrt{7}$', '$\frac{22}{7}$'], a: 2, exp: '7 is not a perfect square. ($\frac{22}{7}$ is a rational APPROXIMATION of $\pi$.)'}
+      - {type: num, d: 2, q: 'Write the repeating decimal $0.\overline{36}=0.3636\ldots$ as a fraction.', a: '4/11', exp: 'Let $x=0.\overline{36}$; $100x-x=36$, so $x=\frac{36}{99}=\frac{4}{11}$.'}
+      - {type: mc, d: 2, q: 'The sum of a rational and an irrational number is always...', choices: ['rational', 'irrational', 'an integer', 'could be either'], a: 1, exp: 'If $r+s=q$ were rational, $s=q-r$ would be rational -- contradiction.'}
+      - {type: mc, d: 1, q: 'Which set contains $-3$, $\frac12$ and $\sqrt2$ but NOT $\sqrt{-1}$?', choices: ['integers', 'rationals', 'real numbers', 'naturals'], a: 2, exp: '$\sqrt{-1}=i$ is imaginary, outside the reals.'}
+    cards:
+      - {f: 'Rational vs irrational (decimal test)', b: 'Rational: decimal terminates or repeats. Irrational: never terminates, never repeats.'}
+      - {f: 'When is $\sqrt n$ irrational (whole $n$)?', b: 'Whenever $n$ is not a perfect square.'}
+    fun:
+      - kind: fact
+        title: "π to 105 trillion digits"
+        body: |
+          In 2024, π was computed to over 105 trillion digits -- and still no repeating pattern,
+          as there can't be: π is irrational (Lambert, 1761). NASA uses about 15 digits for
+          interplanetary navigation.
+
+  - id: al-expressions
+    title: "Variables, Expressions & Properties of Real Numbers"
+    xp: 40
+    prereqs: [al-real-numbers]
+    readings:
+      - {book: EA, sec: "1.2", title: "Use the Language of Algebra"}
+      - {book: EA, sec: "1.9", title: "Properties of Real Numbers"}
+    summary: |
+      Variables stand for numbers. Evaluate expressions with the order of operations, combine
+      like terms, and use the distributive property $a(b+c)=ab+ac$ to expand and factor.
+    key_ideas:
+      - 'Order of operations: parentheses, exponents, multiply/divide (left→right), add/subtract.'
+      - 'Like terms have identical variable parts: $3x^2$ and $-5x^2$ combine; $3x^2$ and $3x$ don''t.'
+      - 'Distributive property: $-2(x-4)=-2x+8$ (distribute the sign too).'
+    ds: |
+      A model like $\hat y=3+2x_1-0.5x_2$ is an expression you evaluate for each data row. Code
+      precedence follows the same rules (`2 + 3 * x ** 2`).
+    lab: |
+      Evaluate $\hat y=3+2x_1-0.5x_2$ for three made-up rows by hand, then vectorize it with numpy.
+    questions:
+      - {type: num, d: 1, q: 'Evaluate $3x^2-2x+1$ when $x=-2$.', a: '17', exp: '$12+4+1$.'}
+      - {type: expr, d: 1, var: x, q: 'Simplify $4x+3-(2x-5)$.', a: '2x+8', exp: 'Distribute the minus: $4x+3-2x+5$.'}
+      - {type: expr, d: 2, var: x, q: 'Simplify $-3(2x-1)+4(x+2)$.', a: '-2x+11', exp: '$-6x+3+4x+8$.'}
+    cards:
+      - {f: 'Distributive property', b: '$a(b+c)=ab+ac$ -- including the sign of $a$.'}
+      - {f: 'Like terms', b: 'Same variables raised to the same powers; only their coefficients combine.'}
+    fun:
+      - kind: fact
+        title: "The equals sign is 469 years old"
+        body: |
+          Robert Recorde invented "=" in 1557 because "no two things can be more equal" than a
+          pair of parallel lines. Before that, mathematicians wrote "is equal to" in words.
+
+  - id: al-linear-equations
+    title: "Solving Linear Equations"
+    xp: 60
+    prereqs: [al-expressions]
+    readings:
+      - {book: EA, sec: "2.1, 2.2, 2.3, 2.4, 2.5", title: "Solve Equations (properties of equality, both sides, general strategy, fractions)"}
+    summary: |
+      Keep the equation balanced: do the same thing to both sides. General strategy: clear
+      fractions, distribute, collect variable terms on one side, constants on the other, divide.
+    key_ideas:
+      - 'Whatever you do to one side, do to the other.'
+      - 'Clear fractions first by multiplying everything by the LCD.'
+      - 'Check by substituting the solution back in. Some equations have no solution or every $x$.'
+    ds: |
+      Solving for an unknown parameter (the break-even point, the time a trend crosses a target)
+      is solving a linear equation.
+    lab: |
+      Running lab: if your pace drops by 2 seconds per mile each week, starting at 8:10, solve for
+      the week you reach 7:38.
+    questions:
+      - {type: num, d: 1, q: 'Solve $5x-7=3x+9$.', a: '8', exp: '$2x=16$.'}
+      - {type: num, d: 2, q: 'Solve $\frac{x}{3}+\frac{x}{4}=14$.', a: '24', exp: 'Multiply by 12: $4x+3x=168$.'}
+      - {type: num, d: 2, q: 'Solve $3(2x-4)=2(x+6)$.', a: '6', exp: '$6x-12=2x+12$.'}
+      - {type: mc, d: 2, q: '$2(x+3)=2x+5$ has...', choices: ['one solution', 'no solution', 'infinitely many solutions', 'two solutions'], a: 1, exp: 'It simplifies to $6=5$, a contradiction.'}
+    cards:
+      - {f: 'First step for an equation with fractions', b: 'Multiply both sides by the least common denominator.'}
+    fun:
+      - kind: fact
+        title: "Al-jabr: restoring balance"
+        body: |
+          "Algebra" comes from al-jabr in al-Khwarizmi's 9th-century book: moving a subtracted term
+          to the other side ("restoring") to keep the equation balanced -- exactly what you just did.
+
+  - id: al-formulas
+    title: "Solving Formulas for a Variable"
+    xp: 40
+    prereqs: [al-linear-equations]
+    readings:
+      - {book: EA, sec: "2.6", title: "Solve a Formula for a Specific Variable"}
+    summary: |
+      Treat every other letter as a known number and isolate the one you want, using the same
+      steps as for numeric equations.
+    key_ideas:
+      - 'Undo operations in reverse order (last applied, first undone).'
+      - 'Factor out the target variable if it appears in more than one term.'
+    ds: |
+      Rearranging $z=\frac{x-\mu}{\sigma}$ to $x=\mu+z\sigma$ converts standardized scores back
+      to real units -- you'll do it constantly.
+    lab: |
+      Solve $d=rt$ for $t$ and $r$; then the z-score formula for $x$. Check numerically in Python.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $d=rt$ for $t$.', choices: ['$t=dr$', '$t=\frac dr$', '$t=\frac rd$', '$t=d-r$'], a: 1, exp: 'Divide both sides by $r$.'}
+      - {type: mc, d: 2, q: 'Solve $z=\frac{x-\mu}{\sigma}$ for $x$.', choices: ['$x=z\sigma-\mu$', '$x=\mu+z\sigma$', '$x=\frac{z-\mu}{\sigma}$', '$x=z+\mu\sigma$'], a: 1, exp: 'Multiply by $\sigma$, then add $\mu$.'}
+      - {type: mc, d: 2, q: 'Solve $P=2L+2W$ for $W$.', choices: ['$W=\frac{P-2L}{2}$', '$W=P-L$', '$W=\frac P2-2L$', '$W=2P-L$'], a: 0, exp: 'Subtract $2L$, divide by 2.'}
+    cards:
+      - {f: 'Solve $z=\frac{x-\mu}{\sigma}$ for $x$', b: '$x=\mu+z\sigma$'}
+    fun:
+      - kind: fact
+        title: "Riegel's race formula"
+        body: |
+          Pete Riegel's 1977 formula $T_2=T_1\left(\frac{D_2}{D_1}\right)^{1.06}$ predicts race times
+          across distances. Solving it for $T_1$ tells you the half-marathon you'd need for a target
+          marathon -- formula rearranging with real stakes.
+
+  - id: al-word-problems
+    title: "Word Problems: Percent, Mixture & Motion"
+    xp: 60
+    prereqs: [al-formulas]
+    readings:
+      - {book: EA, sec: "3.1, 3.2, 3.3, 3.4, 3.5", title: "Problem-Solving Strategy; Percent, Mixture, Geometry and Uniform Motion Applications"}
+    summary: |
+      Read, name the unknown, translate words into an equation, solve, and check that the answer
+      makes sense. Tables organize mixture and motion problems.
+    key_ideas:
+      - 'Percent change $=\frac{\text{new}-\text{old}}{\text{old}}$.'
+      - 'Uniform motion: distance = rate × time; make a row per traveler.'
+      - 'Always answer the question asked, with units.'
+    ds: |
+      Stakeholder questions arrive as words; your first job is translating them into equations.
+      Percent change and relative lift are the most common.
+    lab: |
+      Running lab: you ran 5 miles at an unknown pace, then 3 miles 30 s/mi faster, totaling
+      64 minutes. Set up and solve for your first pace.
+    questions:
+      - {type: num, d: 1, q: 'A price goes from 80 to 92. Percent increase?', a: '15', exp: '$12/80=0.15$.'}
+      - {type: num, d: 2, q: 'After a 20% discount, a jacket costs 64. Original price?', a: '80', exp: '$0.8p=64$.'}
+      - {type: num, d: 2, q: 'Two runners start together in opposite directions at 6 and 8 mph. After how many hours are they 21 miles apart?', a: '1.5', exp: '$(6+8)t=21$.'}
+    cards:
+      - {f: 'Percent change formula', b: '$\frac{\text{new}-\text{old}}{\text{old}}\times100\%$'}
+    fun:
+      - kind: puzzle
+        title: "The out-and-back"
+        body: |
+          You run out at 6 mph and back the same route at 10 mph. What's your average speed? (It is
+          NOT 8.)
+        answer: "For $d$ miles each way: $\\frac{2d}{d/6+d/10}=7.5$ mph. Time, not distance, gets averaged equally."
+
+  - id: al-inequalities
+    title: "Linear Inequalities"
+    xp: 40
+    prereqs: [al-linear-equations]
+    readings:
+      - {book: EA, sec: "2.7", title: "Solve Linear Inequalities"}
+      - {book: EA, sec: "3.6", title: "Solve Applications with Linear Inequalities"}
+    summary: |
+      Solve like equations, but flip the inequality when multiplying or dividing by a negative.
+      Write answers on a number line or in interval notation.
+    key_ideas:
+      - 'Multiply/divide by a negative ⇒ reverse $<$ and $>$.'
+      - 'Interval notation: $x\ge3$ is $[3,\infty)$; $x<-1$ is $(-\infty,-1)$.'
+    ds: |
+      Constraints in optimization, thresholds in classification rules, and "at least / at most"
+      business rules are inequalities.
+    lab: |
+      Running lab: you need average pace under 7:38 for 26.2 miles; with 20 miles done in 152
+      minutes, write and solve the inequality for the last 6.2 miles.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $-3x+4\ge 19$.', choices: ['$x\ge-5$', '$x\le-5$', '$x\le5$', '$x\ge5$'], a: 1, exp: '$-3x\ge15$; divide by $-3$ and flip.'}
+      - {type: mc, d: 2, q: '$x>2$ in interval notation is...', choices: ['$[2,\infty)$', '$(2,\infty)$', '$(-\infty,2)$', '$(2,\infty]$'], a: 1, exp: 'Parenthesis: 2 not included; $\infty$ always gets a parenthesis.'}
+    cards:
+      - {f: 'When does an inequality flip?', b: 'When you multiply or divide both sides by a negative number.'}
+    fun:
+      - kind: fact
+        title: "The signs < and >"
+        body: |
+          Thomas Harriot introduced < and > in a book published in 1631, ten years after his death.
+          Mnemonic: the open mouth faces the bigger number.
+
+  - id: al-graphing-lines
+    title: "The Coordinate Plane & Graphing Lines"
+    xp: 40
+    prereqs: [al-linear-equations]
+    readings:
+      - {book: EA, sec: "4.1, 4.2, 4.3", title: "Rectangular Coordinate System; Graph Linear Equations; Graph with Intercepts"}
+    summary: |
+      Points are $(x,y)$ pairs. A linear equation's solutions form a line; two points (often the
+      intercepts) are enough to draw it.
+    key_ideas:
+      - '$x$-intercept: set $y=0$. $y$-intercept: set $x=0$.'
+      - 'Every point on the line satisfies the equation, and only those points do.'
+    ds: |
+      Scatter plots are the coordinate plane; a fitted regression line is a linear equation drawn
+      on top.
+    lab: |
+      Plot $2x+3y=12$ with matplotlib using its intercepts, and check three other points satisfy it.
+    questions:
+      - {type: num, d: 1, q: '$x$-intercept of $2x+3y=12$ (the $x$ value)?', a: '6', exp: 'Set $y=0$.'}
+      - {type: num, d: 1, q: '$y$-intercept of $2x+3y=12$ (the $y$ value)?', a: '4', exp: 'Set $x=0$.'}
+      - {type: mc, d: 1, q: 'Which point lies on $y=2x-1$?', choices: ['$(2,5)$', '$(3,5)$', '$(1,3)$', '$(0,1)$'], a: 1, exp: '$2(3)-1=5$.'}
+    cards:
+      - {f: 'How to find intercepts', b: 'x-intercept: set $y=0$. y-intercept: set $x=0$.'}
+    fun:
+      - kind: fact
+        title: "Fermat beat Descartes (privately)"
+        body: |
+          Pierre de Fermat developed coordinate geometry around 1636 but didn't publish; Descartes
+          published in 1637 and got the name: "Cartesian" coordinates.
+
+  - id: al-slope
+    title: "Slope & Equations of Lines"
+    xp: 60
+    prereqs: [al-graphing-lines]
+    readings:
+      - {book: EA, sec: "4.4, 4.5, 4.6", title: "Understand Slope; Slope-Intercept Form; Find the Equation of a Line"}
+    summary: |
+      Slope $m=\frac{\text{rise}}{\text{run}}=\frac{y_2-y_1}{x_2-x_1}$ is the rate of change.
+      Slope-intercept form $y=mx+b$; point-slope form $y-y_1=m(x-x_1)$.
+    key_ideas:
+      - 'Positive slope rises, negative falls, zero is horizontal, undefined is vertical.'
+      - 'Parallel lines: equal slopes. Perpendicular: slopes multiply to $-1$.'
+      - 'Slope has units: (units of $y$) per (unit of $x$).'
+    ds: |
+      A regression coefficient IS a slope: change in prediction per unit change in a feature.
+      Derivatives (calculus) are slopes of tangent lines.
+    lab: |
+      Running lab: from (mile 5, 38 min) and (mile 15, 116 min), find the slope (your pace) and
+      the line's equation. What does its intercept mean?
+    questions:
+      - {type: num, d: 1, q: 'Slope through $(2,3)$ and $(6,11)$?', a: '2', exp: '$8/4$.'}
+      - {type: expr, d: 2, var: x, q: 'Line with slope $-3$ through $(1,4)$, as $y=\dots$', a: '-3x+7', exp: '$y-4=-3(x-1)$.'}
+      - {type: num, d: 2, q: 'Slope of a line perpendicular to $y=\frac{2}{5}x+1$?', a: '-5/2', exp: 'Negative reciprocal.'}
+    cards:
+      - {f: 'Slope formula', b: '$m=\frac{y_2-y_1}{x_2-x_1}$'}
+      - {f: 'Point-slope form', b: '$y-y_1=m(x-x_1)$'}
+    fun:
+      - kind: fact
+        title: "Why m?"
+        body: |
+          Nobody knows for sure why slope is "m". A popular myth says French "monter" (to climb);
+          historians have found no evidence. Some math mysteries are just naming accidents.
+
+  - id: al-systems
+    title: "Systems of Linear Equations"
+    xp: 60
+    prereqs: [al-slope]
+    readings:
+      - {book: EA, sec: "5.1, 5.2, 5.3, 5.4", title: "Systems by Graphing, Substitution and Elimination; Applications"}
+    summary: |
+      Two lines meet in one point (one solution), are parallel (none), or coincide (infinitely
+      many). Solve by substitution or elimination.
+    key_ideas:
+      - 'Substitution: solve one equation for a variable, plug into the other.'
+      - 'Elimination: scale and add equations to cancel a variable.'
+      - 'Check the solution in BOTH original equations.'
+    ds: |
+      Linear regression solves a (large) system of linear equations; matrices (later) are the
+      bookkeeping for systems with many unknowns.
+    lab: |
+      Solve $2x+3y=12$, $x-y=1$ by hand, then with `np.linalg.solve`.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $x+y=10$, $x-y=4$.', choices: ['$(7,3)$', '$(3,7)$', '$(6,4)$', '$(5,5)$'], a: 0, exp: 'Add: $2x=14$.'}
+      - {type: mc, d: 2, q: 'Solve $2x+3y=12$, $x-y=1$.', choices: ['$(3,2)$', '$(2,3)$', '$(3,1)$', '$(0,4)$'], a: 0, exp: '$x=y+1$; $2y+2+3y=12$ gives $y=2$.'}
+      - {type: mc, d: 2, q: '$y=2x+1$ and $y=2x-3$ have...', choices: ['one solution', 'no solution', 'infinitely many', 'the solution $(1,3)$'], a: 1, exp: 'Same slope, different intercepts: parallel.'}
+    cards:
+      - {f: 'Possible numbers of solutions of a 2×2 linear system', b: '0 (parallel), 1 (intersecting), or infinitely many (same line).'}
+    fun:
+      - kind: puzzle
+        title: "Chickens and rabbits"
+        body: |
+          A classic Chinese puzzle (Sunzi, ~400 AD): a cage holds 35 heads and 94 feet of chickens
+          and rabbits. How many of each?
+        answer: "23 chickens and 12 rabbits ($c+r=35$, $2c+4r=94$)."
+
+  - id: al-exponents
+    title: "Exponent Rules & Scientific Notation"
+    xp: 50
+    prereqs: [al-expressions]
+    readings:
+      - {book: EA, sec: "6.2", title: "Use Multiplication Properties of Exponents"}
+      - {book: EA, sec: "6.5", title: "Divide Monomials"}
+      - {book: EA, sec: "6.7", title: "Integer Exponents and Scientific Notation"}
+    summary: |
+      $a^ma^n=a^{m+n}$, $\frac{a^m}{a^n}=a^{m-n}$, $(a^m)^n=a^{mn}$, $a^0=1$, $a^{-n}=\frac1{a^n}$.
+      Scientific notation writes numbers as $c\times10^k$ with $1\le c<10$.
+    key_ideas:
+      - 'Add exponents when multiplying the same base; multiply exponents for a power of a power.'
+      - '$(ab)^n=a^nb^n$ but $(a+b)^n\ne a^n+b^n$.'
+      - 'Negative exponent = reciprocal, not a negative number.'
+    ds: |
+      Learning rates ($3\times10^{-4}$), dataset sizes ($10^9$ rows) and floating-point limits are
+      powers of ten; exponent rules power every log transform.
+    lab: |
+      Compute $(2\times10^{5})(3\times10^{-8})$ by hand and with Python's `2e5 * 3e-8`.
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Simplify $x^3\cdot x^5$.', a: 'x^8', exp: 'Add exponents.'}
+      - {type: expr, d: 2, var: x, q: 'Simplify $\frac{(x^2)^4}{x^3}$.', a: 'x^5', exp: '$x^8/x^3$.'}
+      - {type: num, d: 1, q: 'Evaluate $2^{-3}$.', a: '1/8', exp: '$1/2^3$.'}
+      - {type: num, d: 2, q: 'Compute $(4\times10^{3})(2.5\times10^{-5})$ as a decimal.', a: '0.1', exp: '$10\times10^{-2}$.'}
+    cards:
+      - {f: '$a^{-n}$', b: '$\frac{1}{a^n}$'}
+      - {f: '$(a^m)^n$', b: '$a^{mn}$'}
+    fun:
+      - kind: fact
+        title: "A googol of grains"
+        body: |
+          Archimedes' "Sand Reckoner" (~250 BC) estimated the grains of sand needed to fill the
+          universe -- about $10^{63}$ -- inventing a notation for huge powers along the way.
+
+  - id: al-polynomials
+    title: "Polynomials: Add, Subtract, Multiply, Special Products"
+    xp: 50
+    prereqs: [al-exponents]
+    readings:
+      - {book: EA, sec: "6.1", title: "Add and Subtract Polynomials"}
+      - {book: EA, sec: "6.3, 6.4", title: "Multiply Polynomials; Special Products"}
+    summary: |
+      Combine like terms to add; distribute every term to multiply (FOIL for binomials). Learn the
+      special products by heart: squares of binomials and the difference of squares.
+    key_ideas:
+      - '$(a+b)^2=a^2+2ab+b^2$ (not $a^2+b^2$!).'
+      - '$(a+b)(a-b)=a^2-b^2$.'
+      - 'Degree = highest exponent; standard form lists terms from highest to lowest degree.'
+    ds: |
+      Polynomial features ($x$, $x^2$, $xy$) let linear models fit curves. Expanding
+      $(y-\hat y)^2$ is the first step of deriving least squares.
+    lab: |
+      Expand $(x-3)^2$ and $(2x+1)(x-4)$ by hand; check with `sympy.expand`.
+    questions:
+      - {type: expr, d: 1, var: x, q: 'Expand $(x-3)^2$.', a: 'x^2-6x+9', exp: '$(a-b)^2$ pattern.'}
+      - {type: expr, d: 1, var: x, q: 'Expand $(2x+1)(x-4)$.', a: '2x^2-7x-4', exp: '$2x^2-8x+x-4$.'}
+      - {type: expr, d: 2, var: x, q: 'Simplify $(3x^2-2x+5)-(x^2+4x-1)$.', a: '2x^2-6x+6', exp: 'Distribute the minus to every term.'}
+    cards:
+      - {f: '$(a+b)^2$', b: '$a^2+2ab+b^2$'}
+      - {f: '$(a+b)(a-b)$', b: '$a^2-b^2$'}
+    fun:
+      - kind: puzzle
+        title: "Mental squaring"
+        body: |
+          Use $(a+b)^2=a^2+2ab+b^2$ to compute $51^2$ in your head.
+        answer: "$50^2+2\\cdot50\\cdot1+1=2601$."
+
+  - id: al-factoring
+    title: "Factoring: GCF, Grouping & Trinomials"
+    xp: 70
+    prereqs: [al-polynomials]
+    readings:
+      - {book: EA, sec: "7.1, 7.2, 7.3", title: "GCF and Grouping; Factor Trinomials (x² + bx + c and ax² + bx + c)"}
+    summary: |
+      Factoring reverses multiplication. Always pull out the greatest common factor first, then
+      look for trinomial patterns: find two numbers that multiply to $c$ and add to $b$.
+    key_ideas:
+      - 'GCF first: $6x^2+9x=3x(2x+3)$.'
+      - '$x^2+bx+c=(x+p)(x+q)$ where $pq=c$, $p+q=b$.'
+      - 'For $ax^2+bx+c$: the "ac method" (split the middle term) or trial and error.'
+    ds: |
+      Factoring finds zeros (where a function crosses 0) and simplifies expressions before
+      differentiating -- a calculus prerequisite.
+    lab: |
+      Factor five trinomials by hand, then check each with `sympy.factor`.
+    questions:
+      - {type: mc, d: 1, q: 'Factor $x^2+7x+12$.', choices: ['$(x+3)(x+4)$', '$(x+2)(x+6)$', '$(x+1)(x+12)$', '$(x-3)(x-4)$'], a: 0, exp: '$3\cdot4=12$, $3+4=7$.'}
+      - {type: mc, d: 2, q: 'Factor $x^2-2x-15$.', choices: ['$(x-5)(x+3)$', '$(x+5)(x-3)$', '$(x-15)(x+1)$', '$(x-5)(x-3)$'], a: 0, exp: '$-5\cdot3=-15$, $-5+3=-2$.'}
+      - {type: mc, d: 2, q: 'Factor $2x^2+7x+3$.', choices: ['$(2x+1)(x+3)$', '$(2x+3)(x+1)$', '$(x+7)(2x+3)$', '$(2x-1)(x-3)$'], a: 0, exp: 'Check: $2x^2+6x+x+3$.'}
+      - {type: mc, d: 1, q: 'Factor $6x^3-9x^2$ completely.', choices: ['$3x^2(2x-3)$', '$3x(2x^2-3x)$', '$x^2(6x-9)$', '$6x^2(x-9)$'], a: 0, exp: 'GCF is $3x^2$.'}
+    cards:
+      - {f: 'First step in every factoring problem', b: 'Factor out the greatest common factor.'}
+      - {f: 'Factoring $x^2+bx+c$', b: 'Find $p,q$ with $pq=c$ and $p+q=b$: $(x+p)(x+q)$.'}
+    fun:
+      - kind: fact
+        title: "Factoring keeps the internet safe"
+        body: |
+          Factoring polynomials is easy; factoring huge integers is so hard that RSA encryption
+          relies on it. A 2048-bit key would take classical computers far longer than the age of
+          the universe to factor.
+
+  - id: al-special-factoring
+    title: "Special Factoring Patterns & Solving by Factoring"
+    xp: 60
+    prereqs: [al-factoring]
+    readings:
+      - {book: EA, sec: "7.4, 7.5, 7.6", title: "Factor Special Products; General Strategy; Quadratic Equations"}
+    summary: |
+      Recognize $a^2-b^2$, perfect-square trinomials and sums/differences of cubes. Then solve
+      equations: get 0 on one side, factor, and set each factor to 0 (zero product property).
+    key_ideas:
+      - '$a^2-b^2=(a-b)(a+b)$; $a^2\pm2ab+b^2=(a\pm b)^2$.'
+      - '$a^3\pm b^3=(a\pm b)(a^2\mp ab+b^2)$.'
+      - 'Zero product property: $AB=0\Rightarrow A=0$ or $B=0$. Only works with 0 on one side!'
+    ds: |
+      Setting a factored expression to zero is how you find where a loss, a profit, or a
+      velocity is zero -- the starting move of optimization.
+    lab: |
+      Solve $x^2-5x=0$ by factoring, then plot $y=x^2-5x$ and see the two zeros.
+    questions:
+      - {type: mc, d: 1, q: 'Factor $x^2-49$.', choices: ['$(x-7)^2$', '$(x-7)(x+7)$', '$(x+7)^2$', 'does not factor'], a: 1, exp: 'Difference of squares.'}
+      - {type: mc, d: 2, q: 'Solutions of $x^2-5x=0$?', choices: ['$\{5\}$', '$\{0,5\}$', '$\{0,-5\}$', '$\{-5,5\}$'], a: 1, exp: '$x(x-5)=0$. Don''t divide by $x$: you''d lose $x=0$.'}
+      - {type: mc, d: 2, q: 'Solutions of $x^2+x-6=0$?', choices: ['$\{2,-3\}$', '$\{-2,3\}$', '$\{1,-6\}$', '$\{6,-1\}$'], a: 0, exp: '$(x+3)(x-2)=0$.'}
+    cards:
+      - {f: 'Zero product property', b: 'If $AB=0$ then $A=0$ or $B=0$ (needs 0 on one side).'}
+    fun:
+      - kind: puzzle
+        title: "The disappearing root"
+        body: |
+          A student "solves" $x^2=5x$ by dividing both sides by $x$ to get $x=5$. What did they
+          lose, and why?
+        answer: "$x=0$. Dividing by $x$ silently assumes $x\\ne0$. Factor instead: $x(x-5)=0$."

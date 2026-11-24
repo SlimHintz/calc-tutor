@@ -1,0 +1,307 @@
+unit:
+  id: U06
+  ord: 110
+  course: core
+  title: "Multivariable Differential Calculus"
+  constellation: "The Landscape"
+  color: "#ffd166"
+  blurb: |
+    Real models have many parameters. Here functions take vectors in and produce surfaces;
+    derivatives become gradients pointing uphill on a loss landscape.
+  ds_why: |
+    Every loss function is multivariable. The gradient is the steering wheel of training;
+    the Hessian describes the terrain; Lagrange multipliers handle constraints (SVMs,
+    max-entropy, portfolio optimization).
+
+topics:
+  - id: mv-vectors
+    title: "Vectors & the Dot Product"
+    xp: 60
+    optional: true
+    prereqs: [fn-basics]
+    readings:
+      - {book: STW, sec: "12.1-12.3", title: "3-D Coordinates; Vectors; The Dot Product"}
+      - {book: PRE, sec: "8.4-8.5", title: "Vectors; The Dot Product"}
+      - {book: OS3, sec: "2.1", title: "Vectors in the Plane"}
+      - {book: OS3, sec: "2.2", title: "Vectors in Three Dimensions"}
+      - {book: OS3, sec: "2.3", title: "The Dot Product"}
+    summary: |
+      Vectors have magnitude and direction. $\mathbf a\cdot\mathbf b=\sum a_ib_i=\|\mathbf
+      a\|\|\mathbf b\|\cos\theta$ measures alignment; projections decompose vectors.
+    key_ideas:
+      - '$\|\mathbf v\|=\sqrt{\mathbf v\cdot\mathbf v}$.'
+      - '$\mathbf a\cdot\mathbf b=0$ iff perpendicular (orthogonal).'
+      - 'Projection of $\mathbf b$ onto $\mathbf a$: $\frac{\mathbf a\cdot\mathbf b}{\|\mathbf a\|^2}\mathbf a$.'
+    ds: |
+      Cosine similarity (embeddings, search, recommendation) is the normalized dot product. A
+      linear model's prediction $\mathbf w\cdot\mathbf x$ is a dot product. Attention in
+      transformers is dot products all the way down.
+    lab: |
+      Compute cosine similarity between a few sentence embeddings (or simple word-count
+      vectors). Which pairs are closest? Why normalize?
+    questions:
+      - {type: num, d: 1, q: '$(1,2,3)\cdot(4,-5,6)$', a: '12', exp: '$4-10+18$.'}
+      - {type: num, d: 1, q: '$\|(3,4)\|$', a: '5', exp: '$\sqrt{9+16}$.'}
+      - {type: num, d: 2, q: 'Cosine similarity of $(1,0)$ and $(1,1)$ (exact or decimal).', a: '1/sqrt(2)', exp: '$\frac{1}{1\cdot\sqrt2}$, i.e. 45 degrees.'}
+    cards:
+      - {f: 'Dot product, geometric form', b: '$\mathbf a\cdot\mathbf b=\|\mathbf a\|\|\mathbf b\|\cos\theta$'}
+      - {f: 'Cosine similarity', b: '$\frac{\mathbf a\cdot\mathbf b}{\|\mathbf a\|\|\mathbf b\|}$'}
+    fun:
+      - kind: fact
+        title: "king - man + woman ≈ queen"
+        body: |
+          Word2vec (2013) famously found that vector arithmetic on word embeddings captures
+          meaning, with closeness measured by cosine similarity, i.e. dot products from this
+          lesson. It's part truth, part cherry-picking -- but it launched the embedding era.
+
+  - id: mv-functions
+    title: "Functions of Several Variables & Level Sets"
+    xp: 50
+    prereqs: [la-dot, lim-continuity]
+    readings:
+      - {book: STW, sec: "14.1", title: "Functions of Several Variables"}
+      - {book: STW, sec: "14.2", title: "Limits and Continuity"}
+      - {book: OS3, sec: "4.1", title: "Functions of Several Variables"}
+      - {book: OS3, sec: "4.2", title: "Limits and Continuity"}
+    summary: |
+      $f(x,y)$ is a surface; its level curves $f(x,y)=c$ form a contour map. Loss landscapes
+      are exactly this, in many more dimensions.
+    key_ideas:
+      - 'Graph of $z=f(x,y)$ is a surface; level curves are horizontal slices.'
+      - 'Closely spaced contours = steep terrain.'
+      - 'Multivariable limits must agree along EVERY path.'
+    ds: |
+      Contour plots of loss vs. two parameters show elongated "valleys" (ill-conditioning)
+      that make gradient descent zig-zag -- the motivation for momentum and Adam.
+    lab: |
+      Make a contour plot of $L(w_1,w_2)=w_1^2+10w_2^2$ with matplotlib. Then the Rosenbrock
+      function $(1-x)^2+100(y-x^2)^2$. Where's the minimum? Why is it hard?
+    questions:
+      - {type: mc, d: 1, q: 'Level curves of $f(x,y)=x^2+y^2$ are...', choices: ['lines', 'parabolas', 'circles', 'hyperbolas'], a: 2, exp: '$x^2+y^2=c$.'}
+      - {type: mc, d: 2, q: 'Level curves of $L=w_1^2+10w_2^2$ are ellipses that are...', choices: ['stretched along $w_1$', 'stretched along $w_2$', 'circles', 'lines'], a: 0, exp: 'Shallow in $w_1$ (coefficient 1), steep in $w_2$: long axis along $w_1$.'}
+    cards:
+      - {f: 'Contour lines close together mean...', b: 'Steep terrain (large gradient).'}
+    fun:
+      - kind: fact
+        title: "Topographic maps are calculus"
+        body: |
+          Every trail map's contour lines are level curves of an elevation function $h(x,y)$.
+          Spotting the steep part of your marathon course on a contour map = reading gradient
+          magnitude from line spacing.
+
+  - id: mv-partials
+    title: "Partial Derivatives"
+    xp: 80
+    prereqs: [mv-functions, d-chain]
+    readings:
+      - {book: STW, sec: "14.3", title: "Partial Derivatives"}
+      - {book: OS3, sec: "4.3", title: "Partial Derivatives"}
+    videos:
+      - {book: KA-MV, n: 0, title: "Partial derivatives, introduction"}
+    summary: |
+      $\frac{\partial f}{\partial x}$: differentiate with respect to $x$, treating every other
+      variable as a constant. Mixed partials commute (Clairaut).
+    key_ideas:
+      - 'Hold others fixed; differentiate in one variable.'
+      - 'Second partials $f_{xx}, f_{xy}, f_{yy}$; $f_{xy}=f_{yx}$ for nice functions.'
+      - 'Partial derivative = slope of a slice of the surface.'
+    ds: |
+      $\frac{\partial L}{\partial w_j}$: how the loss responds to nudging one weight. In linear
+      regression, $\frac{\partial\hat y}{\partial x_j}=\beta_j$ -- the "holding all else
+      constant" interpretation of a coefficient.
+    lab: |
+      With sympy, compute all first and second partials of $f=x^2y+e^{xy}$. Verify
+      $f_{xy}=f_{yx}$.
+    questions:
+      - {type: expr, d: 1, var: 'x,y', q: '$\frac{\partial}{\partial x}(x^2y+3y^2)$', a: '2x*y', exp: 'Treat $y$ as constant.'}
+      - {type: expr, d: 1, var: 'x,y', q: '$\frac{\partial}{\partial y}(x^2y+3y^2)$', a: 'x^2+6y', exp: 'Treat $x$ as constant.'}
+      - {type: expr, d: 2, var: 'x,y', q: '$\frac{\partial}{\partial x}e^{xy}$', a: 'y*e^(x*y)', exp: 'Chain rule with $y$ constant.'}
+      - {type: expr, d: 2, var: 'x,y', q: '$f_{xy}$ for $f=x^3y^2$', a: '6x^2*y', exp: '$f_x=3x^2y^2$, then $\partial_y$: $6x^2y$.'}
+    cards:
+      - {f: 'How to compute $\partial f/\partial x$', b: 'Differentiate in $x$ treating all other variables as constants.'}
+      - {f: 'Clairaut''s theorem', b: '$f_{xy}=f_{yx}$ when second partials are continuous.'}
+    fun:
+      - kind: fact
+        title: "Ceteris paribus"
+        body: |
+          Economists' favourite Latin, "ceteris paribus" ("all else equal"), is a partial
+          derivative in disguise. So is every regression coefficient interpretation you've
+          ever read.
+
+  - id: mv-tangent
+    title: "Tangent Planes & Linear Approximation"
+    xp: 50
+    prereqs: [mv-partials, app-linear]
+    readings:
+      - {book: STW, sec: "14.4", title: "Tangent Planes and Linear Approximations"}
+      - {book: OS3, sec: "4.4", title: "Tangent Planes and Linear Approximations"}
+    summary: |
+      $f(\mathbf x)\approx f(\mathbf a)+\nabla f(\mathbf a)\cdot(\mathbf x-\mathbf a)$: near a
+      point, a smooth surface looks like a plane.
+    key_ideas:
+      - 'Tangent plane: $z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)$.'
+      - 'Differentiable means "well-approximated by a plane" (stronger than partials existing).'
+    ds: |
+      First-order methods treat the loss as locally planar. LIME explains black-box models
+      by fitting exactly this local linear approximation.
+    lab: |
+      Linearize $f(x,y)=\sqrt{x^2+y^2}$ at $(3,4)$ and estimate $f(3.1,3.9)$. Compare with
+      the true value.
+    questions:
+      - {type: expr, d: 2, var: 'x,y', q: 'Tangent plane to $z=x^2+y^2$ at $(1,1)$: $z=?$', a: '2+2(x-1)+2(y-1)', exp: '$f=2$, $f_x=f_y=2$.'}
+      - {type: num, d: 2, q: 'Linearize $f(x,y)=xy$ at $(2,3)$ to estimate $f(2.1, 2.9)$.', a: '6.1', exp: '$6+3(0.1)+2(-0.1)=6.1$ (true 6.09).'}
+    cards:
+      - {f: 'Multivariable linearization', b: '$f(\mathbf x)\approx f(\mathbf a)+\nabla f(\mathbf a)\cdot(\mathbf x-\mathbf a)$'}
+    fun:
+      - kind: fact
+        title: "Flat Earth, locally"
+        body: |
+          The Earth looks flat because a sphere's tangent plane is an excellent approximation
+          over a few miles. Surveyors use the same linearization -- and correct with the
+          next Taylor term on long distances.
+
+  - id: mv-chain
+    title: "Multivariable Chain Rule & Computational Graphs"
+    xp: 90
+    prereqs: [mv-partials, d-chain]
+    readings:
+      - {book: STW, sec: "14.5", title: "The Chain Rule"}
+      - {book: OS3, sec: "4.5", title: "The Chain Rule"}
+      - {book: MML, sec: "5.2.2", title: "Chain Rule (partial differentiation)"}
+    summary: |
+      If $z=f(x,y)$ with $x(t),y(t)$: $\frac{dz}{dt}=\frac{\partial f}{\partial x}\frac{dx}{dt}+
+      \frac{\partial f}{\partial y}\frac{dy}{dt}$. Sum over every path from input to output.
+    key_ideas:
+      - 'Tree diagram: multiply along each path, add across paths.'
+      - 'A computational graph is that tree diagram drawn by a computer.'
+    ds: |
+      This is backprop in miniature: when a variable feeds multiple downstream nodes, their
+      gradient contributions add up. PyTorch's `.grad` accumulates for exactly this reason.
+    lab: |
+      Draw the computational graph for $L=(wx+b-y)^2$. Compute $\partial L/\partial w$ by hand
+      via the chain rule, then with `torch.autograd` for $w=2,x=3,b=1,y=5$.
+    questions:
+      - {type: expr, d: 2, var: t, q: '$z=x^2y$, $x=t^2$, $y=3t$. Find $dz/dt$ via chain rule (in $t$).', a: '15t^4', exp: '$z=3t^5$ directly, or $2xy\cdot2t+x^2\cdot3=12t^4+3t^4$.'}
+      - {type: num, d: 2, q: '$L=(wx+b-y)^2$ with $w=2,x=3,b=1,y=5$. Find $\partial L/\partial w$.', a: '12', exp: '$2(wx+b-y)\cdot x=2(2)(3)=12$.'}
+      - {type: num, d: 2, q: 'Same setup: $\partial L/\partial b$.', a: '4', exp: '$2(wx+b-y)\cdot1=4$.'}
+    cards:
+      - {f: 'Multivariable chain rule (tree rule)', b: 'Multiply partials along each path from input to output; sum over paths.'}
+      - {f: 'Why do gradients accumulate (+=) in autodiff?', b: 'A variable used in several places gets the SUM of gradient contributions along all paths.'}
+    fun:
+      - kind: puzzle
+        title: "Gradient by hand, like it's 1986"
+        body: |
+          Neuron: $a=\sigma(wx+b)$, loss $L=\frac12(a-y)^2$. With $w=0, b=0, x=1, y=1$,
+          compute $\partial L/\partial w$. You just did one step of backprop by hand.
+        answer: "$a=\\sigma(0)=0.5$; $\\partial L/\\partial w=(a-y)\\,\\sigma'(0)\\,x=(-0.5)(0.25)(1)=-0.125$."
+
+  - id: mv-gradient
+    title: "Directional Derivatives & the Gradient"
+    xp: 100
+    prereqs: [mv-chain, mv-tangent]
+    readings:
+      - {book: STW, sec: "14.6", title: "Directional Derivatives and the Gradient Vector"}
+      - {book: OS3, sec: "4.6", title: "Directional Derivatives and the Gradient"}
+      - {book: MML, sec: "5.2", title: "Partial Differentiation and Gradients"}
+    summary: |
+      $\nabla f=(f_{x_1},\dots,f_{x_n})$. The rate of change in unit direction $\mathbf u$ is
+      $\nabla f\cdot\mathbf u$; it's largest along $\nabla f$, with value $\|\nabla f\|$.
+      $\nabla f$ is perpendicular to level sets.
+    key_ideas:
+      - 'Gradient points in the direction of steepest ascent.'
+      - '$-\nabla f$ is steepest descent.'
+      - 'Gradient is orthogonal to level curves.'
+      - 'Directional derivative $D_{\mathbf u}f=\nabla f\cdot\mathbf u$ ($\|\mathbf u\|=1$).'
+    ds: |
+      "Why does gradient descent use $-\nabla L$?" -- because of this theorem. Gradient
+      magnitude near zero means a flat region (convergence or a plateau).
+    lab: |
+      On the contour plot of $w_1^2+10w_2^2$, draw gradient arrows with `plt.quiver`. Confirm
+      they're perpendicular to the contours.
+    questions:
+      - {type: mc, d: 1, q: 'Direction of steepest INCREASE of $f$ at a point?', choices: ['$-\nabla f$', '$\nabla f$', 'along a level curve', 'any direction'], a: 1, exp: 'Steepest ascent.'}
+      - {type: num, d: 2, q: '$f=x^2+3y$. Directional derivative at $(1,1)$ in direction $\mathbf u=(0.6, 0.8)$?', a: '3.6', exp: '$\nabla f=(2,3)$; $2(0.6)+3(0.8)=3.6$.'}
+      - {type: num, d: 2, q: 'Max rate of increase of $f=x^2+3y$ at $(1,1)$?', a: 'sqrt(13)', exp: '$\|(2,3)\|=\sqrt{13}$.'}
+    cards:
+      - {f: 'Steepest ascent direction & rate', b: 'Direction $\nabla f$; rate $\|\nabla f\|$.'}
+      - {f: 'Gradient vs level curves', b: 'Gradient is perpendicular to level curves.'}
+    fun:
+      - kind: fact
+        title: "Water knows calculus"
+        body: |
+          Rain on a hillside flows along $-\nabla h$, perpendicular to the contour lines.
+          River networks trace gradient descent paths on terrain -- nature's original
+          optimization algorithm.
+
+  - id: mv-extrema
+    title: "Multivariable Extrema & the Hessian"
+    xp: 90
+    prereqs: [mv-gradient, app-shape, la-eigen]
+    readings:
+      - {book: STW, sec: "14.7", title: "Maximum and Minimum Values"}
+      - {book: OS3, sec: "4.7", title: "Maxima/Minima Problems"}
+    summary: |
+      Critical points: $\nabla f=\mathbf 0$. The Hessian $H$ (matrix of second partials)
+      classifies them: positive definite => min, negative definite => max, mixed => saddle.
+    key_ideas:
+      - '2-D test: $D=f_{xx}f_{yy}-f_{xy}^2$. $D>0,f_{xx}>0$ min; $D>0,f_{xx}<0$ max; $D<0$ saddle.'
+      - 'Eigenvalues of $H$ = curvatures along principal directions.'
+      - 'Condition number $\lambda_{max}/\lambda_{min}$ measures how elongated the valley is.'
+    ds: |
+      The Hessian's eigenvalues decide the max stable learning rate ($\eta<2/\lambda_{max}$)
+      and how slowly GD converges (condition number). Saddle points dominate deep-learning
+      landscapes.
+    lab: |
+      Compute the Hessian of $w_1^2+10w_2^2$ and its eigenvalues with numpy. Predict the
+      largest stable learning rate, then confirm by running GD.
+    questions:
+      - {type: mc, d: 2, q: '$f(x,y)=x^2-y^2$ at the origin is a...', choices: ['min', 'max', 'saddle', 'not critical'], a: 2, exp: '$D=(2)(-2)-0<0$.'}
+      - {type: num, d: 2, q: 'For $f=x^2+xy+y^2$, compute $D=f_{xx}f_{yy}-f_{xy}^2$ at the origin.', a: '3', exp: '$2\cdot2-1=3>0$, $f_{xx}>0$: min.'}
+      - {type: num, d: 3, q: 'Hessian of $w_1^2+10w_2^2$ has eigenvalues 2 and 20. Condition number?', a: '10', exp: '$20/2$.'}
+    cards:
+      - {f: '2-D second derivative test', b: '$D=f_{xx}f_{yy}-f_{xy}^2$: $D>0$ & $f_{xx}>0$ min; $D>0$ & $f_{xx}<0$ max; $D<0$ saddle.'}
+      - {f: 'Hessian', b: 'Matrix of second partials $H_{ij}=\partial^2f/\partial x_i\partial x_j$.'}
+    fun:
+      - kind: fact
+        title: "The Pringle"
+        body: |
+          A Pringles chip is a hyperbolic paraboloid: $z=x^2-y^2$, the textbook saddle point.
+          Along one direction it curves up, along the other down. Snack-based mathematics.
+
+  - id: mv-lagrange
+    title: "Lagrange Multipliers"
+    xp: 90
+    prereqs: [mv-extrema]
+    readings:
+      - {book: STW, sec: "14.8", title: "Lagrange Multipliers"}
+      - {book: OS3, sec: "4.8", title: "Lagrange Multipliers"}
+      - {book: MML, sec: "7.2", title: "Constrained Optimization and Lagrange Multipliers"}
+    summary: |
+      Optimize $f$ subject to $g=c$: at the optimum, $\nabla f=\lambda\nabla g$ (gradients
+      parallel -- the level curve of $f$ just touches the constraint).
+    key_ideas:
+      - 'Solve $\nabla f=\lambda\nabla g$ together with $g=c$.'
+      - '$\lambda$ = sensitivity of the optimum to the constraint (shadow price).'
+      - 'Lagrangian $\mathcal L=f-\lambda(g-c)$; set all partials to zero.'
+    ds: |
+      Ridge regression is constrained least squares in disguise. SVMs, maximum entropy
+      models, and portfolio optimization are all Lagrangian problems.
+    lab: |
+      Maximize entropy $-\sum p_i\ln p_i$ subject to $\sum p_i=1$ with Lagrange multipliers
+      (answer: uniform). Verify with `scipy.optimize.minimize` and an equality constraint.
+    questions:
+      - {type: num, d: 2, q: 'Maximize $f=xy$ subject to $x+y=10$. Max value?', a: '25', exp: '$y=\lambda, x=\lambda$ so $x=y=5$.'}
+      - {type: num, d: 3, q: 'Minimize $x^2+y^2$ subject to $x+2y=5$. Min value?', a: '5', exp: '$(2x,2y)=\lambda(1,2)$ => $y=2x$, $x=1,y=2$: value 5.'}
+      - {type: mc, d: 2, q: 'At a constrained optimum, $\nabla f$ and $\nabla g$ are...', choices: ['perpendicular', 'parallel', 'both zero', 'unrelated'], a: 1, exp: '$\nabla f=\lambda\nabla g$.'}
+    cards:
+      - {f: 'Lagrange condition', b: '$\nabla f=\lambda\nabla g$ and $g(\mathbf x)=c$'}
+      - {f: 'Interpretation of $\lambda$', b: 'Rate of change of the optimal value as the constraint level $c$ changes.'}
+    fun:
+      - kind: puzzle
+        title: "Maximum entropy dice"
+        body: |
+          A die has unknown probabilities, but you know only $\sum p_i=1$. Lagrange + max
+          entropy says assume uniform. If you also know the average roll is 4.5 (not 3.5),
+          max entropy says $p_i\propto e^{\beta i}$ -- an exponential family. Puzzle: does
+          $\beta$ come out positive or negative?
+        answer: "Positive -- higher faces must be more likely to push the mean up."

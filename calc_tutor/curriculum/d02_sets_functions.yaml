@@ -1,0 +1,258 @@
+unit:
+  id: D02
+  ord: 20
+  course: core
+  title: "Sets, Functions & Relations"
+  constellation: "The Lattice"
+  color: "#4db6ac"
+  blurb: |
+    The data structures of mathematics: sets, functions viewed as general mappings, and
+    relations -- including the equivalence relations that partition the world into groups.
+  ds_why: |
+    Joins, group-bys, deduplication, hashing, train/test splits and categorical encodings are
+    set operations, functions and equivalence relations in disguise.
+
+topics:
+  - id: dm-sets
+    title: "Sets & Set Operations"
+    xp: 50
+    prereqs: [dm-propositional]
+    readings:
+      - {book: EPP, sec: "5.1", title: "Basic Definitions of Set Theory"}
+      - {book: EPP, sec: "5.2", title: "Properties of Sets"}
+      - {book: KBR, sec: "1.1-1.2", title: "Sets and Subsets; Operations on Sets"}
+    summary: |
+      Union, intersection, difference, complement, Cartesian product, power set. Set identities
+      mirror logical equivalences.
+    key_ideas:
+      - '$|A\cup B|=|A|+|B|-|A\cap B|$.'
+      - 'Power set of an $n$-element set has $2^n$ elements.'
+      - '$|A\times B|=|A|\cdot|B|$.'
+      - 'De Morgan for sets: $(A\cup B)^c=A^c\cap B^c$.'
+    ds: |
+      SQL INNER/OUTER/ANTI joins are intersection, union and difference of key sets. A
+      cross join is a Cartesian product -- and why it explodes. Feature subsets for selection
+      come from a power set ($2^n$ -- hence greedy selection).
+    lab: |
+      With pandas, create two tables of run IDs (Strava vs Garmin) and compute matches,
+      Strava-only and Garmin-only with merges (`indicator=True`). Map each to a set operation.
+    questions:
+      - {type: num, d: 1, q: '$|A|=20$, $|B|=15$, $|A\cap B|=6$. Find $|A\cup B|$.', a: '29', exp: '$20+15-6$.'}
+      - {type: num, d: 1, q: 'How many subsets does a set of 10 features have?', a: '1024', exp: '$2^{10}$.'}
+      - {type: num, d: 1, q: 'A cross join of a 1000-row table with a 365-row date table has how many rows?', a: '365000', exp: '$|A\times B|=|A||B|$.'}
+    cards:
+      - {f: 'Inclusion-exclusion for two sets', b: '$|A\cup B|=|A|+|B|-|A\cap B|$'}
+      - {f: 'Size of the power set', b: '$2^n$'}
+    fun:
+      - kind: fact
+        title: "Venn's diagrams"
+        body: |
+          John Venn popularized his diagrams in 1880. There's no way to draw a Venn diagram
+          for 4+ sets with circles that shows every region -- you need ellipses or stranger
+          shapes. Venn diagrams for 7 sets exist and look like flowers.
+
+  - id: dm-functions
+    title: "Functions: One-to-One, Onto, Inverses & Composition"
+    xp: 60
+    prereqs: [dm-sets, fn-basics]
+    readings:
+      - {book: EPP, sec: "7.1", title: "Functions Defined on General Sets"}
+      - {book: EPP, sec: "7.2", title: "One-to-One and Onto, Inverse Functions"}
+      - {book: EPP, sec: "7.4", title: "Composition of Functions"}
+      - {book: KBR, sec: "5.1-5.2", title: "Functions; Functions for Computer Science"}
+    summary: |
+      A function $f:X\to Y$ assigns each $x$ exactly one $y$. Injective (one-to-one), surjective
+      (onto), bijective (both, so invertible).
+    key_ideas:
+      - 'Injective: $f(a)=f(b)\Rightarrow a=b$. Surjective: every $y$ is hit.'
+      - 'Bijection $\iff$ inverse function exists.'
+      - 'Composition of injections is injective; of surjections is surjective.'
+    ds: |
+      A hash function is deliberately NOT injective (collisions). Label encoding must be a
+      bijection or you lose information. Lossy compression and dimensionality reduction
+      ($\mathbb R^{100}\to\mathbb R^2$) can't be injective, which is why they lose detail.
+    lab: |
+      Check whether `hash(x) % 16` is injective on 20 strings (pigeonhole says no!). Then
+      verify sklearn's `LabelEncoder` round-trips via `inverse_transform`.
+    questions:
+      - {type: mc, d: 1, q: '$f:\mathbb Z\to\mathbb Z$, $f(n)=2n$ is...', choices: ['injective but not surjective', 'surjective but not injective', 'bijective', 'neither'], a: 0, exp: 'Distinct inputs give distinct outputs, but odd numbers are never hit.'}
+      - {type: mc, d: 2, q: 'A map from 100 users to 10 buckets can be...', choices: ['injective', 'surjective', 'bijective', 'none of these'], a: 1, exp: 'Every bucket can be hit, but some bucket gets two users (pigeonhole), so not injective.'}
+      - {type: mc, d: 2, q: 'Which function $\mathbb R\to\mathbb R$ is a bijection?', choices: ['$x^2$', '$e^x$', '$x^3$', '$\sin x$'], a: 2, exp: '$x^2$ fails injectivity; $e^x$ misses negatives; $\sin$ fails both.'}
+    cards:
+      - {f: 'Injective', b: '$f(a)=f(b)\Rightarrow a=b$ (no two inputs share an output).'}
+      - {f: 'When does $f$ have an inverse function?', b: 'Exactly when $f$ is a bijection.'}
+    fun:
+      - kind: fact
+        title: "Infinite hotel"
+        body: |
+          Hilbert's Hotel has infinitely many rooms, all full. A new guest arrives: move every
+          guest from room $n$ to room $n+1$. The map $n\mapsto n+1$ is injective but not onto --
+          impossible for finite sets, routine for infinite ones.
+
+  - id: dm-pigeonhole
+    title: "The Pigeonhole Principle"
+    xp: 50
+    prereqs: [dm-functions]
+    readings:
+      - {book: EPP, sec: "7.3", title: "Application: The Pigeonhole Principle"}
+      - {book: KBR, sec: "3.3", title: "Pigeonhole Principle"}
+    summary: |
+      Put $n+1$ pigeons in $n$ holes and some hole gets two. Generalized: some hole gets at
+      least $\lceil n/k\rceil$.
+    key_ideas:
+      - 'No injection from a larger finite set into a smaller one.'
+      - 'Generalized: $N$ objects in $k$ boxes => some box has $\ge\lceil N/k\rceil$.'
+    ds: |
+      Hash collisions, the impossibility of lossless compression for all files, and why a
+      birthday-sized group needs few people for a shared birthday all start here.
+    lab: |
+      Generate random 32-bit hashes until you get a collision; repeat 100 times and average.
+      Compare with $\sqrt{2^{32}}\approx65{,}536$ (the birthday bound).
+    questions:
+      - {type: num, d: 1, q: 'Minimum number of people to guarantee two share a birth month?', a: '13', exp: '12 holes, so 13 pigeons.'}
+      - {type: num, d: 2, q: '500 runs logged in 52 weeks: some week must have at least how many runs?', a: '10', exp: '$\lceil 500/52\rceil=10$.'}
+    cards:
+      - {f: 'Generalized pigeonhole', b: '$N$ objects in $k$ boxes: some box has at least $\lceil N/k\rceil$.'}
+    fun:
+      - kind: puzzle
+        title: "Hair on heads"
+        body: |
+          Prove that at least two people in London have exactly the same number of hairs on
+          their heads. (Humans have at most about 150,000 hairs.)
+        answer: "London has ~9 million people but only ~150,001 possible hair counts. Pigeonhole: at least two (in fact dozens) share a count."
+
+  - id: dm-relations
+    title: "Relations & Their Properties"
+    xp: 50
+    prereqs: [dm-sets]
+    readings:
+      - {book: EPP, sec: "10.1", title: "Relations on Sets"}
+      - {book: EPP, sec: "10.2", title: "Reflexivity, Symmetry, and Transitivity"}
+      - {book: KBR, sec: "4.1-4.4", title: "Product Sets; Relations and Digraphs; Paths; Properties"}
+    summary: |
+      A relation on $A$ is a subset of $A\times A$. Key properties: reflexive, symmetric,
+      antisymmetric, transitive. Relations are directed graphs.
+    key_ideas:
+      - 'Reflexive: $aRa$. Symmetric: $aRb\Rightarrow bRa$. Transitive: $aRb, bRc\Rightarrow aRc$.'
+      - 'A relation is a 0/1 matrix and a digraph.'
+      - 'Transitive closure = reachability (Warshall''s algorithm, KBR 4.8).'
+    ds: |
+      "Follows" on a social network is a relation (not symmetric). Similarity isn't
+      transitive -- which is why clustering is hard. Foreign keys define relations between
+      tables; a relational database is literally built on this idea.
+    lab: |
+      Represent "A is faster than B" among 5 runners as a numpy boolean matrix and compute
+      its transitive closure with Warshall's algorithm (triple loop) or repeated boolean products.
+    questions:
+      - {type: mc, d: 1, q: '"Is within 1 minute of" on finish times is...', choices: ['reflexive and symmetric, not transitive', 'an equivalence relation', 'transitive only', 'antisymmetric'], a: 0, exp: 'A~B and B~C (each within 1 min) does not give A~C within 1 min.'}
+      - {type: mc, d: 1, q: '$\le$ on the integers is...', choices: ['symmetric', 'antisymmetric and transitive', 'not reflexive', 'an equivalence relation'], a: 1, exp: 'It''s a partial (indeed total) order.'}
+    cards:
+      - {f: 'Transitive', b: '$aRb$ and $bRc$ imply $aRc$.'}
+      - {f: 'Antisymmetric', b: '$aRb$ and $bRa$ imply $a=b$.'}
+    fun:
+      - kind: fact
+        title: "Codd's relational model"
+        body: |
+          In 1970, Edgar Codd at IBM proposed storing data as mathematical relations (sets of
+          tuples). IBM initially resisted. Today SQL databases run the world, and every JOIN
+          is relational algebra from his paper.
+
+  - id: dm-equivalence
+    title: "Equivalence Relations & Modular Arithmetic"
+    xp: 60
+    prereqs: [dm-relations]
+    readings:
+      - {book: EPP, sec: "10.3", title: "Equivalence Relations"}
+      - {book: EPP, sec: "10.4", title: "Modular Arithmetic with Applications to Cryptography"}
+      - {book: KBR, sec: "4.5", title: "Equivalence Relations"}
+    summary: |
+      Reflexive + symmetric + transitive = equivalence relation. Its classes partition the
+      set. Congruence mod $n$ is the star example.
+    key_ideas:
+      - 'Equivalence classes are disjoint and cover the set (a partition).'
+      - '$a\equiv b \pmod n \iff n \mid (a-b)$.'
+      - 'Arithmetic respects congruence: you can reduce mod $n$ at every step.'
+    ds: |
+      `df.groupby(key)` partitions rows into equivalence classes of "same key". Hash
+      partitioning in Spark is mod arithmetic. Day-of-week features are mod 7.
+    lab: |
+      Compute $7^{222}\bmod 10$ by hand using cycles, then check with Python's `pow(7, 222, 10)`.
+      Then partition your runs by `weekday` and compare with `groupby`.
+    questions:
+      - {type: num, d: 1, q: 'What is $47\bmod 7$?', a: '5', exp: '$47=6\cdot7+5$.'}
+      - {type: num, d: 2, q: 'Last digit of $7^{222}$?', a: '9', exp: 'Powers of 7 mod 10 cycle 7,9,3,1. $222\equiv2\pmod4$ gives 9.'}
+      - {type: num, d: 2, q: 'Today is Wednesday. What day number (Mon=1 ... Sun=7) is it 100 days from now?', a: '5', exp: '$100\equiv2\pmod7$; Wednesday + 2 = Friday = 5.'}
+    cards:
+      - {f: 'Equivalence relation', b: 'Reflexive, symmetric and transitive; its classes partition the set.'}
+      - {f: '$a\equiv b\pmod n$ means', b: '$n$ divides $a-b$.'}
+    fun:
+      - kind: fact
+        title: "RSA is modular arithmetic"
+        body: |
+          Every HTTPS connection (including your tutor's Cloudflare tunnel) relies on RSA or
+          elliptic-curve cryptography -- modular arithmetic with enormous numbers. Encrypting
+          is computing $m^e\bmod n$; the security rests on how hard it is to factor $n$.
+
+  - id: dm-posets
+    title: "Partial Orders & Lattices"
+    xp: 40
+    optional: true
+    prereqs: [dm-relations]
+    readings:
+      - {book: EPP, sec: "10.5", title: "Partial Order Relations"}
+      - {book: KBR, sec: "6.1-6.3", title: "Partially Ordered Sets; Extremal Elements; Lattices"}
+    summary: |
+      Reflexive + antisymmetric + transitive = partial order. Hasse diagrams, maximal elements,
+      topological sorting.
+    key_ideas:
+      - 'Not every pair need be comparable (e.g. subsets under $\subseteq$).'
+      - 'Topological sort orders a DAG consistently with its partial order.'
+    ds: |
+      Task schedulers (Airflow, make, dbt) topologically sort a dependency DAG. This app's
+      topic prerequisites form a partial order too!
+    lab: |
+      Topologically sort this course's topics by prerequisites with `graphlib.TopologicalSorter`
+      from Python's standard library.
+    questions:
+      - {type: mc, d: 1, q: 'Is "divides" on positive integers a partial order?', choices: ['yes', 'no, not antisymmetric', 'no, not transitive', 'no, not reflexive'], a: 0, exp: 'Reflexive, antisymmetric on positives, transitive.'}
+    cards:
+      - {f: 'Partial order', b: 'Reflexive, antisymmetric, transitive.'}
+    fun:
+      - kind: fact
+        title: "Your syllabus is a poset"
+        body: |
+          The prerequisite arrows on this course's star map form a partial order. The
+          "next topic" recommendation is a topological sort that skips what you've finished.
+
+  - id: dm-cardinality
+    title: "Countable & Uncountable Infinity"
+    xp: 40
+    optional: true
+    prereqs: [dm-functions]
+    readings:
+      - {book: EPP, sec: "7.5", title: "Cardinality with Applications to Computability"}
+      - {book: EPP, sec: "5.4", title: "Russell's Paradox and the Halting Problem"}
+    summary: |
+      Two sets have the same size if a bijection exists. The integers and rationals are
+      countable; the reals are not (Cantor's diagonal argument).
+    key_ideas:
+      - 'Countable = bijection with $\mathbb N$.'
+      - 'Cantor''s diagonal argument: no list of reals can be complete.'
+      - 'There are uncomputable functions (more functions than programs).'
+    ds: |
+      The halting problem means no tool can perfectly detect every infinite loop or bug -- a
+      fundamental limit on static analysis and AutoML.
+    lab: |
+      Write a generator that enumerates all positive rationals $p/q$ (zig-zag over the grid)
+      without repeats. Print the first 30.
+    questions:
+      - {type: mc, d: 2, q: 'Which set is uncountable?', choices: ['the integers', 'the rationals', 'finite strings over {a,b}', 'the real numbers in [0,1]'], a: 3, exp: 'Cantor''s diagonal argument.'}
+    cards:
+      - {f: 'Cantor''s diagonal argument shows...', b: 'The real numbers are uncountable.'}
+    fun:
+      - kind: fact
+        title: "Infinities of different sizes"
+        body: |
+          Cantor's 1891 diagonal argument shocked mathematicians: some infinities are bigger
+          than others. Kronecker called him a "corrupter of youth"; Hilbert said "no one shall
+          expel us from the paradise that Cantor has created."

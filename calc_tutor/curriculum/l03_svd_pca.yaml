@@ -1,0 +1,149 @@
+unit:
+  id: L03
+  ord: 105
+  course: core
+  title: "Linear Algebra III: SVD, PCA & Matrix Factorization"
+  constellation: "The Lens"
+  color: "#0097a7"
+  blurb: |
+    The singular value decomposition is the Swiss-army knife of data science: every matrix is a
+    rotation, a stretch and a rotation. From it come PCA, low-rank approximation, recommender
+    systems, and the numerically robust way to do least squares.
+  ds_why: |
+    Dimensionality reduction (PCA), latent factors in recommenders, compression, denoising,
+    LSA for text, and diagnosing ill-conditioned regressions all run on the SVD.
+
+topics:
+  - id: la-svd
+    title: "The Singular Value Decomposition"
+    xp: 100
+    prereqs: [la-spectral]
+    readings:
+      - {book: MML, sec: "4.5", title: "Singular Value Decomposition"}
+      - {book: MIT1806, sec: "Lec 29", title: "Singular value decomposition"}
+    summary: |
+      Any $m\times n$ matrix factors as $A=U\Sigma V^\top$: orthogonal $U$, $V$ and a diagonal
+      $\Sigma$ of singular values $\sigma_1\ge\sigma_2\ge\dots\ge0$. Geometrically: rotate,
+      stretch along axes, rotate.
+    key_ideas:
+      - 'Singular values are square roots of the eigenvalues of $A^\top A$.'
+      - '$V$: eigenvectors of $A^\top A$; $U$: eigenvectors of $AA^\top$.'
+      - 'Rank = number of nonzero singular values; condition number $=\sigma_{max}/\sigma_{min}$.'
+    ds: |
+      Works for ANY matrix (not just square/symmetric), which is why it's everywhere: data
+      matrices are rectangular.
+    lab: |
+      Compute `np.linalg.svd` of a 6×4 data matrix; verify $U\Sigma V^\top=A$ and that
+      $\sigma_i^2$ equal the eigenvalues of $A^\top A$.
+    questions:
+      - {type: num, d: 2, q: 'If $A^\top A$ has eigenvalues 9 and 4, what is the largest singular value of $A$?', a: '3', exp: '$\sqrt9$.'}
+      - {type: num, d: 2, q: 'A matrix has singular values 10, 2, 0, 0. Its rank?', a: '2', exp: 'Count nonzero singular values.'}
+      - {type: num, d: 2, q: 'Condition number of a matrix with singular values 50 and 0.5?', a: '100', exp: '$\sigma_{max}/\sigma_{min}$.'}
+    cards:
+      - {f: 'SVD', b: '$A=U\Sigma V^\top$ with orthogonal $U,V$ and nonnegative diagonal $\Sigma$.'}
+      - {f: 'Singular values vs eigenvalues', b: '$\sigma_i=\sqrt{\lambda_i(A^\top A)}$'}
+    fun:
+      - kind: fact
+        title: "The Netflix Prize"
+        body: |
+          From 2006 to 2009 Netflix offered a million-dollar prize for beating its
+          recommender by 10%. Matrix factorization -- SVD-style latent factors -- was the
+          backbone of the winning approaches.
+
+  - id: la-low-rank
+    title: "Low-Rank Approximation & Matrix Factorization"
+    xp: 80
+    prereqs: [la-svd]
+    readings:
+      - {book: MML, sec: "4.6", title: "Matrix Approximation"}
+    summary: |
+      Keep the top $k$ singular values: $A_k=\sum_{i\le k}\sigma_i\mathbf u_i\mathbf v_i^\top$ is
+      the best rank-$k$ approximation (Eckart–Young), with error $\sigma_{k+1}$ in spectral norm.
+    key_ideas:
+      - 'Truncated SVD = optimal compression.'
+      - 'Energy kept: $\sum_{i\le k}\sigma_i^2/\sum\sigma_i^2$.'
+      - 'Recommenders: ratings ≈ (user factors)(item factors)$^\top$.'
+    ds: |
+      Image compression, denoising, latent semantic analysis, and collaborative filtering are
+      low-rank approximations.
+    lab: |
+      Load a grayscale image as a matrix and reconstruct it from the top 5, 20, 50 singular
+      values. Plot "energy kept" vs $k$.
+    questions:
+      - {type: num, d: 2, q: 'Singular values 4, 3, 0. Fraction of "energy" ($\sum\sigma^2$) kept by rank 1? (fraction)', a: '16/25', exp: '$16/(16+9)$.'}
+      - {type: num, d: 2, q: 'Storing a rank-$k$ approximation of a 1000×500 matrix with $k=10$ needs about how many numbers ($k(m+n)+k$)?', a: '15010', exp: '$10(1500)+10$, vs 500,000 for the full matrix.'}
+    cards:
+      - {f: 'Eckart–Young theorem', b: 'The truncated SVD $A_k$ is the best rank-$k$ approximation of $A$.'}
+    fun:
+      - kind: fact
+        title: "JPEG's cousin"
+        body: |
+          JPEG uses a cosine transform rather than the SVD, but the idea is the same: most of an
+          image's information lives in a few components, so throw the rest away.
+
+  - id: la-pca
+    title: "Principal Component Analysis"
+    xp: 100
+    prereqs: [la-low-rank, la-spectral]
+    readings:
+      - {book: MML, sec: "10.1-10.6", title: "Dimensionality Reduction with Principal Component Analysis"}
+    summary: |
+      Center the data, then find orthogonal directions of maximum variance: the eigenvectors of
+      the covariance matrix (equivalently, right singular vectors of the centered data matrix).
+      Project onto the top $k$.
+    key_ideas:
+      - 'Always center (and usually standardize) first.'
+      - 'Variance explained by component $i$ = $\lambda_i/\sum\lambda_j$.'
+      - 'PCA = max-variance projection = min-reconstruction-error projection.'
+    ds: |
+      Visualization, compression, decorrelating features, noise reduction, and the "eigenfaces"
+      classic. Also a sanity check: if 2 components explain 95% of variance, your 40 features
+      are really 2.
+    lab: |
+      Running lab: PCA on your runs (distance, pace, HR, cadence, elevation, temperature),
+      standardized. How much variance do PC1 and PC2 explain? Interpret the loadings.
+    questions:
+      - {type: num, d: 2, q: 'Covariance eigenvalues 6, 3, 1. Variance explained by the first two components? (fraction)', a: '9/10', exp: '$(6+3)/10$.'}
+      - {type: mc, d: 2, q: 'Why center the data before PCA?', choices: ['to speed it up', 'otherwise PC1 points toward the mean instead of the direction of spread', 'to make it nonnegative', 'it isn''t needed'], a: 1, exp: 'PCA describes variation around the mean.'}
+      - {type: mc, d: 2, q: 'Features in meters and kilometers mixed, unstandardized. PCA will...', choices: ['be unaffected', 'be dominated by the large-scale features', 'fail to run', 'drop them'], a: 1, exp: 'Variance depends on units; standardize first.'}
+    cards:
+      - {f: 'Principal components are...', b: 'Eigenvectors of the covariance matrix (right singular vectors of the centered data).'}
+      - {f: 'Variance explained by PC $i$', b: '$\lambda_i/\sum_j\lambda_j$'}
+    fun:
+      - kind: fact
+        title: "Pearson, 1901"
+        body: |
+          Karl Pearson introduced PCA in 1901 as "lines and planes of closest fit to systems of
+          points in space". Hotelling reinvented and named it in 1933.
+
+  - id: la-numerical
+    title: "Numerical Linear Algebra in Practice"
+    xp: 50
+    optional: true
+    prereqs: [la-svd, la-least-squares]
+    readings:
+      - {book: VMLS, sec: "Ch 11-12", title: "Matrix inverses (QR); Least squares (solving)"}
+    summary: |
+      Conditioning, why you never invert matrices in code, QR and SVD solvers, and sparse
+      matrices. The difference between math that's right and code that's right.
+    key_ideas:
+      - 'Condition number $\kappa$: you can lose about $\log_{10}\kappa$ digits of accuracy.'
+      - 'Least squares via QR or SVD (`lstsq`), not the normal equations, when $X$ is ill-conditioned.'
+      - 'Sparse matrices (scipy.sparse) for huge, mostly-zero data.'
+    ds: |
+      Ill-conditioned design matrices give unstable coefficients; ridge regression adds $\lambda$
+      to every singular value squared, fixing the conditioning.
+    lab: |
+      Build a Vandermonde matrix for degree-15 polynomial fitting; compare coefficients from the
+      normal equations vs `np.linalg.lstsq`. Print the condition numbers.
+    questions:
+      - {type: num, d: 2, q: 'A matrix has condition number $10^{6}$. Roughly how many significant digits can you lose? ', a: '6', exp: '$\log_{10}\kappa$.'}
+    cards:
+      - {f: 'Why avoid the normal equations for ill-conditioned $X$?', b: '$\kappa(X^\top X)=\kappa(X)^2$: forming $X^\top X$ squares the conditioning problem.'}
+    fun:
+      - kind: fact
+        title: "LAPACK is everywhere"
+        body: |
+          numpy, R, MATLAB, Julia and PyTorch's CPU linear algebra all call LAPACK, Fortran code
+          whose roots go back to the 1970s (LINPACK/EISPACK). Some of the world's most reused
+          code is older than most data scientists.

@@ -1,0 +1,231 @@
+unit:
+  id: D01
+  ord: 10
+  course: core
+  title: "Logic & Proof"
+  constellation: "The Compass"
+  color: "#64b5f6"
+  blurb: |
+    The grammar of mathematics: statements, connectives, quantifiers, valid arguments, and
+    the main proof techniques. After this unit, theorems in papers stop looking like spells.
+  ds_why: |
+    Boolean logic is SQL WHERE clauses, feature flags and decision rules. Quantifiers are how
+    ML papers state guarantees ("for all inputs, there exists a step size ..."). Proof
+    techniques let you read, check and trust results instead of memorizing them.
+
+topics:
+  - id: dm-propositional
+    title: "Propositional Logic & Truth Tables"
+    xp: 50
+    prereqs: []
+    readings:
+      - {book: EPP, sec: "1.1", title: "Logical Form and Logical Equivalence"}
+      - {book: EPP, sec: "1.2", title: "Conditional Statements"}
+      - {book: KBR, sec: "2.1-2.2", title: "Propositions and Logical Operations; Conditional Statements"}
+    summary: |
+      Statements combine with $\neg$, $\wedge$, $\vee$, $\to$, $\leftrightarrow$. Truth tables
+      decide equivalence. $p\to q$ is false only when $p$ is true and $q$ is false.
+    key_ideas:
+      - 'De Morgan: $\neg(p\wedge q)\equiv\neg p\vee\neg q$ and $\neg(p\vee q)\equiv\neg p\wedge\neg q$.'
+      - '$p\to q\equiv\neg p\vee q$. Its contrapositive $\neg q\to\neg p$ is equivalent; the converse $q\to p$ is NOT.'
+      - 'A tautology is true in every row; a contradiction false in every row.'
+    ds: |
+      De Morgan's laws rewrite filters: `~(a & b) == (~a | ~b)` in pandas. Confusing a
+      conditional with its converse is the logical core of the base-rate fallacy ("most
+      fraud is flagged" ≠ "most flags are fraud").
+    lab: |
+      Build a truth table generator in Python with `itertools.product([True, False], repeat=n)`
+      and use it to verify De Morgan's laws and $p\to q\equiv\neg p\vee q$.
+    questions:
+      - {type: num, d: 1, q: 'How many rows does a truth table with 4 propositional variables have?', a: '16', exp: '$2^4$.'}
+      - {type: mc, d: 1, q: 'Which is logically equivalent to $p\to q$?', choices: ['$q\to p$', '$\neg p\to\neg q$', '$\neg q\to\neg p$', '$p\wedge\neg q$'], a: 2, exp: 'The contrapositive. The converse and inverse are not equivalent.'}
+      - {type: mc, d: 2, q: 'Negate "the model is accurate AND fast".', choices: ['not accurate and not fast', 'not accurate or not fast', 'accurate or fast', 'fast but not accurate'], a: 1, exp: 'De Morgan: $\neg(a\wedge f)\equiv\neg a\vee\neg f$.'}
+      - {type: mc, d: 2, q: '$p\to q$ is false exactly when...', choices: ['$p$ false', '$q$ true', '$p$ true and $q$ false', '$p$ and $q$ both false'], a: 2, exp: 'A promise is only broken when the condition holds and the result does not.'}
+    cards:
+      - {f: 'De Morgan''s laws', b: '$\neg(p\wedge q)\equiv\neg p\vee\neg q$; $\neg(p\vee q)\equiv\neg p\wedge\neg q$'}
+      - {f: 'Converse vs contrapositive of $p\to q$', b: 'Converse $q\to p$ (not equivalent); contrapositive $\neg q\to\neg p$ (equivalent).'}
+    fun:
+      - kind: puzzle
+        title: "Knights and knaves"
+        body: |
+          On an island, knights always tell the truth and knaves always lie. A says: "B is a
+          knave." B says: "A and I are the same type." What are A and B?
+        answer: "A is a knight, B is a knave. (If B were a knight, A and B would match, so A is a knight -- but A calls B a knave: contradiction. So B is a knave and B's statement is false: they differ, so A is a knight.)"
+
+  - id: dm-arguments
+    title: "Valid Arguments & Rules of Inference"
+    xp: 50
+    prereqs: [dm-propositional]
+    readings:
+      - {book: EPP, sec: "1.3", title: "Valid and Invalid Arguments"}
+      - {book: KBR, sec: "2.3", title: "Methods of Proof"}
+    summary: |
+      An argument is valid if the conclusion is true whenever all premises are true. Modus
+      ponens, modus tollens, and the two classic fallacies.
+    key_ideas:
+      - 'Modus ponens: $p\to q$, $p$, therefore $q$.'
+      - 'Modus tollens: $p\to q$, $\neg q$, therefore $\neg p$.'
+      - 'Fallacies: affirming the consequent ($p\to q$, $q$ ⊢ $p$) and denying the antecedent.'
+      - 'Valid ≠ true: a valid argument with a false premise can reach a false conclusion.'
+    ds: |
+      "If the model overfits, test error is high. Test error is high. So it overfits" is
+      affirming the consequent -- high error has other causes. Good debugging is modus tollens:
+      "if the bug were in preprocessing, this assertion would fail; it doesn't, so it isn't."
+    lab: |
+      Write `is_valid(premises, conclusion, n_vars)` that checks validity by brute-force over a
+      truth table. Test it on modus ponens, modus tollens and both fallacies.
+    questions:
+      - {type: mc, d: 1, q: '"If it rains, the track is wet. The track is wet. So it rained." This is...', choices: ['modus ponens', 'modus tollens', 'affirming the consequent (invalid)', 'valid by contraposition'], a: 2, exp: 'The sprinklers might be on.'}
+      - {type: mc, d: 1, q: '"If the code compiles, the tests run. The tests did not run. So..."', choices: ['the code compiled', 'the code did not compile', 'nothing follows', 'the tests passed'], a: 1, exp: 'Modus tollens.'}
+      - {type: free, d: 2, q: 'Give an example of a valid argument with a false conclusion, and explain why validity is not violated.', a: 'E.g. All fish can fly; a salmon is a fish; so a salmon can fly. Valid form, but a premise is false, so the conclusion need not be true.'}
+    cards:
+      - {f: 'Modus tollens', b: '$p\to q$ and $\neg q$ entail $\neg p$.'}
+      - {f: 'Affirming the consequent', b: 'Invalid: from $p\to q$ and $q$ you cannot conclude $p$.'}
+    fun:
+      - kind: fact
+        title: "The Wason selection task"
+        body: |
+          Cards show A, K, 4, 7. Rule: "if a card has a vowel on one side, it has an even
+          number on the other." Which cards must you flip to test it? Fewer than 10% of people
+          get it right. (Answer: A and 7 -- the 7 is modus tollens in disguise.) Yet people
+          solve the identical logic easily when it's framed as checking IDs at a bar.
+
+  - id: dm-quantifiers
+    title: "Predicates & Quantifiers"
+    xp: 60
+    prereqs: [dm-propositional]
+    readings:
+      - {book: EPP, sec: "2.1-2.3", title: "Predicates and Quantified Statements; Multiple Quantifiers"}
+      - {book: EPP, sec: "2.4", title: "Arguments with Quantified Statements"}
+      - {book: KBR, sec: "2.5", title: "Mathematical Statements"}
+    summary: |
+      $\forall x\,P(x)$ and $\exists x\,P(x)$. Negation swaps them:
+      $\neg\forall x\,P(x)\equiv\exists x\,\neg P(x)$. With several quantifiers, order matters.
+    key_ideas:
+      - '$\neg\forall x\,P(x)\equiv\exists x\,\neg P(x)$; $\neg\exists x\,P(x)\equiv\forall x\,\neg P(x)$.'
+      - '$\forall x\,\exists y$ vs $\exists y\,\forall x$: "everyone has a mother" vs "someone is everyone''s mother".'
+      - 'One counterexample disproves a universal statement.'
+    ds: |
+      Read the epsilon-delta limit definition (and every convergence theorem) as nested
+      quantifiers. `all()` and `any()` in Python are $\forall$ and $\exists$ over a finite set.
+    lab: |
+      Using numpy, test the statement "for every $x$ in a grid, there is a $y$ in the grid with
+      $|x-y|<0.1$" with `all(any(...))`, then swap the quantifier order and see it fail.
+    questions:
+      - {type: mc, d: 1, q: 'Negate: "every run this month was under 10 miles".', choices: ['every run was over 10 miles', 'some run was 10 miles or more', 'no run was under 10 miles', 'some run was under 10 miles'], a: 1, exp: '$\neg\forall\equiv\exists\neg$.'}
+      - {type: mc, d: 2, q: 'Which statement is TRUE over the real numbers?', choices: ['$\exists y\,\forall x: y>x$', '$\forall x\,\exists y: y>x$', '$\forall x\,\forall y: y>x$', 'none of them'], a: 1, exp: 'For each $x$ take $y=x+1$. No single $y$ beats every $x$.'}
+      - {type: mc, d: 2, q: 'To disprove "$\forall n$, $n^2+n+41$ is prime" you need...', choices: ['a proof by induction', 'one counterexample', 'to check all $n$', 'a contradiction proof'], a: 1, exp: '$n=40$ gives $41^2$.'}
+    cards:
+      - {f: 'Negation of $\forall x\,P(x)$', b: '$\exists x\,\neg P(x)$'}
+      - {f: 'Does quantifier order matter?', b: 'Yes: $\forall x\exists y$ lets $y$ depend on $x$; $\exists y\forall x$ needs one $y$ for all $x$.'}
+    fun:
+      - kind: fact
+        title: "Euler's prime-generating polynomial"
+        body: |
+          $n^2+n+41$ is prime for $n=0,1,\dots,39$ -- forty primes in a row -- and fails at
+          $n=40$. A beautiful warning: many confirming examples prove nothing about "for all".
+
+  - id: dm-proof-direct
+    title: "Direct Proof & Counterexample"
+    xp: 70
+    prereqs: [dm-quantifiers]
+    readings:
+      - {book: EPP, sec: "3.1", title: "Direct Proof and Counterexample I: Introduction"}
+      - {book: EPP, sec: "3.2-3.4", title: "Rational Numbers; Divisibility; Division into Cases"}
+      - {book: KBR, sec: "2.3", title: "Methods of Proof"}
+    summary: |
+      To prove $\forall x\,(P(x)\to Q(x))$: take an arbitrary $x$ with $P(x)$ and derive
+      $Q(x)$ by definitions and algebra. To disprove, exhibit one counterexample.
+    key_ideas:
+      - '"Let $n$ be any even integer, so $n=2k$ for some integer $k$..." -- unpack definitions.'
+      - 'Proof by cases when the hypothesis splits naturally (even/odd, sign).'
+      - 'Write the conclusion you need first, then work toward it.'
+    ds: |
+      Proving a function is convex, an estimator unbiased, or an algorithm correct are all
+      direct proofs. You did one already: showing the mean minimizes squared error.
+    lab: |
+      Prove that the sum of two odd integers is even. Then write a property-based test with
+      the `hypothesis` library that checks it on random inputs -- tests sample, proofs cover all.
+    questions:
+      - {type: free, d: 2, q: 'Prove: the sum of two even integers is even.', a: 'Let $a=2j$, $b=2k$ for integers $j,k$. Then $a+b=2(j+k)$ and $j+k$ is an integer, so $a+b$ is even.'}
+      - {type: free, d: 2, q: 'Prove: for every integer $n$, $n^2+n$ is even (hint: cases).', a: 'If $n$ even, $n=2k$, $n^2+n=2(2k^2+k)$. If $n$ odd, $n=2k+1$, $n^2+n=(2k+1)(2k+2)=2(2k+1)(k+1)$. Even in both cases. (Or: $n(n+1)$ is a product of consecutive integers.)'}
+      - {type: mc, d: 1, q: 'Which disproves "every prime is odd"?', choices: ['3', '9', '2', '1'], a: 2, exp: '2 is prime and even.'}
+    cards:
+      - {f: 'Template for a direct proof of $\forall x(P\to Q)$', b: 'Suppose $x$ is arbitrary with $P(x)$; use definitions to derive $Q(x)$.'}
+    fun:
+      - kind: fact
+        title: "Proofs that took centuries"
+        body: |
+          Fermat scribbled in 1637 that $x^n+y^n=z^n$ has no positive integer solutions for
+          $n>2$ and that the margin was too small for his proof. Andrew Wiles published the
+          proof in 1995 -- over 100 pages. Every step is still just direct reasoning from
+          definitions.
+
+  - id: dm-proof-indirect
+    title: "Contradiction & Contraposition"
+    xp: 70
+    prereqs: [dm-proof-direct]
+    readings:
+      - {book: EPP, sec: "3.6", title: "Indirect Argument: Contradiction and Contraposition"}
+      - {book: EPP, sec: "3.7", title: "Two Classical Theorems"}
+    summary: |
+      Contradiction: assume the statement is false and derive an impossibility.
+      Contraposition: prove $\neg Q\to\neg P$ instead of $P\to Q$.
+    key_ideas:
+      - '$\sqrt2$ is irrational: assume $\sqrt2=a/b$ in lowest terms, derive both even.'
+      - 'Infinitely many primes (Euclid): assume finitely many, multiply them, add 1.'
+      - 'Contraposition is often easiest when the conclusion is a "not" statement.'
+    ds: |
+      Impossibility results ("no free lunch", "no unbiased estimator does better than ...") are
+      proofs by contradiction. Recognizing them saves you from chasing things that can't exist.
+    lab: |
+      Read Euclid's proof in EPP 3.7, then compute $p_1p_2\cdots p_k+1$ for the first $k$
+      primes with sympy and factor it. Is it always prime? (No! But it always has a new prime factor.)
+    questions:
+      - {type: free, d: 3, q: 'Prove by contraposition: if $n^2$ is even, then $n$ is even.', a: 'Contrapositive: if $n$ odd then $n^2$ odd. $n=2k+1$ gives $n^2=2(2k^2+2k)+1$, odd.'}
+      - {type: mc, d: 2, q: '$2\cdot3\cdot5\cdot7\cdot11\cdot13+1=30031$. Is it prime?', choices: ['yes', 'no -- but its prime factors are new primes', 'no -- it is divisible by 13', 'cannot tell'], a: 1, exp: '$30031=59\times509$. Euclid''s proof only needs a new prime factor, not primality.'}
+    cards:
+      - {f: 'Proof by contradiction', b: 'Assume the negation of what you want, derive a contradiction.'}
+      - {f: 'Euclid''s idea for infinitely many primes', b: 'Multiply all primes and add 1: that number has a prime factor not on the list.'}
+    fun:
+      - kind: fact
+        title: "The irrational heretic"
+        body: |
+          Legend says the Pythagorean Hippasus was drowned at sea for proving $\sqrt2$ is
+          irrational, contradicting the doctrine that all is ratio. The story is probably
+          apocryphal; the proof by contradiction you just learned is not.
+
+  - id: dm-boolean-circuits
+    title: "Boolean Algebra & Digital Logic"
+    xp: 40
+    optional: true
+    prereqs: [dm-propositional]
+    readings:
+      - {book: EPP, sec: "1.4", title: "Application: Digital Logic Circuits"}
+      - {book: EPP, sec: "1.5", title: "Application: Number Systems and Circuits for Addition"}
+      - {book: KBR, sec: "6.4-6.6", title: "Finite Boolean Algebras; Circuit Design"}
+    summary: |
+      Logic gates implement propositional logic in silicon; binary addition is built from XOR
+      and AND (half and full adders).
+    key_ideas:
+      - 'AND, OR, NOT are functionally complete; so is NAND alone.'
+      - 'Half adder: sum = $a\oplus b$, carry = $a\wedge b$.'
+      - 'Two''s complement represents negative integers.'
+    ds: |
+      Floating-point quirks, bit masks, hashing and quantized neural networks (int8) all live
+      on this layer.
+    lab: |
+      Implement a 4-bit ripple-carry adder from Python functions `AND`, `OR`, `XOR` and check
+      it against `+` for all 256 input pairs.
+    questions:
+      - {type: num, d: 1, q: 'What is binary 1011 in decimal?', a: '11', exp: '$8+2+1$.'}
+      - {type: mc, d: 2, q: 'In a half adder, the carry bit is...', choices: ['$a\oplus b$', '$a\wedge b$', '$a\vee b$', '$\neg a$'], a: 1, exp: 'Carry only when both bits are 1.'}
+    cards:
+      - {f: 'Half adder outputs', b: 'Sum $=a\oplus b$; carry $=a\wedge b$.'}
+    fun:
+      - kind: fact
+        title: "Shannon's master's thesis"
+        body: |
+          In 1937, 21-year-old Claude Shannon showed in his MIT master's thesis that Boolean
+          algebra could design relay circuits. It's been called the most important master's
+          thesis of the 20th century -- every chip descends from it.

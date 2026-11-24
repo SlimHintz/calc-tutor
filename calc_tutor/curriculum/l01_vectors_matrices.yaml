@@ -1,0 +1,282 @@
+unit:
+  id: L01
+  ord: 65
+  course: core
+  title: "Linear Algebra I: Vectors, Matrices & Linear Systems"
+  constellation: "The Grid"
+  color: "#26c6da"
+  blurb: |
+    The language every ML model is written in. Vectors as data points, matrices as functions
+    that move space, and the machinery for solving systems of equations. Watch the 3Blue1Brown
+    episode first, read VMLS for the applied view, then MML for the ML framing.
+  ds_why: |
+    A dataset is a matrix; a linear model is a matrix-vector product; a neural layer is a
+    matrix followed by a nonlinearity; embeddings are vectors compared with dot products.
+    Gradients, Jacobians and Hessians (later units) are linear-algebra objects.
+
+topics:
+  - id: la-vectors
+    title: "Vectors, Linear Combinations & Span"
+    xp: 60
+    prereqs: [pc-systems-matrices]
+    readings:
+      - {book: VMLS, sec: "Ch 1", title: "Vectors"}
+      - {book: MML, sec: "2.4", title: "Vector Spaces (intro)"}
+    videos:
+      - {book: 3B1B-LA, n: 1, title: "Vectors, what even are they?"}
+      - {book: 3B1B-LA, n: 2, title: "Linear combinations, span, and basis vectors"}
+    summary: |
+      A vector is a list of numbers and an arrow in space. Linear combinations
+      $a\mathbf u+b\mathbf v$ build new vectors; the span is everything you can reach.
+    key_ideas:
+      - 'Vectors add componentwise and scale by numbers.'
+      - 'Linear combination: $c_1\mathbf v_1+\cdots+c_k\mathbf v_k$.'
+      - 'Span = set of all linear combinations (a line, plane, or all of space).'
+    ds: |
+      A feature vector per row of your data; a weighted sum of features is a linear
+      combination. The span of your feature columns is everything a linear model can express.
+    lab: |
+      Represent 5 of your runs as vectors (distance, time, elevation, avg HR) in numpy. Compute
+      the mean run as a linear combination $\frac15(\mathbf r_1+\dots+\mathbf r_5)$.
+    questions:
+      - {type: mc, d: 1, q: 'What is $2\begin{pmatrix}1\\-1\end{pmatrix}+3\begin{pmatrix}0\\2\end{pmatrix}$?', choices: ['$\begin{pmatrix}2\\4\end{pmatrix}$', '$\begin{pmatrix}2\\8\end{pmatrix}$', '$\begin{pmatrix}5\\1\end{pmatrix}$', '$\begin{pmatrix}2\\-8\end{pmatrix}$'], a: 0, exp: '$(2,-2)+(0,6)=(2,4)$.'}
+      - {type: mc, d: 2, q: 'The span of $(1,2)$ and $(2,4)$ in $\mathbb R^2$ is...', choices: ['all of $\mathbb R^2$', 'a line through the origin', 'a single point', 'empty'], a: 1, exp: 'They are parallel ($(2,4)=2(1,2)$), so combinations stay on one line.'}
+      - {type: mc, d: 2, q: 'The span of $(1,0)$ and $(1,1)$ in $\mathbb R^2$ is...', choices: ['a line', 'all of $\mathbb R^2$', 'the first quadrant', 'the $x$-axis'], a: 1, exp: 'Not parallel, so they reach every point of the plane.'}
+    cards:
+      - {f: 'Span of a set of vectors', b: 'All linear combinations of them.'}
+    fun:
+      - kind: fact
+        title: "Vectors were controversial"
+        body: |
+          In the 1890s physicists fought a "quaternion war": Hamilton's followers vs Gibbs and
+          Heaviside, who stripped quaternions down to the vectors and dot/cross products we use.
+          Gibbs won -- his notation is in every ML paper.
+
+  - id: la-dot
+    title: "Norms, Dot Products, Angles & Distance"
+    xp: 60
+    prereqs: [la-vectors]
+    readings:
+      - {book: VMLS, sec: "Ch 3", title: "Norm and distance"}
+      - {book: MML, sec: "3.1-3.4", title: "Norms; Inner Products; Lengths and Distances; Angles and Orthogonality"}
+      - {book: STW, sec: "12.3", title: "The Dot Product"}
+    videos:
+      - {book: 3B1B-LA, n: 9, title: "Dot products and duality"}
+    summary: |
+      $\mathbf a\cdot\mathbf b=\sum a_ib_i=\|\mathbf a\|\|\mathbf b\|\cos\theta$. Norms measure
+      size, distances measure dissimilarity, the angle measures alignment.
+    key_ideas:
+      - 'Euclidean norm $\|\mathbf x\|_2=\sqrt{\mathbf x\cdot\mathbf x}$; also $\|\mathbf x\|_1=\sum|x_i|$.'
+      - 'Cosine similarity $\frac{\mathbf a\cdot\mathbf b}{\|\mathbf a\|\|\mathbf b\|}$.'
+      - 'Orthogonal $\iff$ dot product 0.'
+    ds: |
+      kNN uses distances, embeddings use cosine similarity, L1/L2 regularization penalize norms,
+      and attention scores are dot products.
+    lab: |
+      Standardize your run vectors, then find each run's nearest neighbor by Euclidean
+      distance and by cosine similarity. Do they agree?
+    questions:
+      - {type: num, d: 1, q: '$(2,-1,3)\cdot(1,4,2)$', a: '4', exp: '$2-4+6$.'}
+      - {type: num, d: 1, q: '$\|(1,2,2)\|_2$', a: '3', exp: '$\sqrt{1+4+4}$.'}
+      - {type: num, d: 2, q: '$\|(3,-4)\|_1$', a: '7', exp: 'Sum of absolute values.'}
+      - {type: num, d: 2, q: 'For what $k$ are $(1,k)$ and $(4,-2)$ orthogonal?', a: '2', exp: '$4-2k=0$.'}
+    cards:
+      - {f: 'Dot product, geometric form', b: '$\|\mathbf a\|\|\mathbf b\|\cos\theta$'}
+      - {f: 'L1 vs L2 norm', b: '$\sum|x_i|$ vs $\sqrt{\sum x_i^2}$'}
+    fun:
+      - kind: fact
+        title: "Manhattan distance"
+        body: |
+          The L1 norm is called the taxicab or Manhattan norm: the distance a cab drives on a
+          street grid. Lasso regression's L1 penalty is what makes it pick sparse features.
+
+  - id: la-matrix-maps
+    title: "Matrices as Linear Transformations"
+    xp: 70
+    prereqs: [la-vectors]
+    readings:
+      - {book: VMLS, sec: "Ch 6-7", title: "Matrices; Matrix examples"}
+      - {book: MML, sec: "2.7", title: "Linear Mappings"}
+    videos:
+      - {book: 3B1B-LA, n: 3, title: "Linear transformations and matrices"}
+      - {book: 3B1B-LA, n: 8, title: "Nonsquare matrices as transformations between dimensions"}
+    summary: |
+      A matrix is a function: $\mathbf x\mapsto A\mathbf x$. Its columns are where the basis
+      vectors land. $A\mathbf x$ is a linear combination of $A$'s columns with weights $\mathbf x$.
+    key_ideas:
+      - '$A\mathbf x=x_1\mathbf a_1+\cdots+x_n\mathbf a_n$ (column view).'
+      - 'Linear: $A(\mathbf u+\mathbf v)=A\mathbf u+A\mathbf v$, $A(c\mathbf u)=cA\mathbf u$.'
+      - 'An $m\times n$ matrix maps $\mathbb R^n\to\mathbb R^m$.'
+    ds: |
+      A linear regression prediction $X\boldsymbol\beta$ and a dense neural layer $W\mathbf x$ are
+      matrix maps. Rotations, scalings and projections in data augmentation are matrices too.
+    lab: |
+      Apply the matrices for rotation by 90°, scaling by 2, and shear to the unit square in
+      numpy and plot the results. Where do $(1,0)$ and $(0,1)$ land?
+    questions:
+      - {type: mc, d: 1, q: '$\begin{pmatrix}1&2\\3&4\end{pmatrix}\begin{pmatrix}2\\-1\end{pmatrix}=$', choices: ['$\begin{pmatrix}0\\2\end{pmatrix}$', '$\begin{pmatrix}2\\-4\end{pmatrix}$', '$\begin{pmatrix}4\\10\end{pmatrix}$', '$\begin{pmatrix}0\\-2\end{pmatrix}$'], a: 0, exp: '$2(1,3)-1(2,4)=(0,2)$.'}
+      - {type: mc, d: 2, q: 'The matrix that rotates the plane by 90° counterclockwise sends $(1,0)$ to $(0,1)$ and $(0,1)$ to $(-1,0)$. It is...', choices: ['$\begin{pmatrix}0&1\\-1&0\end{pmatrix}$', '$\begin{pmatrix}0&-1\\1&0\end{pmatrix}$', '$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$', '$\begin{pmatrix}-1&0\\0&1\end{pmatrix}$'], a: 1, exp: 'Columns are the images of the basis vectors.'}
+      - {type: mc, d: 1, q: 'A $3\times5$ matrix maps...', choices: ['$\mathbb R^3\to\mathbb R^5$', '$\mathbb R^5\to\mathbb R^3$', '$\mathbb R^{15}\to\mathbb R$', '$\mathbb R^3\to\mathbb R^3$'], a: 1, exp: 'Inputs have 5 entries (columns), outputs 3 (rows).'}
+    cards:
+      - {f: 'Column view of $A\mathbf x$', b: 'A linear combination of the columns of $A$ with weights $x_i$.'}
+      - {f: 'Columns of a transformation matrix are...', b: 'The images of the standard basis vectors.'}
+    fun:
+      - kind: fact
+        title: "Computer graphics is matrices"
+        body: |
+          Every frame of a video game multiplies millions of vertex vectors by 4×4 matrices for
+          rotation, scaling and perspective. GPUs were built for exactly this -- which is why
+          they turned out to be perfect for neural networks.
+
+  - id: la-matmul
+    title: "Matrix Multiplication as Composition"
+    xp: 60
+    prereqs: [la-matrix-maps]
+    readings:
+      - {book: VMLS, sec: "Ch 10", title: "Matrix multiplication"}
+      - {book: MML, sec: "2.2", title: "Matrices"}
+    videos:
+      - {book: 3B1B-LA, n: 4, title: "Matrix multiplication as composition"}
+    summary: |
+      $AB$ means "do $B$, then $A$". Entry $(i,j)$ is row $i$ of $A$ dotted with column $j$ of
+      $B$. Associative, not commutative. Transpose: $(AB)^\top=B^\top A^\top$.
+    key_ideas:
+      - 'Shapes: $(m\times n)(n\times p)=m\times p$.'
+      - '$AB\ne BA$ in general.'
+      - '$(AB)^\top=B^\top A^\top$; $\mathbf x^\top\mathbf y$ is a dot product, $\mathbf x\mathbf y^\top$ an outer product.'
+    ds: |
+      Stacking layers multiplies weight matrices; batching computes $XW$ for a whole batch at
+      once. The cost of $(m\times n)(n\times p)$ is $mnp$ multiplications -- why ordering
+      matrix chains matters for speed.
+    lab: |
+      Verify $AB\ne BA$ and $(AB)^\top=B^\top A^\top$ for random matrices in numpy. Then time
+      $(AB)\mathbf x$ vs $A(B\mathbf x)$ for 2000×2000 matrices.
+    questions:
+      - {type: num, d: 1, q: 'Entry $(1,1)$ of $\begin{pmatrix}1&2\\3&4\end{pmatrix}\begin{pmatrix}5&6\\7&8\end{pmatrix}$?', a: '19', exp: '$1\cdot5+2\cdot7$.'}
+      - {type: mc, d: 2, q: '$(AB)^\top=$', choices: ['$A^\top B^\top$', '$B^\top A^\top$', '$BA$', '$AB$'], a: 1, exp: 'Order reverses.'}
+      - {type: mc, d: 3, q: 'For $A$ (1000×1000), $B$ (1000×1000), $\mathbf x$ (1000×1), which is cheaper?', choices: ['$(AB)\mathbf x$', '$A(B\mathbf x)$', 'same cost'], a: 1, exp: 'Two matrix-vector products ($2\times10^6$) vs a matrix-matrix product ($10^9$).'}
+    cards:
+      - {f: 'Meaning of $AB$ as transformations', b: 'Apply $B$ first, then $A$.'}
+      - {f: '$(AB)^\top$', b: '$B^\top A^\top$'}
+    fun:
+      - kind: fact
+        title: "Faster than n³"
+        body: |
+          Schoolbook matrix multiplication is $O(n^3)$. Strassen (1969) found $O(n^{2.81})$, and
+          in 2022 DeepMind's AlphaTensor discovered new multiplication algorithms for small
+          matrices -- AI improving the math that runs AI.
+
+  - id: la-systems
+    title: "Linear Systems & Gaussian Elimination"
+    xp: 70
+    prereqs: [la-matmul]
+    readings:
+      - {book: VMLS, sec: "Ch 8", title: "Linear equations"}
+      - {book: MML, sec: "2.3", title: "Solving Systems of Linear Equations"}
+      - {book: MIT1806, sec: "Lec 1-2", title: "The geometry of linear equations; Elimination with matrices"}
+    summary: |
+      $A\mathbf x=\mathbf b$: row-reduce the augmented matrix to find all solutions -- none,
+      exactly one, or infinitely many.
+    key_ideas:
+      - 'Row operations don''t change the solution set.'
+      - 'Pivots: a pivot in every column => at most one solution; a pivot row like $[0\ 0\ |\ c\ne0]$ => none.'
+      - 'In practice: `np.linalg.solve` (LU factorization), never an explicit inverse.'
+    ds: |
+      Solving the normal equations, Newton steps, and Gaussian-process predictions all solve
+      linear systems. Knowing when solutions are unique explains collinearity problems.
+    lab: |
+      Solve a 3×3 system by hand with row reduction, then with `np.linalg.solve`. Make the
+      third equation a sum of the first two and see what numpy says.
+    questions:
+      - {type: mc, d: 1, q: 'Solve $x+2y=5$, $3x+4y=11$.', choices: ['$(1,2)$', '$(2,1)$', '$(3,1)$', '$(1,3)$'], a: 0, exp: 'Subtract 3×(first): $-2y=-4$.'}
+      - {type: mc, d: 2, q: 'A system whose row-reduced form has the row $[0\ 0\ 0\,|\,5]$ has...', choices: ['one solution', 'no solution', 'infinitely many', 'cannot tell'], a: 1, exp: '$0=5$ is impossible.'}
+      - {type: mc, d: 2, q: '3 equations, 4 unknowns, consistent. The number of solutions is...', choices: ['exactly one', 'none', 'infinitely many', 'four'], a: 2, exp: 'At least one free variable.'}
+    cards:
+      - {f: 'Three possibilities for $A\mathbf x=\mathbf b$', b: 'No solution, exactly one, or infinitely many.'}
+    fun:
+      - kind: fact
+        title: "Nine Chapters, again"
+        body: |
+          The row-reduction method you just used appears in China's "Nine Chapters on the
+          Mathematical Art" (~2,000 years ago), using counting rods on a board -- columns and
+          all.
+
+  - id: la-independence
+    title: "Independence, Basis, Rank, Column & Null Space"
+    xp: 80
+    prereqs: [la-systems]
+    readings:
+      - {book: VMLS, sec: "Ch 5", title: "Linear independence"}
+      - {book: MML, sec: "2.5-2.6", title: "Linear Independence; Basis and Rank"}
+      - {book: MIT1806, sec: "Lec 6-10", title: "Column space and nullspace ... The four fundamental subspaces"}
+    videos:
+      - {book: 3B1B-LA, n: 7, title: "Inverse matrices, column space and null space"}
+    summary: |
+      Vectors are independent if none is a combination of the others. A basis is an independent
+      spanning set; its size is the dimension. Rank = dimension of the column space; the null
+      space is everything $A$ sends to $\mathbf 0$. Rank–nullity: $\text{rank}+\text{nullity}=n$.
+    key_ideas:
+      - 'Independent $\iff$ $c_1\mathbf v_1+\dots+c_k\mathbf v_k=\mathbf 0$ only for all $c_i=0$.'
+      - 'Rank = number of pivots = number of independent columns.'
+      - 'Rank–nullity theorem: $\text{rank}(A)+\dim N(A)=n$ (number of columns).'
+    ds: |
+      Perfectly collinear features make $X$ rank-deficient: infinitely many regression
+      solutions, exploding coefficients. One-hot encoding all categories plus an intercept is
+      the classic accidental rank deficiency (the "dummy variable trap").
+    lab: |
+      Build a design matrix with an intercept and one-hot columns for all 7 weekdays; compute
+      `np.linalg.matrix_rank`. Drop one weekday column and recompute.
+    questions:
+      - {type: mc, d: 1, q: 'Are $(1,2,3)$, $(2,4,6)$ linearly independent?', choices: ['yes', 'no'], a: 1, exp: 'The second is twice the first.'}
+      - {type: num, d: 2, q: 'Rank of $\begin{pmatrix}1&2&3\\2&4&6\\1&0&1\end{pmatrix}$?', a: '2', exp: 'Row 2 = 2×row 1; rows 1 and 3 are independent.'}
+      - {type: num, d: 2, q: 'A $5\times8$ matrix has rank 5. Dimension of its null space?', a: '3', exp: 'Rank–nullity: $8-5$.'}
+      - {type: mc, d: 2, q: 'Intercept column + one-hot columns for ALL 7 weekdays makes $X$...', choices: ['full column rank', 'rank deficient (the columns are dependent)', 'orthogonal', 'square'], a: 1, exp: 'The 7 one-hot columns sum to the intercept column.'}
+    cards:
+      - {f: 'Rank–nullity theorem', b: '$\text{rank}(A)+\dim N(A)=$ number of columns.'}
+      - {f: 'Dummy variable trap', b: 'Intercept + one-hot for every category = linearly dependent columns. Drop one category.'}
+    fun:
+      - kind: fact
+        title: "The four fundamental subspaces"
+        body: |
+          Gilbert Strang built a whole teaching philosophy on the "four fundamental subspaces"
+          (column, row, null, left-null). His 18.06 lectures, filmed in 1999, are among the most
+          watched math courses ever made.
+
+  - id: la-inverse-det
+    title: "Inverses & Determinants"
+    xp: 70
+    prereqs: [la-independence]
+    readings:
+      - {book: VMLS, sec: "Ch 11", title: "Matrix inverses"}
+      - {book: MML, sec: "4.1", title: "Determinant and Trace"}
+      - {book: MIT1806, sec: "Lec 3, 18-19", title: "Multiplication and inverse; Properties of determinants"}
+    videos:
+      - {book: 3B1B-LA, n: 6, title: "The determinant"}
+      - {book: 3B1B-LA, n: 7, title: "Inverse matrices, column space and null space"}
+    summary: |
+      $A^{-1}$ undoes $A$; it exists iff $\det A\ne0$ iff columns are independent. The determinant
+      is the volume scaling factor (and sign = orientation).
+    key_ideas:
+      - '$\det(AB)=\det A\det B$; $\det(A^{-1})=1/\det A$.'
+      - '$2\times2$ inverse: $\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$.'
+      - 'Invertible $\iff$ full rank $\iff$ $\det\ne0$ $\iff$ $A\mathbf x=\mathbf0$ only for $\mathbf x=\mathbf0$.'
+    ds: |
+      The $|\det J|$ in change-of-variables (normalizing flows, Unit 9) and the $|\Sigma|$ in the
+      Gaussian density are determinants. In code, solve systems instead of forming inverses.
+    lab: |
+      Compare `np.linalg.inv(A) @ b` with `np.linalg.solve(A, b)` on a nearly singular 100×100
+      matrix: accuracy and speed.
+    questions:
+      - {type: num, d: 1, q: '$\det\begin{pmatrix}4&2\\1&3\end{pmatrix}$', a: '10', exp: '$12-2$.'}
+      - {type: num, d: 2, q: 'If $\det A=3$ and $\det B=-2$ (both $n\times n$), what is $\det(AB)$?', a: '-6', exp: 'Multiplicative.'}
+      - {type: mc, d: 2, q: 'Inverse of $\begin{pmatrix}2&1\\1&1\end{pmatrix}$?', choices: ['$\begin{pmatrix}1&-1\\-1&2\end{pmatrix}$', '$\begin{pmatrix}1&1\\1&2\end{pmatrix}$', '$\begin{pmatrix}-1&1\\1&-2\end{pmatrix}$', 'not invertible'], a: 0, exp: '$\det=1$; swap diagonal, negate off-diagonal.'}
+      - {type: num, d: 2, q: 'A linear map with $\det=-3$ maps the unit square to a region of area...', a: '3', exp: '$|\det|$; the minus sign means orientation flips.'}
+    cards:
+      - {f: 'Geometric meaning of $\det A$', b: 'Factor by which $A$ scales area/volume; negative = orientation flip.'}
+      - {f: 'Why avoid computing $A^{-1}$ in code?', b: 'Slower and less accurate than solving $A\mathbf x=\mathbf b$ directly (LU).'}
+    fun:
+      - kind: fact
+        title: "Determinants came first"
+        body: |
+          Determinants were studied by Seki in Japan (1683) and Leibniz in Europe (1693), more
+          than 150 years before matrices were even named, by Sylvester in 1850.
